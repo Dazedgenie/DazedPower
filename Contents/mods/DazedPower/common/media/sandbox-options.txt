@@ -1,0 +1,206 @@
+VERSION = 1,
+
+/* Note the path: media/sandbox-options.txt, NOT media/lua/. The B41 layout
+   is silently dead in B42 -- neither of the two paths the loader checks
+   reaches it, and nothing is logged when it is missing.
+
+   One dot in the option id nests it: DazedPower.LinkRadius becomes
+   SandboxVars.DazedPower.LinkRadius. Two dots would not nest and the option
+   would land flat at the top level instead. */
+
+option DazedPower.LinkRadius
+{
+    type = integer,
+    min = 4,
+    max = 30,
+    default = 12,
+    page = DazedPower,
+    translation = DazedPower_LinkRadius,
+}
+
+option DazedPower.OutputScale
+{
+    type = integer,
+    min = 10,
+    max = 400,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_OutputScale,
+}
+
+option DazedPower.BankScale
+{
+    type = integer,
+    min = 10,
+    max = 400,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_BankScale,
+}
+
+option DazedPower.SnowRate
+{
+    type = integer,
+    min = 0,
+    max = 300,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_SnowRate,
+}
+
+option DazedPower.SoilRate
+{
+    type = integer,
+    min = 0,
+    max = 300,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_SoilRate,
+}
+
+option DazedPower.SimulateLoad
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_SimulateLoad,
+}
+
+option DazedPower.AgeRate
+{
+    type = integer,
+    min = 0,
+    max = 400,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_AgeRate,
+}
+
+option DazedPower.StormRate
+{
+    type = integer,
+    min = 0,
+    max = 400,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_StormRate,
+}
+
+option DazedPower.HydrogenRisk
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_HydrogenRisk,
+}
+
+option DazedPower.DegradeBank
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_DegradeBank,
+}
+
+/* Who may pick a placed part back up. 1 anyone, 2 anyone with a screwdriver,
+   3 the person who placed it plus their safehouse plus admins.
+
+   This exists because the mod cannot rely on the base rule: any mod that
+   loosens canPickUpMoveable (Rebalanced Prop Moving is the obvious one)
+   otherwise makes every panel free to take. Enum values are 1-based, and
+   an enum option requires numValues > 0 AND default > 0 or it is rejected. */
+
+option DazedPower.PickupLock
+{
+    type = enum,
+    numValues = 3,
+    default = 3,
+    page = DazedPower,
+    translation = DazedPower_PickupLock,
+    valueTranslation = DazedPower_PickupLock,
+}
+
+/* Building wiring and transformers (2026-09-24).
+
+   GridLinkRadius is how far one transformer's power line may run, to the
+   controller or to another transformer. It is longer than LinkRadius, which is
+   for panels and batteries, so that transformers can be spaced to keep a
+   street lit end to end: each lights its own GeneratorTileRange circle.
+
+   TransformerLoss is what each powered transformer draws doing nothing, in
+   watts, so a sprawling grid costs something to keep running. */
+
+option DazedPower.GridLinkRadius
+{
+    type = integer,
+    min = 8,
+    max = 60,
+    default = 30,
+    page = DazedPower,
+    translation = DazedPower_GridLinkRadius,
+}
+
+option DazedPower.TransformerLoss
+{
+    type = integer,
+    min = 0,
+    max = 500,
+    default = 25,
+    page = DazedPower,
+    translation = DazedPower_TransformerLoss,
+}
+
+/* Realistic Mode: panels produce what 1993 panels did (Alwar's figures on the
+   suggestions board, 2026-09-25). DP_Model.ARRAY_SPEC_1993. Backup generators
+   burn like real petrol generators (2026-09-29): DP_Model
+   BACKUP_REAL_IDLE_L and BACKUP_REAL_KWH_L, M.realFuelUse. */
+option DazedPower.RealisticMode
+{
+    type = boolean,
+    default = false,
+    page = DazedPower,
+    translation = DazedPower_RealisticMode,
+}
+
+/* One residential house in this many gets a yard rig, and one storage barn in
+   this many holds spare panels and racks, on newly generated ground only. 0
+   turns it off. */
+option DazedPower.RigChance
+{
+    type = integer,
+    min = 0,
+    max = 500,
+    default = 15,
+    page = DazedPower,
+    translation = DazedPower_RigChance,
+}
+
+option DazedPower.BarnStockChance
+{
+    type = integer,
+    min = 0,
+    max = 100,
+    default = 2,
+    page = DazedPower,
+    translation = DazedPower_BarnStockChance,
+}
+
+/* Wiring (0.2.0). CableTilesPerWire is how many tiles one Electric Wire covers when a cable is run
+   (0 makes cables free); cutting one gives half back. LiveShock lets wiring a live system shock. */
+option DazedPower.CableTilesPerWire
+{
+    type = integer,
+    min = 0,
+    max = 20,
+    default = 4,
+    page = DazedPower,
+    translation = DazedPower_CableTilesPerWire,
+}
+
+option DazedPower.LiveShock
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_LiveShock,
+}
