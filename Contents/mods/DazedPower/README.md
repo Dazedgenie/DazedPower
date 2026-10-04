@@ -1,4 +1,4 @@
-# Dazed Utilities: Power  (v0.3.0, Build 42)
+# Dazed Utilities: Power  (v0.3.2, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Utilities: Core** (`DazedCore`), loaded first. Works with
@@ -54,7 +54,7 @@ shut room for the hydrogen warning; the presets.
 ## Console lines to check
 
 ```
-DazedCore: ready -- 1.1.0, heavy parts v2, 1 power provider, N loads, mods: DazedPower 0.3.0, ...
+DazedCore: ready -- 1.1.1, heavy parts v3, 1 power provider, N loads, mods: DazedPower 0.3.2, ...
 DazedPower: ready -- 644/644 tiles, 64/64 items
 ```
 
@@ -75,6 +75,19 @@ DazedPower: ready -- 644/644 tiles, 64/64 items
   `cd tools/tests && lua load_test.lua` (expects `DazedCore` checked out beside this folder).
 
 ## Changes
+
+- **0.3.2.** Fix: the Large Solar Array (all grades) placed as a single tile. The engine builds a 2x2 grid only when
+  each GroupName + CustomName has one tile per grid square per facing, and the clear, snow and cracked states shared
+  one group, so the grid was thrown out. Snow and cracked now have their own groups (`Dazed Power Snow`,
+  `Dazed Power Cracked`), with the same display name. Needs DazedCore 1.1.1, which lets a 2x2 part carried as heavy
+  parts be placed. Placing a Dazed Power part now writes one `DazedPower: place ... -> placed / NOT placed` line to
+  the console, so a part that won't go down can be traced.
+
+- **0.3.1.** Fix: nothing from Dazed Power could be placed. The engine takes at most 512 tiles per tileset and the
+  sheet had 644, so it refused the whole tiledef (`0/644 tiles` in the console). The sheet now spills onto a second
+  tileset, `dazedpower_02` (indices 512 and up); sprite names go through `P.spriteName` / `P.indexOf`. Also fixed:
+  the tracker tooltips' bare `%` (a formatter warning every hover) and a missing loot list (ToolStoreGardening).
+  Clean break: parts placed under 0.3.0 never existed, so nothing to migrate.
 
 - **0.3.0.** The roadmap's remaining code. All new art is stand-in until a Blender pass.
   - **Battery ageing.** Charge cycles wear each cell for good (a worn cell shows a ceiling line under its health bar;

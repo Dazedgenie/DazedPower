@@ -29,7 +29,7 @@ S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping" }
 S.live = S.live or {}       -- key -> { emitter, ids, kind, state }
 S.seen = S.seen or {}       -- key -> state at the last scan
 
-local PREFIX = R.TILESET .. "_"
+local PREFIX = "dazedpower_"
 local PLEN = #PREFIX
 
 local function keyOf(sq) return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ() end

@@ -234,11 +234,9 @@ L.SALVAGE = {
         DazedBankMakeshift = 0.5,
         DazedWindSalvaged = 0.2,         -- a farm's old windmill, taken down
     },
-    -- a worn steam engine from a sawmill or carpenter's yard, and the gas generators
-    -- that stood behind garages and hardware stores
+    -- a worn steam engine from a sawmill or carpenter's yard
     CrateCarpentry = { DazedSteamSalvaged = 0.2 },
     ToolStoreCarpentry = { DazedSteamSalvaged = 0.15 },
-    ToolStoreGardening = { DazedWindSalvaged = 0.15 },
     -- 11 references, and the name says it: a prepper's shelf.
     -- Its containers are household ones that hold 10 to 25 kg, so a heavy
     -- part here costs a little vanilla loot too (see the replay notes).

@@ -2471,7 +2471,7 @@ local function registerSprites()
         local kind = P.ROWS[row].kind
         if kind ~= "lamp" and not P.SOURCE_KINDS[kind] and not P.INSTRUMENT[kind] and not P.PASSIVE[kind] then
             for col = 0, P.COLS - 1 do
-                local name = P.TILESET .. "_" .. ((row - 1) * P.COLS + col)
+                local name = P.spriteName((row - 1) * P.COLS + col)
                 MapObjects.OnLoadWithSprite(name, onLoadPart, PRIORITY)
                 MapObjects.OnNewWithSprite(name, onLoadPart, PRIORITY)
             end

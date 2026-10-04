@@ -9,6 +9,14 @@ released: inserting a row repoints every object standing in a save.
 COLS = 4
 FACINGS = ("E", "S", "W", "N")
 TILESET = "dazedpower_01"
+# The engine takes at most 512 tiles per tileset, so the sheet spills onto dazedpower_02, _03...
+SHEET_TILES = 512
+TILESETS = ["dazedpower_%02d" % (i + 1) for i in range(4)]
+
+
+def sprite_name(n):
+    """Engine sprite name for overall sheet index n."""
+    return "%s_%d" % (TILESETS[n // SHEET_TILES], n % SHEET_TILES)
 GROUP = "Dazed Power"
 PIECES_XL = 4                       # a 2x2 array: pieces 1..4 = NW, NE, SW, SE of its footprint
 

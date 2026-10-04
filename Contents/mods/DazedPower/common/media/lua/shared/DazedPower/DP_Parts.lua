@@ -120,6 +120,24 @@ function P.bankScale()
 end
 
 P.TILESET = "dazedpower_01"
+-- The engine takes at most 512 tiles per tileset, so overall index n lives on dazedpower_0<1 + n // 512>.
+P.SHEET_TILES = 512
+
+--- Engine sprite name for overall sheet index n.
+function P.spriteName(n)
+    local s = math.floor(n / P.SHEET_TILES)
+    return string.format("dazedpower_%02d_%d", s + 1, n - s * P.SHEET_TILES)
+end
+
+--- Overall sheet index of one of our sprite names, or nil.
+function P.indexOf(name)
+    if type(name) ~= "string" then return nil end
+    local s, i = string.match(name, "^dazedpower_(%d%d)_(%d+)$")
+    if not s then return nil end
+    s, i = tonumber(s), tonumber(i)
+    if s < 1 or i >= P.SHEET_TILES then return nil end
+    return (s - 1) * P.SHEET_TILES + i
+end
 P.COLS = 4
 
 -- Column order inside every row, and the reverse lookup.
@@ -324,17 +342,15 @@ function P.sprite(kind, mount, tier, state, facing, piece)
     local row = P.ROW_OF[kind .. "|" .. (mount or "ground") .. "|" .. tier .. "|" .. state .. "|" .. (piece or 1)]
     if not row then return nil end
     local fi = P.FACING_INDEX[facing or "S"] or 1
-    return P.TILESET .. "_" .. ((row - 1) * P.COLS + fi)
+    return P.spriteName((row - 1) * P.COLS + fi)
 end
 
 --- Decompose one of the mod's sprite names, or nil if it is not ours. Anything but a string is not ours
 --  (Kahlua's string.match raises on a userdata). `pieces` is how many squares the part covers and `master`
 --  whether this is the one that carries its state.
 function P.spriteInfo(name)
-    if type(name) ~= "string" then return nil end
-    local idx = string.match(name, "^" .. P.TILESET .. "_(%d+)$")
+    local idx = P.indexOf(name)
     if not idx then return nil end
-    idx = tonumber(idx)
     local r = P.ROWS[math.floor(idx / P.COLS) + 1]
     if not r then return nil end
     local pieces = P.piecesOf(r.kind, r.mount)

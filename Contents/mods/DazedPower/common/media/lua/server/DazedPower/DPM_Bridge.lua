@@ -1060,7 +1060,7 @@ local function registerSprites()
     for row = 1, #P.ROWS do
         if P.SOURCE_KINDS[P.ROWS[row].kind] then
             for col = 0, P.COLS - 1 do
-                local name = P.TILESET .. "_" .. ((row - 1) * P.COLS + col)
+                local name = P.spriteName((row - 1) * P.COLS + col)
                 MapObjects.OnLoadWithSprite(name, onLoad, 6)
                 MapObjects.OnNewWithSprite(name, onLoad, 6)
             end

@@ -17,7 +17,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent.parent / "DazedCore/tools/pzformat"))
 import dp_taxonomy as T  # noqa: E402
-from tiledef import TileDefinitions, Tile  # noqa: E402
+from tiledef import TileDefinitions, Tile, Tileset  # noqa: E402
 from packfile import TexturePack, PackEntry, PackPage  # noqa: E402
 
 MEDIA = HERE.parent / "common/media"
@@ -202,8 +202,16 @@ LIGHT_RADIUS = {("garden", "makeshift"): 4, ("garden", "workshop"): 6, ("street"
 GRID_POS = {1: "0,0", 2: "1,0", 3: "0,1", 4: "1,1"}
 
 
+def group_of(kind, mount, tier, state):
+    """The engine builds one sprite grid per GroupName+CustomName and facing, so each 2x2 state needs its own group."""
+    if kind == "array" and mount == "xl" and state != T.states_for(kind, mount, tier)[0]:
+        return T.GROUP + " " + state.capitalize()
+    return T.GROUP
+
+
 def tile_props(kind, mount, tier, state, facing, piece, index):
-    p = {"CustomName": T.display_name(kind, mount, tier), "GroupName": T.GROUP, "Facing": facing, "BlocksPlacement": ""}
+    p = {"CustomName": T.display_name(kind, mount, tier), "GroupName": group_of(kind, mount, tier, state), "Facing": facing,
+         "BlocksPlacement": ""}
     wood = (tier == "makeshift" and kind in ("bank", "pedal", "windmill"))
     p.update(WOOD if wood else METAL)
     p.update({"IsMoveAble": "", "CustomItem": "Base." + T.item_of(kind, mount, tier),
@@ -258,7 +266,7 @@ def build_pack(cells, out):
     for n in sorted(cells):
         cell = cells[n]
         bb = cell.getbbox() or (0, 0, 1, 1)
-        sprites.append((PackEntry("%s_%d" % (T.TILESET, n), 0, 0, bb[2] - bb[0], bb[3] - bb[1], bb[0], bb[1], CW, CH), cell.crop(bb)))
+        sprites.append((PackEntry(T.sprite_name(n), 0, 0, bb[2] - bb[0], bb[3] - bb[1], bb[0], bb[1], CW, CH), cell.crop(bb)))
     order = sorted(range(len(sprites)), key=lambda i: -sprites[i][0].h)
     pages, cur = [], None
     x = y = shelf = 0
@@ -307,9 +315,10 @@ def main():
     pages = build_pack(cells, MEDIA / "texturepacks/dazedpower.pack")
     # the tiledef
     td = TileDefinitions.read(SRC / "offgrid_tiles.tiles")
-    ts = td.tilesets[0]
-    ts.name = T.TILESET; ts.cols = T.COLS; ts.rows = len(T.ROWS); ts.tiles = tiles
-    td.tilesets = [ts]
+    # one tileset per 512 tiles (the engine's limit), 128 rows each
+    per = T.SHEET_TILES
+    td.tilesets = [Tileset(T.TILESETS[k], T.TILESETS[k] + ".png", T.COLS, len(tiles[k * per:(k + 1) * per]) // T.COLS, k + 1,
+                           tiles[k * per:(k + 1) * per]) for k in range((len(tiles) + per - 1) // per)]
     td.write(MEDIA / "dazedpower_tiles.tiles")
     (MEDIA / "dazedpower_tiles.tiles.txt").write_text(td.to_text(), encoding="utf-8")
     # icons
@@ -363,7 +372,7 @@ def write_items():
                 name = T.item_of(kind, mount, tier)
                 w = T.WEIGHT[(kind, mount)][tier]
                 first = T.states_for(kind, mount, tier)[0]
-                sprite = "%s_%d" % (T.TILESET, T.sprite_index(kind, mount, tier, first, "S"))
+                sprite = T.sprite_name(T.sprite_index(kind, mount, tier, first, "S"))
                 heavy = "\n        RequiresEquippedBothHands = true," if w >= 10 else ""
                 tags = ("base:heavyitem;" if w >= 10 else "") + "base:hasmetal;base:showcondition"
                 extra = ""
@@ -379,7 +388,7 @@ def write_items():
                         for facing in T.FACINGS:
                             if state == "off" and facing == "S": continue
                             vname = name + ("On" if state == "on" else "") + ("" if facing == "S" else facing)
-                            vs = "%s_%d" % (T.TILESET, T.sprite_index(kind, mount, tier, state, facing))
+                            vs = T.sprite_name(T.sprite_index(kind, mount, tier, state, facing))
                             out.append(ITEM_TEMPLATE.format(name=vname, display=T.display_name(kind, mount, tier), weight="%.1f" % w,
                                                             icon=name, sprite=vs, metal="%.1f" % (w * 2.5), tip=name, heavy="",
                                                             tags=tags, extra=extra))
@@ -400,7 +409,8 @@ def write_translations():
                 names["Base." + item] = disp
                 if kind == "controller":
                     for suffix in ("E", "W", "N", "On", "OnE", "OnW", "OnN"): names["Base." + item + suffix] = disp
-                moves["Dazed_Power_" + disp.replace(" ", "_")] = disp
+                for state in T.states_for(kind, mount, tier):
+                    moves[(group_of(kind, mount, tier, state) + " " + disp).replace(" ", "_")] = disp
     (tr / "ItemName.json").write_text(json.dumps(names, indent=4, ensure_ascii=False) + "\n", encoding="utf-8")
     (tr / "Moveables.json").write_text(json.dumps(moves, indent=4, ensure_ascii=False) + "\n", encoding="utf-8")
 

@@ -702,6 +702,16 @@ function ISMoveableSpriteProps:placeMoveable(character, square, origSpriteName, 
                           forceAllow, ...)
     placing = prev
     if not ok then error(res, 0) end
+    -- One console line per Dazed Power placement, so a part that never lands shows in console.txt.
+    if square and P.spriteInfo(self.spriteName or origSpriteName) then
+        local landed = false
+        local objs = square:getObjects()
+        for i = 0, objs:size() - 1 do
+            if P.partOf(objs:get(i)) == P.spriteInfo(self.spriteName or origSpriteName).kind then landed = true end
+        end
+        print(string.format("DazedPower: place %s at %d,%d,%d -> %s", tostring(self.spriteName or origSpriteName),
+              square:getX(), square:getY(), square:getZ(), landed and "placed" or "NOT placed"))
+    end
     return res
 end
 
@@ -931,7 +941,12 @@ if origCanPlace then
         if not info or not square or not square.getObjects then return allowed end
         local objs = square:getObjects()
         for i = 0, objs:size() - 1 do
-            if P.partOf(objs:get(i)) == info.kind then return false end
+            if P.partOf(objs:get(i)) == info.kind then
+                if DazedCore and DazedCore.Heavy and DazedCore.Heavy.say then
+                    DazedCore.Heavy.say("DazedPower: one " .. info.kind .. " per square")
+                end
+                return false
+            end
         end
         -- A 2x2 array stands in the open: nothing overhead on any of its squares.
         if info.pieces > 1 and square.isOutside and not square:isOutside() then

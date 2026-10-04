@@ -19,7 +19,7 @@ require "DazedCore/DC_Boot"
 require "DazedPower/DP_Parts"
 
 DazedPower = DazedPower or {}
-DazedPower.VERSION = "0.3.0"
+DazedPower.VERSION = "0.3.2"
 DazedPower.Boot = DazedPower.Boot or {}
 local B = DazedPower.Boot
 local P = DazedPower.Parts
@@ -38,7 +38,7 @@ function B.check()
     local total = P.COLS * #P.ROWS
     local sprites, missing = 0, nil
     for m = 0, total - 1 do
-        local name = P.TILESET .. "_" .. m
+        local name = P.spriteName(m)
         if named and named:containsKey(name) then
             sprites = sprites + 1
         elseif not missing then

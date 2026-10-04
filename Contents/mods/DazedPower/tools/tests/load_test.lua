@@ -120,9 +120,17 @@ local xl = P.spriteInfo("dazedpower_01_73")
 check(xl and xl.kind == "array" and xl.mount == "xl" and xl.piece == 1 and xl.master and xl.pieces == 4, "XL master piece decoded")
 local xl2 = P.spriteInfo(P.sprite("array", "xl", "workshop", "snow", "N", 3))
 check(xl2 and xl2.piece == 3 and not xl2.master and xl2.tier == "workshop" and xl2.state == "snow", "XL piece 3 decoded")
-check(P.spriteInfo("dazedpower_01_607").kind == "petrol", "last sprite is a petrol generator")
-check(P.spriteInfo("dazedpower_01_608").kind == "gauge" and P.spriteInfo("dazedpower_01_623").state == "full", "the wall gauge rows follow")
-check(P.spriteInfo("dazedpower_01_644") == nil, "nothing past the sheet")
+check(P.spriteInfo("dazedpower_02_95").kind == "petrol", "last sprite is a petrol generator")
+check(P.spriteInfo("dazedpower_02_96").kind == "gauge" and P.spriteInfo("dazedpower_02_111").state == "full", "the wall gauge rows follow")
+check(P.spriteInfo("dazedpower_02_132") == nil, "nothing past the sheet")
+check(P.spriteName(511) == "dazedpower_01_511" and P.spriteName(512) == "dazedpower_02_0", "the sheet spills onto a second tileset at 512")
+check(P.indexOf("dazedpower_02_0") == 512 and P.indexOf("dazedpower_01_512") == nil, "names map back to sheet indices")
+local over = 0
+for n = 0, #P.ROWS * P.COLS - 1 do
+    local nm = P.spriteName(n)
+    if P.indexOf(nm) ~= n or tonumber(string.match(nm, "_(%d+)$")) >= 512 then over = over + 1 end
+end
+check(over == 0, "every sprite round-trips and no tileset holds more than 512")
 check(#P.allItems() == 64, "64 items: " .. #P.allItems())
 check(M.wireLegal("windmill", "controller") and M.wireLegal("windmill", "windmill") and not M.wireLegal("windmill", "array"), "source wiring rules")
 check(M.wireLegal("waterpump", "transformer") and not M.wireLegal("array", "waterpump") and not M.wireLegal("vane", "controller"), "load and instrument rules")

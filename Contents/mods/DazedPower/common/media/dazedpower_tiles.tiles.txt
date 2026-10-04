@@ -2,7 +2,7 @@ version = 1
 tileset
 {
     file = dazedpower_01
-    size = 4,161
+    size = 4,128
     id = 1
     // dazedpower_01_0
     tile
@@ -2065,7 +2065,7 @@ tileset
     {
         xy = 0,22
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2090,7 +2090,7 @@ tileset
     {
         xy = 1,22
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2115,7 +2115,7 @@ tileset
     {
         xy = 2,22
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2140,7 +2140,7 @@ tileset
     {
         xy = 3,22
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2165,7 +2165,7 @@ tileset
     {
         xy = 0,23
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2190,7 +2190,7 @@ tileset
     {
         xy = 1,23
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2215,7 +2215,7 @@ tileset
     {
         xy = 2,23
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2240,7 +2240,7 @@ tileset
     {
         xy = 3,23
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2265,7 +2265,7 @@ tileset
     {
         xy = 0,24
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2290,7 +2290,7 @@ tileset
     {
         xy = 1,24
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2315,7 +2315,7 @@ tileset
     {
         xy = 2,24
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2340,7 +2340,7 @@ tileset
     {
         xy = 3,24
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2365,7 +2365,7 @@ tileset
     {
         xy = 0,25
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2390,7 +2390,7 @@ tileset
     {
         xy = 1,25
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2415,7 +2415,7 @@ tileset
     {
         xy = 2,25
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2440,7 +2440,7 @@ tileset
     {
         xy = 3,25
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2465,7 +2465,7 @@ tileset
     {
         xy = 0,26
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2490,7 +2490,7 @@ tileset
     {
         xy = 1,26
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2515,7 +2515,7 @@ tileset
     {
         xy = 2,26
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2540,7 +2540,7 @@ tileset
     {
         xy = 3,26
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2565,7 +2565,7 @@ tileset
     {
         xy = 0,27
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2590,7 +2590,7 @@ tileset
     {
         xy = 1,27
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2615,7 +2615,7 @@ tileset
     {
         xy = 2,27
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2640,7 +2640,7 @@ tileset
     {
         xy = 3,27
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2665,7 +2665,7 @@ tileset
     {
         xy = 0,28
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2690,7 +2690,7 @@ tileset
     {
         xy = 1,28
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2715,7 +2715,7 @@ tileset
     {
         xy = 2,28
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2740,7 +2740,7 @@ tileset
     {
         xy = 3,28
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -2765,7 +2765,7 @@ tileset
     {
         xy = 0,29
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -2790,7 +2790,7 @@ tileset
     {
         xy = 1,29
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -2815,7 +2815,7 @@ tileset
     {
         xy = 2,29
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -2840,7 +2840,7 @@ tileset
     {
         xy = 3,29
         CustomName = Makeshift Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3265,7 +3265,7 @@ tileset
     {
         xy = 0,34
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3290,7 +3290,7 @@ tileset
     {
         xy = 1,34
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3315,7 +3315,7 @@ tileset
     {
         xy = 2,34
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3340,7 +3340,7 @@ tileset
     {
         xy = 3,34
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3365,7 +3365,7 @@ tileset
     {
         xy = 0,35
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3390,7 +3390,7 @@ tileset
     {
         xy = 1,35
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3415,7 +3415,7 @@ tileset
     {
         xy = 2,35
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3440,7 +3440,7 @@ tileset
     {
         xy = 3,35
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3465,7 +3465,7 @@ tileset
     {
         xy = 0,36
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3490,7 +3490,7 @@ tileset
     {
         xy = 1,36
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3515,7 +3515,7 @@ tileset
     {
         xy = 2,36
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3540,7 +3540,7 @@ tileset
     {
         xy = 3,36
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3565,7 +3565,7 @@ tileset
     {
         xy = 0,37
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3590,7 +3590,7 @@ tileset
     {
         xy = 1,37
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3615,7 +3615,7 @@ tileset
     {
         xy = 2,37
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3640,7 +3640,7 @@ tileset
     {
         xy = 3,37
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3665,7 +3665,7 @@ tileset
     {
         xy = 0,38
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3690,7 +3690,7 @@ tileset
     {
         xy = 1,38
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3715,7 +3715,7 @@ tileset
     {
         xy = 2,38
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3740,7 +3740,7 @@ tileset
     {
         xy = 3,38
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3765,7 +3765,7 @@ tileset
     {
         xy = 0,39
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3790,7 +3790,7 @@ tileset
     {
         xy = 1,39
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3815,7 +3815,7 @@ tileset
     {
         xy = 2,39
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3840,7 +3840,7 @@ tileset
     {
         xy = 3,39
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3865,7 +3865,7 @@ tileset
     {
         xy = 0,40
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3890,7 +3890,7 @@ tileset
     {
         xy = 1,40
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -3915,7 +3915,7 @@ tileset
     {
         xy = 2,40
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -3940,7 +3940,7 @@ tileset
     {
         xy = 3,40
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -3965,7 +3965,7 @@ tileset
     {
         xy = 0,41
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -3990,7 +3990,7 @@ tileset
     {
         xy = 1,41
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -4015,7 +4015,7 @@ tileset
     {
         xy = 2,41
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -4040,7 +4040,7 @@ tileset
     {
         xy = 3,41
         CustomName = Salvaged Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -4465,7 +4465,7 @@ tileset
     {
         xy = 0,46
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -4490,7 +4490,7 @@ tileset
     {
         xy = 1,46
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -4515,7 +4515,7 @@ tileset
     {
         xy = 2,46
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -4540,7 +4540,7 @@ tileset
     {
         xy = 3,46
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -4565,7 +4565,7 @@ tileset
     {
         xy = 0,47
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -4590,7 +4590,7 @@ tileset
     {
         xy = 1,47
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -4615,7 +4615,7 @@ tileset
     {
         xy = 2,47
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -4640,7 +4640,7 @@ tileset
     {
         xy = 3,47
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -4665,7 +4665,7 @@ tileset
     {
         xy = 0,48
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -4690,7 +4690,7 @@ tileset
     {
         xy = 1,48
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -4715,7 +4715,7 @@ tileset
     {
         xy = 2,48
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -4740,7 +4740,7 @@ tileset
     {
         xy = 3,48
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -4765,7 +4765,7 @@ tileset
     {
         xy = 0,49
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -4790,7 +4790,7 @@ tileset
     {
         xy = 1,49
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -4815,7 +4815,7 @@ tileset
     {
         xy = 2,49
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -4840,7 +4840,7 @@ tileset
     {
         xy = 3,49
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Snow
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -4865,7 +4865,7 @@ tileset
     {
         xy = 0,50
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -4890,7 +4890,7 @@ tileset
     {
         xy = 1,50
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -4915,7 +4915,7 @@ tileset
     {
         xy = 2,50
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -4940,7 +4940,7 @@ tileset
     {
         xy = 3,50
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -4965,7 +4965,7 @@ tileset
     {
         xy = 0,51
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -4990,7 +4990,7 @@ tileset
     {
         xy = 1,51
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -5015,7 +5015,7 @@ tileset
     {
         xy = 2,51
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -5040,7 +5040,7 @@ tileset
     {
         xy = 3,51
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -5065,7 +5065,7 @@ tileset
     {
         xy = 0,52
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -5090,7 +5090,7 @@ tileset
     {
         xy = 1,52
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -5115,7 +5115,7 @@ tileset
     {
         xy = 2,52
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -5140,7 +5140,7 @@ tileset
     {
         xy = 3,52
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -5165,7 +5165,7 @@ tileset
     {
         xy = 0,53
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = E
         BlocksPlacement = 
         Material = MetalPlates
@@ -5190,7 +5190,7 @@ tileset
     {
         xy = 1,53
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = S
         BlocksPlacement = 
         Material = MetalPlates
@@ -5215,7 +5215,7 @@ tileset
     {
         xy = 2,53
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = W
         BlocksPlacement = 
         Material = MetalPlates
@@ -5240,7 +5240,7 @@ tileset
     {
         xy = 3,53
         CustomName = Workshop Large Solar Array
-        GroupName = Dazed Power
+        GroupName = Dazed Power Cracked
         Facing = N
         BlocksPlacement = 
         Material = MetalPlates
@@ -12092,10 +12092,16 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_512
+}
+tileset
+{
+    file = dazedpower_02
+    size = 4,33
+    id = 2
+    // dazedpower_02_0
     tile
     {
-        xy = 0,128
+        xy = 0,0
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = E
@@ -12114,10 +12120,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_513
+    // dazedpower_02_1
     tile
     {
-        xy = 1,128
+        xy = 1,0
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = S
@@ -12136,10 +12142,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_514
+    // dazedpower_02_2
     tile
     {
-        xy = 2,128
+        xy = 2,0
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = W
@@ -12158,10 +12164,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_515
+    // dazedpower_02_3
     tile
     {
-        xy = 3,128
+        xy = 3,0
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = N
@@ -12180,10 +12186,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_516
+    // dazedpower_02_4
     tile
     {
-        xy = 0,129
+        xy = 0,1
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = E
@@ -12202,10 +12208,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_517
+    // dazedpower_02_5
     tile
     {
-        xy = 1,129
+        xy = 1,1
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = S
@@ -12224,10 +12230,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_518
+    // dazedpower_02_6
     tile
     {
-        xy = 2,129
+        xy = 2,1
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = W
@@ -12246,10 +12252,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_519
+    // dazedpower_02_7
     tile
     {
-        xy = 3,129
+        xy = 3,1
         CustomName = Workshop Steam Plant
         GroupName = Dazed Power
         Facing = N
@@ -12268,10 +12274,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_520
+    // dazedpower_02_8
     tile
     {
-        xy = 0,130
+        xy = 0,2
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = E
@@ -12290,10 +12296,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_521
+    // dazedpower_02_9
     tile
     {
-        xy = 1,130
+        xy = 1,2
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = S
@@ -12312,10 +12318,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_522
+    // dazedpower_02_10
     tile
     {
-        xy = 2,130
+        xy = 2,2
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = W
@@ -12334,10 +12340,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_523
+    // dazedpower_02_11
     tile
     {
-        xy = 3,130
+        xy = 3,2
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = N
@@ -12356,10 +12362,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_524
+    // dazedpower_02_12
     tile
     {
-        xy = 0,131
+        xy = 0,3
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = E
@@ -12378,10 +12384,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_525
+    // dazedpower_02_13
     tile
     {
-        xy = 1,131
+        xy = 1,3
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = S
@@ -12400,10 +12406,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_526
+    // dazedpower_02_14
     tile
     {
-        xy = 2,131
+        xy = 2,3
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = W
@@ -12422,10 +12428,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_527
+    // dazedpower_02_15
     tile
     {
-        xy = 3,131
+        xy = 3,3
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = N
@@ -12444,10 +12450,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_528
+    // dazedpower_02_16
     tile
     {
-        xy = 0,132
+        xy = 0,4
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = E
@@ -12466,10 +12472,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_529
+    // dazedpower_02_17
     tile
     {
-        xy = 1,132
+        xy = 1,4
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = S
@@ -12488,10 +12494,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_530
+    // dazedpower_02_18
     tile
     {
-        xy = 2,132
+        xy = 2,4
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = W
@@ -12510,10 +12516,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_531
+    // dazedpower_02_19
     tile
     {
-        xy = 3,132
+        xy = 3,4
         CustomName = Windsock
         GroupName = Dazed Power
         Facing = N
@@ -12532,10 +12538,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_532
+    // dazedpower_02_20
     tile
     {
-        xy = 0,133
+        xy = 0,5
         CustomName = Weather Vane
         GroupName = Dazed Power
         Facing = E
@@ -12554,10 +12560,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_533
+    // dazedpower_02_21
     tile
     {
-        xy = 1,133
+        xy = 1,5
         CustomName = Weather Vane
         GroupName = Dazed Power
         Facing = S
@@ -12576,10 +12582,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_534
+    // dazedpower_02_22
     tile
     {
-        xy = 2,133
+        xy = 2,5
         CustomName = Weather Vane
         GroupName = Dazed Power
         Facing = W
@@ -12598,10 +12604,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_535
+    // dazedpower_02_23
     tile
     {
-        xy = 3,133
+        xy = 3,5
         CustomName = Weather Vane
         GroupName = Dazed Power
         Facing = N
@@ -12620,10 +12626,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_536
+    // dazedpower_02_24
     tile
     {
-        xy = 0,134
+        xy = 0,6
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = E
@@ -12642,10 +12648,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_537
+    // dazedpower_02_25
     tile
     {
-        xy = 1,134
+        xy = 1,6
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = S
@@ -12664,10 +12670,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_538
+    // dazedpower_02_26
     tile
     {
-        xy = 2,134
+        xy = 2,6
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = W
@@ -12686,10 +12692,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_539
+    // dazedpower_02_27
     tile
     {
-        xy = 3,134
+        xy = 3,6
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = N
@@ -12708,10 +12714,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_540
+    // dazedpower_02_28
     tile
     {
-        xy = 0,135
+        xy = 0,7
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = E
@@ -12730,10 +12736,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_541
+    // dazedpower_02_29
     tile
     {
-        xy = 1,135
+        xy = 1,7
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = S
@@ -12752,10 +12758,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_542
+    // dazedpower_02_30
     tile
     {
-        xy = 2,135
+        xy = 2,7
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = W
@@ -12774,10 +12780,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_543
+    // dazedpower_02_31
     tile
     {
-        xy = 3,135
+        xy = 3,7
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = N
@@ -12796,10 +12802,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_544
+    // dazedpower_02_32
     tile
     {
-        xy = 0,136
+        xy = 0,8
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = E
@@ -12818,10 +12824,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_545
+    // dazedpower_02_33
     tile
     {
-        xy = 1,136
+        xy = 1,8
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = S
@@ -12840,10 +12846,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_546
+    // dazedpower_02_34
     tile
     {
-        xy = 2,136
+        xy = 2,8
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = W
@@ -12862,10 +12868,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_547
+    // dazedpower_02_35
     tile
     {
-        xy = 3,136
+        xy = 3,8
         CustomName = Makeshift Propane Generator
         GroupName = Dazed Power
         Facing = N
@@ -12884,10 +12890,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_548
+    // dazedpower_02_36
     tile
     {
-        xy = 0,137
+        xy = 0,9
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = E
@@ -12906,10 +12912,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_549
+    // dazedpower_02_37
     tile
     {
-        xy = 1,137
+        xy = 1,9
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = S
@@ -12928,10 +12934,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_550
+    // dazedpower_02_38
     tile
     {
-        xy = 2,137
+        xy = 2,9
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = W
@@ -12950,10 +12956,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_551
+    // dazedpower_02_39
     tile
     {
-        xy = 3,137
+        xy = 3,9
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = N
@@ -12972,10 +12978,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_552
+    // dazedpower_02_40
     tile
     {
-        xy = 0,138
+        xy = 0,10
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = E
@@ -12994,10 +13000,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_553
+    // dazedpower_02_41
     tile
     {
-        xy = 1,138
+        xy = 1,10
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = S
@@ -13016,10 +13022,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_554
+    // dazedpower_02_42
     tile
     {
-        xy = 2,138
+        xy = 2,10
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = W
@@ -13038,10 +13044,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_555
+    // dazedpower_02_43
     tile
     {
-        xy = 3,138
+        xy = 3,10
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = N
@@ -13060,10 +13066,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_556
+    // dazedpower_02_44
     tile
     {
-        xy = 0,139
+        xy = 0,11
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = E
@@ -13082,10 +13088,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_557
+    // dazedpower_02_45
     tile
     {
-        xy = 1,139
+        xy = 1,11
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = S
@@ -13104,10 +13110,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_558
+    // dazedpower_02_46
     tile
     {
-        xy = 2,139
+        xy = 2,11
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = W
@@ -13126,10 +13132,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_559
+    // dazedpower_02_47
     tile
     {
-        xy = 3,139
+        xy = 3,11
         CustomName = Salvaged Standby Generator
         GroupName = Dazed Power
         Facing = N
@@ -13148,10 +13154,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_560
+    // dazedpower_02_48
     tile
     {
-        xy = 0,140
+        xy = 0,12
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = E
@@ -13170,10 +13176,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_561
+    // dazedpower_02_49
     tile
     {
-        xy = 1,140
+        xy = 1,12
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = S
@@ -13192,10 +13198,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_562
+    // dazedpower_02_50
     tile
     {
-        xy = 2,140
+        xy = 2,12
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = W
@@ -13214,10 +13220,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_563
+    // dazedpower_02_51
     tile
     {
-        xy = 3,140
+        xy = 3,12
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = N
@@ -13236,10 +13242,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_564
+    // dazedpower_02_52
     tile
     {
-        xy = 0,141
+        xy = 0,13
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = E
@@ -13258,10 +13264,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_565
+    // dazedpower_02_53
     tile
     {
-        xy = 1,141
+        xy = 1,13
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = S
@@ -13280,10 +13286,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_566
+    // dazedpower_02_54
     tile
     {
-        xy = 2,141
+        xy = 2,13
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = W
@@ -13302,10 +13308,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_567
+    // dazedpower_02_55
     tile
     {
-        xy = 3,141
+        xy = 3,13
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = N
@@ -13324,10 +13330,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_568
+    // dazedpower_02_56
     tile
     {
-        xy = 0,142
+        xy = 0,14
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = E
@@ -13346,10 +13352,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_569
+    // dazedpower_02_57
     tile
     {
-        xy = 1,142
+        xy = 1,14
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = S
@@ -13368,10 +13374,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_570
+    // dazedpower_02_58
     tile
     {
-        xy = 2,142
+        xy = 2,14
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = W
@@ -13390,10 +13396,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_571
+    // dazedpower_02_59
     tile
     {
-        xy = 3,142
+        xy = 3,14
         CustomName = Workshop Standby Generator
         GroupName = Dazed Power
         Facing = N
@@ -13412,10 +13418,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_572
+    // dazedpower_02_60
     tile
     {
-        xy = 0,143
+        xy = 0,15
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13434,10 +13440,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_573
+    // dazedpower_02_61
     tile
     {
-        xy = 1,143
+        xy = 1,15
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13456,10 +13462,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_574
+    // dazedpower_02_62
     tile
     {
-        xy = 2,143
+        xy = 2,15
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -13478,10 +13484,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_575
+    // dazedpower_02_63
     tile
     {
-        xy = 3,143
+        xy = 3,15
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -13500,10 +13506,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_576
+    // dazedpower_02_64
     tile
     {
-        xy = 0,144
+        xy = 0,16
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13522,10 +13528,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_577
+    // dazedpower_02_65
     tile
     {
-        xy = 1,144
+        xy = 1,16
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13544,10 +13550,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_578
+    // dazedpower_02_66
     tile
     {
-        xy = 2,144
+        xy = 2,16
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -13566,10 +13572,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_579
+    // dazedpower_02_67
     tile
     {
-        xy = 3,144
+        xy = 3,16
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -13588,10 +13594,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_580
+    // dazedpower_02_68
     tile
     {
-        xy = 0,145
+        xy = 0,17
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13610,10 +13616,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_581
+    // dazedpower_02_69
     tile
     {
-        xy = 1,145
+        xy = 1,17
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13632,10 +13638,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_582
+    // dazedpower_02_70
     tile
     {
-        xy = 2,145
+        xy = 2,17
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -13654,10 +13660,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_583
+    // dazedpower_02_71
     tile
     {
-        xy = 3,145
+        xy = 3,17
         CustomName = Makeshift Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -13676,10 +13682,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_584
+    // dazedpower_02_72
     tile
     {
-        xy = 0,146
+        xy = 0,18
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13698,10 +13704,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_585
+    // dazedpower_02_73
     tile
     {
-        xy = 1,146
+        xy = 1,18
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13720,10 +13726,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_586
+    // dazedpower_02_74
     tile
     {
-        xy = 2,146
+        xy = 2,18
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -13742,10 +13748,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_587
+    // dazedpower_02_75
     tile
     {
-        xy = 3,146
+        xy = 3,18
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -13764,10 +13770,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_588
+    // dazedpower_02_76
     tile
     {
-        xy = 0,147
+        xy = 0,19
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13786,10 +13792,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_589
+    // dazedpower_02_77
     tile
     {
-        xy = 1,147
+        xy = 1,19
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13808,10 +13814,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_590
+    // dazedpower_02_78
     tile
     {
-        xy = 2,147
+        xy = 2,19
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -13830,10 +13836,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_591
+    // dazedpower_02_79
     tile
     {
-        xy = 3,147
+        xy = 3,19
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -13852,10 +13858,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_592
+    // dazedpower_02_80
     tile
     {
-        xy = 0,148
+        xy = 0,20
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13874,10 +13880,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_593
+    // dazedpower_02_81
     tile
     {
-        xy = 1,148
+        xy = 1,20
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13896,10 +13902,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_594
+    // dazedpower_02_82
     tile
     {
-        xy = 2,148
+        xy = 2,20
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -13918,10 +13924,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_595
+    // dazedpower_02_83
     tile
     {
-        xy = 3,148
+        xy = 3,20
         CustomName = Salvaged Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -13940,10 +13946,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_596
+    // dazedpower_02_84
     tile
     {
-        xy = 0,149
+        xy = 0,21
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -13962,10 +13968,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_597
+    // dazedpower_02_85
     tile
     {
-        xy = 1,149
+        xy = 1,21
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -13984,10 +13990,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_598
+    // dazedpower_02_86
     tile
     {
-        xy = 2,149
+        xy = 2,21
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -14006,10 +14012,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_599
+    // dazedpower_02_87
     tile
     {
-        xy = 3,149
+        xy = 3,21
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -14028,10 +14034,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_600
+    // dazedpower_02_88
     tile
     {
-        xy = 0,150
+        xy = 0,22
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -14050,10 +14056,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_601
+    // dazedpower_02_89
     tile
     {
-        xy = 1,150
+        xy = 1,22
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -14072,10 +14078,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_602
+    // dazedpower_02_90
     tile
     {
-        xy = 2,150
+        xy = 2,22
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -14094,10 +14100,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_603
+    // dazedpower_02_91
     tile
     {
-        xy = 3,150
+        xy = 3,22
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -14116,10 +14122,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_604
+    // dazedpower_02_92
     tile
     {
-        xy = 0,151
+        xy = 0,23
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = E
@@ -14138,10 +14144,10 @@ tileset
         Noffset = 3
         solidtrans = 
     }
-    // dazedpower_01_605
+    // dazedpower_02_93
     tile
     {
-        xy = 1,151
+        xy = 1,23
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = S
@@ -14160,10 +14166,10 @@ tileset
         Noffset = 2
         solidtrans = 
     }
-    // dazedpower_01_606
+    // dazedpower_02_94
     tile
     {
-        xy = 2,151
+        xy = 2,23
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = W
@@ -14182,10 +14188,10 @@ tileset
         Noffset = 1
         solidtrans = 
     }
-    // dazedpower_01_607
+    // dazedpower_02_95
     tile
     {
-        xy = 3,151
+        xy = 3,23
         CustomName = Workshop Petrol Generator
         GroupName = Dazed Power
         Facing = N
@@ -14204,102 +14210,10 @@ tileset
         Noffset = 0
         solidtrans = 
     }
-    // dazedpower_01_608
+    // dazedpower_02_96
     tile
     {
-        xy = 0,152
-        CustomName = Wall Power Gauge
-        GroupName = Dazed Power
-        Facing = E
-        BlocksPlacement = 
-        Material = MetalPlates
-        Material2 = MetalScrap
-        MaterialType = Metal_Large
-        IsMoveAble = 
-        CustomItem = Base.DazedPowerGauge
-        PickUpWeight = 15
-        PickUpLevel = 0
-        MoveType = WallObject
-        Eoffset = 0
-        Soffset = 1
-        Woffset = 2
-        Noffset = 3
-        IsHigh = 
-        ItemHeight = 60
-    }
-    // dazedpower_01_609
-    tile
-    {
-        xy = 1,152
-        CustomName = Wall Power Gauge
-        GroupName = Dazed Power
-        Facing = S
-        BlocksPlacement = 
-        Material = MetalPlates
-        Material2 = MetalScrap
-        MaterialType = Metal_Large
-        IsMoveAble = 
-        CustomItem = Base.DazedPowerGauge
-        PickUpWeight = 15
-        PickUpLevel = 0
-        MoveType = WallObject
-        Eoffset = -1
-        Soffset = 0
-        Woffset = 1
-        Noffset = 2
-        IsHigh = 
-        ItemHeight = 60
-    }
-    // dazedpower_01_610
-    tile
-    {
-        xy = 2,152
-        CustomName = Wall Power Gauge
-        GroupName = Dazed Power
-        Facing = W
-        BlocksPlacement = 
-        Material = MetalPlates
-        Material2 = MetalScrap
-        MaterialType = Metal_Large
-        IsMoveAble = 
-        CustomItem = Base.DazedPowerGauge
-        PickUpWeight = 15
-        PickUpLevel = 0
-        MoveType = WallObject
-        Eoffset = -2
-        Soffset = -1
-        Woffset = 0
-        Noffset = 1
-        IsHigh = 
-        ItemHeight = 60
-    }
-    // dazedpower_01_611
-    tile
-    {
-        xy = 3,152
-        CustomName = Wall Power Gauge
-        GroupName = Dazed Power
-        Facing = N
-        BlocksPlacement = 
-        Material = MetalPlates
-        Material2 = MetalScrap
-        MaterialType = Metal_Large
-        IsMoveAble = 
-        CustomItem = Base.DazedPowerGauge
-        PickUpWeight = 15
-        PickUpLevel = 0
-        MoveType = WallObject
-        Eoffset = -3
-        Soffset = -2
-        Woffset = -1
-        Noffset = 0
-        IsHigh = 
-        ItemHeight = 60
-    }
-    // dazedpower_01_612
-    tile
-    {
-        xy = 0,153
+        xy = 0,24
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = E
@@ -14319,10 +14233,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_613
+    // dazedpower_02_97
     tile
     {
-        xy = 1,153
+        xy = 1,24
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = S
@@ -14342,10 +14256,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_614
+    // dazedpower_02_98
     tile
     {
-        xy = 2,153
+        xy = 2,24
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = W
@@ -14365,10 +14279,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_615
+    // dazedpower_02_99
     tile
     {
-        xy = 3,153
+        xy = 3,24
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = N
@@ -14388,10 +14302,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_616
+    // dazedpower_02_100
     tile
     {
-        xy = 0,154
+        xy = 0,25
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = E
@@ -14411,10 +14325,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_617
+    // dazedpower_02_101
     tile
     {
-        xy = 1,154
+        xy = 1,25
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = S
@@ -14434,10 +14348,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_618
+    // dazedpower_02_102
     tile
     {
-        xy = 2,154
+        xy = 2,25
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = W
@@ -14457,10 +14371,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_619
+    // dazedpower_02_103
     tile
     {
-        xy = 3,154
+        xy = 3,25
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = N
@@ -14480,10 +14394,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_620
+    // dazedpower_02_104
     tile
     {
-        xy = 0,155
+        xy = 0,26
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = E
@@ -14503,10 +14417,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_621
+    // dazedpower_02_105
     tile
     {
-        xy = 1,155
+        xy = 1,26
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = S
@@ -14526,10 +14440,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_622
+    // dazedpower_02_106
     tile
     {
-        xy = 2,155
+        xy = 2,26
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = W
@@ -14549,10 +14463,10 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_623
+    // dazedpower_02_107
     tile
     {
-        xy = 3,155
+        xy = 3,26
         CustomName = Wall Power Gauge
         GroupName = Dazed Power
         Facing = N
@@ -14572,10 +14486,102 @@ tileset
         IsHigh = 
         ItemHeight = 60
     }
-    // dazedpower_01_624
+    // dazedpower_02_108
     tile
     {
-        xy = 0,156
+        xy = 0,27
+        CustomName = Wall Power Gauge
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPowerGauge
+        PickUpWeight = 15
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_109
+    tile
+    {
+        xy = 1,27
+        CustomName = Wall Power Gauge
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPowerGauge
+        PickUpWeight = 15
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_110
+    tile
+    {
+        xy = 2,27
+        CustomName = Wall Power Gauge
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPowerGauge
+        PickUpWeight = 15
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_111
+    tile
+    {
+        xy = 3,27
+        CustomName = Wall Power Gauge
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPowerGauge
+        PickUpWeight = 15
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_112
+    tile
+    {
+        xy = 0,28
         CustomName = Grounding Rod
         GroupName = Dazed Power
         Facing = E
@@ -14595,10 +14601,10 @@ tileset
         solidtrans = 
         ItemHeight = 100
     }
-    // dazedpower_01_625
+    // dazedpower_02_113
     tile
     {
-        xy = 1,156
+        xy = 1,28
         CustomName = Grounding Rod
         GroupName = Dazed Power
         Facing = S
@@ -14618,10 +14624,10 @@ tileset
         solidtrans = 
         ItemHeight = 100
     }
-    // dazedpower_01_626
+    // dazedpower_02_114
     tile
     {
-        xy = 2,156
+        xy = 2,28
         CustomName = Grounding Rod
         GroupName = Dazed Power
         Facing = W
@@ -14641,10 +14647,10 @@ tileset
         solidtrans = 
         ItemHeight = 100
     }
-    // dazedpower_01_627
+    // dazedpower_02_115
     tile
     {
-        xy = 3,156
+        xy = 3,28
         CustomName = Grounding Rod
         GroupName = Dazed Power
         Facing = N
@@ -14664,10 +14670,10 @@ tileset
         solidtrans = 
         ItemHeight = 100
     }
-    // dazedpower_01_628
+    // dazedpower_02_116
     tile
     {
-        xy = 0,157
+        xy = 0,29
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = E
@@ -14687,10 +14693,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_629
+    // dazedpower_02_117
     tile
     {
-        xy = 1,157
+        xy = 1,29
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = S
@@ -14710,10 +14716,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_630
+    // dazedpower_02_118
     tile
     {
-        xy = 2,157
+        xy = 2,29
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = W
@@ -14733,10 +14739,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_631
+    // dazedpower_02_119
     tile
     {
-        xy = 3,157
+        xy = 3,29
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = N
@@ -14756,10 +14762,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_632
+    // dazedpower_02_120
     tile
     {
-        xy = 0,158
+        xy = 0,30
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = E
@@ -14779,10 +14785,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_633
+    // dazedpower_02_121
     tile
     {
-        xy = 1,158
+        xy = 1,30
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = S
@@ -14802,10 +14808,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_634
+    // dazedpower_02_122
     tile
     {
-        xy = 2,158
+        xy = 2,30
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = W
@@ -14825,10 +14831,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_635
+    // dazedpower_02_123
     tile
     {
-        xy = 3,158
+        xy = 3,30
         CustomName = Battery Charger Bench
         GroupName = Dazed Power
         Facing = N
@@ -14848,10 +14854,10 @@ tileset
         solidtrans = 
         ItemHeight = 56
     }
-    // dazedpower_01_636
+    // dazedpower_02_124
     tile
     {
-        xy = 0,159
+        xy = 0,31
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = E
@@ -14871,10 +14877,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_637
+    // dazedpower_02_125
     tile
     {
-        xy = 1,159
+        xy = 1,31
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = S
@@ -14894,10 +14900,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_638
+    // dazedpower_02_126
     tile
     {
-        xy = 2,159
+        xy = 2,31
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = W
@@ -14917,10 +14923,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_639
+    // dazedpower_02_127
     tile
     {
-        xy = 3,159
+        xy = 3,31
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = N
@@ -14940,10 +14946,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_640
+    // dazedpower_02_128
     tile
     {
-        xy = 0,160
+        xy = 0,32
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = E
@@ -14963,10 +14969,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_641
+    // dazedpower_02_129
     tile
     {
-        xy = 1,160
+        xy = 1,32
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = S
@@ -14986,10 +14992,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_642
+    // dazedpower_02_130
     tile
     {
-        xy = 2,160
+        xy = 2,32
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = W
@@ -15009,10 +15015,10 @@ tileset
         solidtrans = 
         ItemHeight = 80
     }
-    // dazedpower_01_643
+    // dazedpower_02_131
     tile
     {
-        xy = 3,160
+        xy = 3,32
         CustomName = Micro-Hydro Wheel
         GroupName = Dazed Power
         Facing = N
