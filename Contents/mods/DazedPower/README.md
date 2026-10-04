@@ -68,6 +68,9 @@ DazedPower: ready -- 644/644 tiles, 64/64 items
   `ART = r"<folder>"; FAMILIES = ["all"]; exec(open(ART + r"\dp_render.py").read())` into Blender's Python console.
   Families: arrays, trackers, xl, banks, walls, controllers, transformer, lamps, icons (or `preview`). The 2x2
   array renders whole and writes a `_m.png` mask per piece.
+- `tools/blender/dz2.py` renders the new-style art for every part (and Dazed Plumbing's): run headless with
+  `blender -b --factory-startup -P dz2.py -- <out folder> dp:all icons:dp`, then `tools/grade_all.py <out> <graded>`
+  and import the graded `dp` folder. `tools/ui_art.py <out>` draws the monitor, menu and sidebar art.
 - `tools/import_art.py <dp_out folder>` cuts the 2x2 pieces by their masks, shrinks the renders to 128x256 (icons
   to 32x32) into `tools/art`, then runs `build_sheet.py`.
 - `tools/build_recipes.py` writes the recipes, the handbooks and the misc items.
@@ -75,6 +78,11 @@ DazedPower: ready -- 644/644 tiles, 64/64 items
   `cd tools/tests && lua load_test.lua` (expects `DazedCore` checked out beside this folder).
 
 ## Changes
+
+- **Unreleased.** New art style throughout, closer to the base game: all 644 world sprites (including the grounding
+  rod, charger bench and water wheel, which had stand-ins), all 50 icons, the monitor window parts, and the menu and
+  sidebar icons. The menu icons are now drawn by `tools/ui_art.py`, so the Tabler licence file is gone. No code or
+  save changes.
 
 - **0.3.2.** Fix: the Large Solar Array (all grades) placed as a single tile. The engine builds a 2x2 grid only when
   each GroupName + CustomName has one tile per grid square per facing, and the clear, snow and cracked states shared
