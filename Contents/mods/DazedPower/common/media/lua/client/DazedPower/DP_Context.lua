@@ -37,12 +37,8 @@ end
 
 ------------------------------------------------------------------ row icons
 
---- The Dazed Power menu's row icons (2026-09-26: line pictures coloured by
---  group). Tabler Icons (MIT, v3.48.0; the licence ships beside them), drawn
---  white by tools/build_menu_icons.py at these sizes. Each row tints its icon
---  with its group's colour: ISContextMenu.renderOptionTextureOrColor draws
---  the texture multiplied by option.color and uses the colour for nothing
---  else. A row the player cannot use yet shows its icon grey.
+--- The menu's row icons: white glyphs drawn by tools/ui_art.py at these sizes.
+--  Each row tints its icon with its group's colour, and greys it while the row is unavailable.
 C.ICON_DIR = "media/ui/DazedPower/Menu/"
 C.ICON_SIZES = { 16, 20, 24, 32, 48 }
 C.ICON_GROUP = {
