@@ -60,5 +60,7 @@
     "Base.DazedPowerGauge": "Wall Power Gauge",
     "Base.DazedGroundingRod": "Grounding Rod",
     "Base.DazedChargerBench": "Battery Charger Bench",
-    "Base.DazedWaterWheel": "Micro-Hydro Wheel"
+    "Base.DazedWaterWheel": "Micro-Hydro Wheel",
+    "Base.DazedElectricFence": "Electric Fence",
+    "Base.DazedRoomCooler": "Room Cooler"
 }

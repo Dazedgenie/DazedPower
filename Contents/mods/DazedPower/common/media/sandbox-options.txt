@@ -204,3 +204,12 @@ option DazedPower.LiveShock
     page = DazedPower,
     translation = DazedPower_LiveShock,
 }
+
+/* FenceDamage: a zap from a live electric fence also takes a little health off the zombie (off: knockdown only). */
+option DazedPower.FenceDamage
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_FenceDamage,
+}

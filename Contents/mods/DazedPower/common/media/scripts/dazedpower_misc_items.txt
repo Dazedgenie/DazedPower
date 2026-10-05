@@ -28,7 +28,7 @@ module Base
         Icon                = DazedPowerManualAdv,
         BoredomChange       = -20,
         StressChange        = -12,
-        LearnedRecipes      = MakeDazedArrayWorkshop;MakeDazedTrackerWorkshop;MakeDazedArrayXLWorkshop;MakeDazedBankWorkshop;MakeDazedWallBankWorkshop;MakeDazedControllerWorkshop;MakeDazedGardenLampWorkshop;MakeDazedStreetLampWorkshop;MakeDazedPedalWorkshop;MakeDazedWindWorkshop;MakeDazedSteamWorkshop;MakeDazedPropaneWorkshop;MakeDazedPetrolWorkshop;MakeDazedWaterWheel;MakeDazedGearKitRacing,
+        LearnedRecipes      = MakeDazedArrayWorkshop;MakeDazedTrackerWorkshop;MakeDazedArrayXLWorkshop;MakeDazedBankWorkshop;MakeDazedWallBankWorkshop;MakeDazedControllerWorkshop;MakeDazedGardenLampWorkshop;MakeDazedStreetLampWorkshop;MakeDazedPedalWorkshop;MakeDazedWindWorkshop;MakeDazedSteamWorkshop;MakeDazedPropaneWorkshop;MakeDazedPetrolWorkshop;MakeDazedWaterWheel;MakeDazedElectricFence;MakeDazedRoomCooler;MakeDazedGearKitRacing,
         StaticModel         = Magazine,
         WorldStaticModel    = MagazineElec2Ground,
         Tags                = base:magazine,

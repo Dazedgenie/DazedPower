@@ -92,13 +92,15 @@ function Ch.systemOf(obj)
     if not gen then return nil end
     local floorSoc = P.data(gen).floorSoc or 0.2
     local racks, nominal = {}, 0
+    -- The county temperature is the same for every rack, so the world is read once, not once per rack.
+    local E = DazedPower.Env
+    local county = E and E.read and E.read().temperature
     for _, o in ipairs(rec.banks or {}) do
         local info = P.describe(o)
         if info then
             local d = P.data(o)
             -- the floor is on the cold-capacity scale (what the controller prints), so use that
-            local E = DazedPower.Env
-            local temp = E and E.read and E.tempAt(o, E.read().temperature) or 20
+            local temp = E and E.read and E.tempAt(o, county) or 20
             local cap = M.bankCapacity({ tier = info.tier, cellSum = P.cellSum(d), scale = P.bankScale() }, temp)
             racks[#racks + 1] = { d = d, obj = o, charge = d.charge or 0, nominal = cap }
             nominal = nominal + cap

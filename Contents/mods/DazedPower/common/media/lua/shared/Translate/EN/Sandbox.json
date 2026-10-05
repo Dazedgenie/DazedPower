@@ -38,5 +38,7 @@
     "Sandbox_DazedPower_CableTilesPerWire": "Tiles per Electric Wire",
     "Sandbox_DazedPower_CableTilesPerWire_tooltip": "How many tiles of cable one Electric Wire covers. A 6-tile lead at 4 costs 2 wire. Cutting a cable gives half back. 0 makes cables free.",
     "Sandbox_DazedPower_LiveShock": "Shock when wiring a live system",
-    "Sandbox_DazedPower_LiveShock_tooltip": "Running or cutting a cable while the controller is switched on can burn the player's hand. The chance grows with the system's load and falls with Electricity skill. Never lethal."
+    "Sandbox_DazedPower_LiveShock_tooltip": "Running or cutting a cable while the controller is switched on can burn the player's hand. The chance grows with the system's load and falls with Electricity skill. Never lethal.",
+    "Sandbox_DazedPower_FenceDamage": "Electric fence hurts zombies",
+    "Sandbox_DazedPower_FenceDamage_tooltip": "A zap from a live electric fence takes a little health off the zombie as well as knocking it down. Off: it only knocks them down."
 }

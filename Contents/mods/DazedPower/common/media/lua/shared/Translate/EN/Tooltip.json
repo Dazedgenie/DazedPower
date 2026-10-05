@@ -91,5 +91,11 @@
     "Tooltip_DazedPower_ChargeUnwired": "Wire this bench to a controller first.",
     "Tooltip_DazedGroundingRod": "A copper rod driven into the ground. Stand it within a few tiles of a controller and lightning goes to earth instead of through your system.",
     "Tooltip_DazedChargerBench": "Wire it to a controller. Charges loose car and small batteries from the system's racks, above the discharge floor, with some loss.",
-    "Tooltip_DazedWaterWheel": "Set it at the edge of a stream or river and wire it to a controller. Steady power in any weather; ice slows it."
+    "Tooltip_DazedWaterWheel": "Set it at the edge of a stream or river and wire it to a controller. Steady power in any weather; ice slows it.",
+    "Tooltip_DazedPower_AdminRepair": "Admin: set every part in this system to full condition, and each battery to the best its wear allows.",
+    "Tooltip_DazedPower_AdminReset": "Admin: clear the breaker trip and the low-voltage disconnect, switch the system on, stop any equalisation and relink its wiring.",
+    "Tooltip_DazedPower_AdminFill": "Admin: fill every battery rack in this system to its capacity.",
+    "Tooltip_DazedPower_AdminReach": "Stand next to the controller to use this.",
+    "Tooltip_DazedElectricFence": "Wire it to a controller. While the system is on and above its discharge floor, a zombie that comes up against it is knocked down and stunned, for a few watt-hours a zap. People are not hurt.",
+    "Tooltip_DazedRoomCooler": "Hang it on a wall inside a room and wire it to a controller. While powered, food in every container in that room keeps like it does in a fridge. Draws 100 W plus 10 W for each container."
 }

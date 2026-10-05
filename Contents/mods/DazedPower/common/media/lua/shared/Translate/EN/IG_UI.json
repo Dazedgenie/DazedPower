@@ -423,5 +423,16 @@
     "IGUI_DazedPower_StormTrip": "Lightning! The isolator tripped.",
     "IGUI_DazedPower_StormHit": "A lightning strike fried the controller!",
     "IGUI_DazedPower_StormRod": "The grounding rod took a strike.",
-    "IGUI_DazedPower_Hydrogen": "It smells sharp in here. Open a window."
+    "IGUI_DazedPower_Hydrogen": "It smells sharp in here. Open a window.",
+    "IGUI_DazedPower_SrcCar": "Car alternator",
+    "IGUI_DazedPower_ApplLoose": "not wired",
+    "IGUI_DazedPower_ApplFar": "its controller is out of reach",
+    "IGUI_DazedPower_ApplOffline": "the controller is switched off",
+    "IGUI_DazedPower_ApplTrip": "the isolator has tripped",
+    "IGUI_DazedPower_ApplLvd": "low-voltage cut-out",
+    "IGUI_DazedPower_ApplFloor": "the batteries are at their discharge floor",
+    "IGUI_DazedPower_ApplShed": "cut by load priority",
+    "IGUI_DazedPower_CoolerNoRoom": "not inside a room",
+    "IGUI_DazedPower_Load_fence": "FENCE",
+    "IGUI_DazedPower_Load_cooler": "COOLER"
 }

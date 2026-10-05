@@ -48,7 +48,33 @@ end
 --  Every field degrades to a sane default if the engine hands back nil,
 --  because a nil arithmetic error inside a per-hour tick would take the
 --  whole system down silently.
+-- While the simulation tick holds it, one world read serves every controller; each caller gets its own copy.
+local held = nil
+
+--- Start (true) or end (false) sharing one E.read across a tick. A hold left on goes stale at the next game minute.
+function E.holdRead(on)
+    held = on and { at = E.worldHours() } or nil
+end
+
+local function copyEnv(src)
+    local e = {}
+    for k, v in pairs(src) do e[k] = v end
+    return e
+end
+
 function E.read()
+    if held then
+        if held.at == E.worldHours() then
+            if not held.env then held.env = E.readFresh() end
+            return copyEnv(held.env)
+        end
+        held = nil
+    end
+    return E.readFresh()
+end
+
+--- The world as it is this instant, never shared.
+function E.readFresh()
     local gt = getGameTime()
     local cm = getClimateManager()
 

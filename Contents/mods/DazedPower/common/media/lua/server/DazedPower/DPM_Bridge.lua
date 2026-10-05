@@ -78,7 +78,7 @@ end
 --  through the wrapped P.spriteInfo) and stamped their system claim; it just
 --  had no list to file them in.
 local function collect(rec)
-    local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {} }
+    local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {} }
     local root = UM.nodeKey(rec.x, rec.y, rec.z, "controller")
     for nk in pairs((S.claimed or {})[root] or {}) do
         local x, y, z, kind = UM.parseNodeKey(nk)
@@ -142,11 +142,17 @@ end
 --- True when a wheel's square or a neighbouring one is water.
 local function nearWater(sq)
     if not (sq and IsoFlagType and IsoFlagType.water) then return false end
+    local cell = getCell and getCell()
+    local x, y, z = sq:getX(), sq:getY(), sq:getZ()
+    local flag = IsoFlagType.water
     for dx = -1, 1 do
         for dy = -1, 1 do
-            local n = (dx == 0 and dy == 0) and sq or (getCell and getCell():getGridSquare(sq:getX() + dx, sq:getY() + dy, sq:getZ()))
-            local ok, w = pcall(function() return n and n:Is(IsoFlagType.water) end)
-            if ok and w then return true end
+            local n = (dx == 0 and dy == 0) and sq or (cell and cell:getGridSquare(x + dx, y + dy, z))
+            -- A method pcall instead of a fresh closure per neighbour, every wheel, every minute.
+            if n and n.Is then
+                local ok, w = pcall(n.Is, n, flag)
+                if ok and w then return true end
+            end
         end
     end
     return false
@@ -175,7 +181,8 @@ local function liveSources(rec)
         end
     end
 
-    if (#o.pedal + #o.windmill + #o.steam + #(o.propane or {}) + #o.hydro + #solar) == 0 then return nil end
+    local hooked = DazedPower.Alternator and DazedPower.Alternator.hasLinks(rec)
+    if (#o.pedal + #o.windmill + #o.steam + #(o.propane or {}) + #o.hydro + #solar) == 0 and not hooked then return nil end
     local src = { pedalW = 0, riding = 0, pedals = {}, turbines = {}, boilers = {},
                   gens = {}, solar = solar, indoors = 0, hydros = {}, hydroW = 0 }
     local now = getTimestampMs and getTimestampMs() or 0
@@ -194,6 +201,11 @@ local function liveSources(rec)
             src.pedalW = src.pedalW + w
             if w > 0 then src.riding = src.riding + 1 end
         end
+    end
+
+    -- Cars hooked up by their alternator (DP_Alternator): idling engines feed the bus.
+    if DazedPower.Alternator then
+        src.cars = DazedPower.Alternator.liveCars(rec)
     end
 
     for i = 1, #o.hydro do
@@ -309,6 +321,11 @@ local function stepSources(src, sys, dt, env, invEff, harvest)
     end
     hydroW = hydroW * invEff
     src.hydroW = hydroW
+    local carW = 0
+    for i = 1, #(src.cars or {}) do carW = carW + (src.cars[i].watts or 0) end
+    carW = carW * invEff
+    src.carW = carW
+    hydroW = hydroW + carW
     windW = windW + hydroW      -- sized into the boiler/generator "need" like wind
 
     local steamW = 0
@@ -467,6 +484,12 @@ local function billWater(sys)
     CTX.waterDone = true
     local rec = CTX.rec
     local active, idle, total = waterDraw(rec)
+    -- The fences and coolers (DP_ApplianceTick) are billed the same way, on the same LOADS rows.
+    local Ap = DazedPower.Appliances
+    if Ap and Ap.draw then
+        local a2, i2, t2 = Ap.draw(rec)
+        active, idle, total = addKinds(active, a2), addKinds(idle, i2), total + t2
+    end
     if total > 0 and P.sandbox("SimulateLoad") ~= false then
         sys.load = (sys.load or 0) + total
     end
@@ -702,6 +725,10 @@ local function sourceRows(rec, src)
     for _, p in ipairs(src.pedals or {}) do
         local info = R.describe(p.obj)
         add(p.obj, "pedal", info and info.tier, (p.watts or 0) > 0 and "riding" or "idle", p.watts, P.data(p.obj).condition)
+    end
+    for _, c in ipairs(src.cars or {}) do
+        local r = add(c.obj, "car", "standard", "running", (c.watts or 0) * eff, c.condition)
+        r.x, r.y = c.x or r.x, c.y or r.y
     end
     for _, h in ipairs(src.hydros or {}) do
         add(h.obj, "hydro", "standard", h.motion or "still", (h.watts or 0) * eff, h.condition)

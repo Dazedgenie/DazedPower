@@ -14,7 +14,7 @@ local K = DazedPower.Priority
 K.ESSENTIAL, K.NORMAL, K.LOW = 1, 2, 3
 K.STEP = 0.12            -- each priority step cuts this much charge earlier
 K.BACK = 0.05            -- a cut tier returns this far above where it was cut
-K.DEFAULT = { purifier = 1, waterpump = 2, fuelpump = 3, charger = 3, carcharger = 3 }
+K.DEFAULT = { purifier = 1, dankpump = 1, growlight = 2, dryfan = 3, waterpump = 2, well = 2, fuelpump = 3, charger = 3, carcharger = 3, cooler = 2, fence = 2 }
 
 --- The priority of a wired load kind on this controller's data, 1..3.
 function K.of(d, kind)

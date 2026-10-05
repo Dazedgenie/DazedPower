@@ -885,4 +885,34 @@ module Base
         Tags                = base:heavyitem;base:hasmetal;base:showcondition,
     }
 
+    item DazedElectricFence
+    {
+        DisplayName         = Electric Fence,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 12.0,
+        Icon                = DazedElectricFence,
+        WorldObjectSprite   = dazedpower_02_133,
+        ConditionMax        = 100,
+        MetalValue          = 30.0,
+        Tooltip             = Tooltip_DazedElectricFence,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal;base:showcondition,
+    }
+
+    item DazedRoomCooler
+    {
+        DisplayName         = Room Cooler,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 14.0,
+        Icon                = DazedRoomCooler,
+        WorldObjectSprite   = dazedpower_02_141,
+        ConditionMax        = 100,
+        MetalValue          = 35.0,
+        Tooltip             = Tooltip_DazedRoomCooler,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal;base:showcondition,
+    }
+
 }

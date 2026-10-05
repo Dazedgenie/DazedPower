@@ -16,6 +16,8 @@ require "DazedPower/DP_Almanac"
 require "DazedPower/DP_Coverage"
 require "DazedPower/DP_Buildings"
 require "DazedPower/DP_Lamps"
+require "DazedPower/DP_Admin"
+require "DazedPower/DP_ApplianceMenu"
 -- DP_Info requires this file back, so it cannot be required here.
 -- It registers itself on DazedPower.Info and is reached through that. The
 -- forecast window is reached the same way: DP_Forecast loads after this file
@@ -37,8 +39,12 @@ end
 
 ------------------------------------------------------------------ row icons
 
---- The menu's row icons: white glyphs drawn by tools/ui_art.py at these sizes.
---  Each row tints its icon with its group's colour, and greys it while the row is unavailable.
+--- The Dazed Power menu's row icons (2026-09-26: line pictures coloured by
+--  group). Tabler Icons (MIT, v3.48.0; the licence ships beside them), drawn
+--  white by tools/build_menu_icons.py at these sizes. Each row tints its icon
+--  with its group's colour: ISContextMenu.renderOptionTextureOrColor draws
+--  the texture multiplied by option.color and uses the colour for nothing
+--  else. A row the player cannot use yet shows its icon grey.
 C.ICON_DIR = "media/ui/DazedPower/Menu/"
 C.ICON_SIZES = { 16, 20, 24, 32, 48 }
 C.ICON_GROUP = {
@@ -79,6 +85,11 @@ C.ROW_ICONS = {
     repair          = { "tool", "care" },
     clean           = { "droplet", "care" },
     takeDown        = { "hand-grab", "take" },
+    admin           = { "tool", "info" },
+    adminInspect    = { "info-circle", "info" },
+    adminRepair     = { "tool", "care" },
+    adminReset      = { "refresh", "power" },
+    adminFill       = { "battery-charging-2", "power" },
 }
 
 --- The drawn size for a menu: the smallest at least as tall as its icon
@@ -540,6 +551,8 @@ function C.onFill(playerNum, context, worldobjects, test)
             end
         end
 
+        C.adminMenu(menu, worldobjects, target, playerObj)
+
     elseif part == "transformer" then
         -- A transformer in a system shows the system's coverage and wires
         -- buildings of its own; a loose one only offers its cable rows.
@@ -550,6 +563,12 @@ function C.onFill(playerNum, context, worldobjects, test)
 
     elseif part == "bench" then
         if DazedPower.ChargeMenu then DazedPower.ChargeMenu.benchMenu(menu, worldobjects, target, playerObj) end
+
+    elseif part == "fence" and DazedPower.ApplianceMenu then
+        DazedPower.ApplianceMenu.fenceMenu(menu, target)
+
+    elseif part == "cooler" and DazedPower.ApplianceMenu then
+        DazedPower.ApplianceMenu.coolerMenu(menu, target)
 
     elseif part == "gauge" then
         C.icon(menu:addOption(getText("ContextMenu_DazedPower_ReadGauge"), worldobjects,
@@ -992,7 +1011,8 @@ end
 function C.wiredKinds(d)
     local out, seen = {}, {}
     for _, row in ipairs(type(d.loadList) == "table" and d.loadList or {}) do
-        if row.k and M.LOAD_KINDS and M.LOAD_KINDS[row.k] and not seen[row.k] then
+        local wired = (M.LOAD_KINDS and M.LOAD_KINDS[row.k]) or (M.APPLIANCE_KINDS and M.APPLIANCE_KINDS[row.k])
+        if row.k and wired and not seen[row.k] then
             seen[row.k] = true
             out[#out + 1] = row.k
         end
@@ -1131,6 +1151,44 @@ function C.onGenPanel(playerObj, object, cmd, args)
     local act = DP_GenPanelAction:new(playerObj, object, cmd, args)
     ISTimedActionQueue.add(act)
     return act
+end
+
+------------------------------------------------------------------ admin
+
+--- The controller's Admin submenu, for staff and single-player debug only (DP_Admin.allowed); the server asks again.
+function C.adminMenu(menu, worldobjects, target, playerObj)
+    local A = DazedPower.Admin
+    if not (A and A.allowed(playerObj)) then return end
+    local head = C.icon(menu:addOption(getText("ContextMenu_DazedPower_Admin"), worldobjects, nil), menu, "admin")
+    local sub = ISContextMenu:getNew(menu)
+    menu:addSubMenu(head, sub)
+    head.ogSub = sub
+    C.icon(sub:addOption(getText("ContextMenu_DazedPower_AdminInspect"), worldobjects, C.onAdminInspect, target, playerObj),
+           sub, "adminInspect")
+    -- The three writes go through commandTarget on the server, which refuses beyond arm's reach.
+    local far = not reachable(playerObj, target)
+    for _, row in ipairs({ { "AdminRepair", "adminRepair" }, { "AdminReset", "adminReset" }, { "AdminFill", "adminFill" } }) do
+        local opt = C.icon(sub:addOption(getText("ContextMenu_DazedPower_" .. row[1]), worldobjects, C.onAdminCommand,
+                                         target, playerObj, row[2]), sub, row[2])
+        if far then
+            opt.notAvailable = true
+            opt.toolTip = C.tip(getText("Tooltip_DazedPower_AdminReach"))
+        else
+            opt.toolTip = C.tip(getText("Tooltip_DazedPower_" .. row[1]))
+        end
+    end
+    C.dimUnavailable(sub)
+end
+
+function C.onAdminInspect(worldobjects, object, playerObj)
+    -- Reached through its table, so neither client file has to require the other.
+    if DazedPower.AdminWindow and DazedPower.AdminWindow.open then DazedPower.AdminWindow.open(playerObj, object) end
+end
+
+function C.onAdminCommand(worldobjects, object, playerObj, command)
+    local sq = object and object:getSquare()
+    if not sq then return end
+    C.send(playerObj, command, { x = sq:getX(), y = sq:getY(), z = sq:getZ() })
 end
 
 Events.OnFillWorldObjectContextMenu.Add(C.onFill)

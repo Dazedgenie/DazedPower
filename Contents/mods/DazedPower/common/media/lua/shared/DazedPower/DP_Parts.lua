@@ -51,6 +51,7 @@ P.SANDBOX_DEFAULTS = {
     BarnStockChance = 2,
     CableTilesPerWire = 4,
     LiveShock = true,
+    FenceDamage = true,
 }
 
 -- The Dazed Utilities preset values for this page: { easy, standard, realistic, hardcore } per option.
@@ -63,6 +64,7 @@ P.PRESETS = {
     TransformerLoss = { 10, 25, 25, 35 }, CableTilesPerWire = { 0, 4, 3, 2 },
     LiveShock = { false, true, true, true }, RigChance = { 25, 15, 10, 5 },
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
+    FenceDamage = { true, true, true, true },
 }
 if DazedCore and DazedCore.Preset then DazedCore.Preset.register("DazedPower", P.PRESETS) end
 
@@ -108,6 +110,22 @@ function P.generatorFuelConsumption()
     return v
 end
 
+--- Vanilla's fridge factor: how much of normal ageing food in a powered fridge keeps, mirroring the
+--  engine's private Food.getFridgeFactor (SandboxVars.FridgeFactor 1..6, default 3 = 0.2).
+P.FRIDGE_FACTOR = { 0.4, 0.3, 0.2, 0.1, 0.03, 0.0 }
+function P.fridgeFactor()
+    local v = SandboxVars and tonumber(SandboxVars.FridgeFactor)
+    return P.FRIDGE_FACTOR[v or 3] or 0.2
+end
+
+--- Vanilla's food rot speed multiplier, mirroring the engine's private Food.getFoodRotSpeed
+--  (SandboxVars.FoodRotSpeed 1..5, default 3 = 1.0).
+P.FOOD_ROT_SPEED = { 1.7, 1.4, 1.0, 0.7, 0.4 }
+function P.foodRotSpeed()
+    local v = SandboxVars and tonumber(SandboxVars.FoodRotSpeed)
+    return P.FOOD_ROT_SPEED[v or 3] or 1.0
+end
+
 --- The bank capacity multiplier, and the only reader of it. Installing and
 --  removing batteries, the simulation, the seeder and every panel must agree
 --  on how big a rack is, or a charge is kept against one capacity and handed
@@ -129,14 +147,26 @@ function P.spriteName(n)
     return string.format("dazedpower_%02d_%d", s + 1, n - s * P.SHEET_TILES)
 end
 
+-- Sprite name -> sheet index (false for not ours); names are a fixed set, so the answer never changes.
+local indexMemo, indexMemoN = {}, 0
+local INDEX_MEMO_MAX = 50000
+
 --- Overall sheet index of one of our sprite names, or nil.
 function P.indexOf(name)
     if type(name) ~= "string" then return nil end
+    local hit = indexMemo[name]
+    if hit ~= nil then return hit or nil end
+    local idx = nil
     local s, i = string.match(name, "^dazedpower_(%d%d)_(%d+)$")
-    if not s then return nil end
-    s, i = tonumber(s), tonumber(i)
-    if s < 1 or i >= P.SHEET_TILES then return nil end
-    return (s - 1) * P.SHEET_TILES + i
+    if s then
+        s, i = tonumber(s), tonumber(i)
+        if s >= 1 and i < P.SHEET_TILES then idx = (s - 1) * P.SHEET_TILES + i end
+    end
+    -- Bounded so a map with an unusual number of distinct tiles cannot grow it forever.
+    if indexMemoN >= INDEX_MEMO_MAX then indexMemo, indexMemoN = {}, 0 end
+    indexMemo[name] = idx or false
+    indexMemoN = indexMemoN + 1
+    return idx
 end
 P.COLS = 4
 
@@ -147,7 +177,7 @@ P.FACING_INDEX = { E = 0, S = 1, W = 2, N = 3 }
 -- APPEND ONLY, and in the same order as tools/dp_taxonomy.py: a sprite index is row * COLS + facing, so a
 -- kind inserted anywhere but the end repoints every object already standing in a save.
 P.KINDS = { "array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-            "propane", "petrol", "gauge", "rod", "bench", "hydro" }
+            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler" }
 P.KIND_SET = {}
 for _, k in ipairs(P.KINDS) do P.KIND_SET[k] = true end
 -- The mount is the form factor: a static, tracking or 2x2 array; a floor or wall bank; a garden or street lamp.
@@ -161,6 +191,7 @@ P.MOUNTS = {
     windsock = { "ground" }, vane = { "ground" },
     propane = { "ground" }, petrol = { "ground" },
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
+    fence = { "ground" }, cooler = { "wall" },
 }
 local THREE = { "makeshift", "salvaged", "workshop" }
 P.TIERS = {
@@ -172,6 +203,7 @@ P.TIERS = {
     windsock = { "basic" }, vane = { "basic" },
     propane = THREE, petrol = THREE,
     gauge = { "standard" }, rod = { "standard" }, bench = { "standard" }, hydro = { "standard" },
+    fence = { "standard" }, cooler = { "standard" },
 }
 P.STATES = {
     array = { "clear", "snow", "cracked" },
@@ -189,6 +221,8 @@ P.STATES = {
     rod = { "set" },
     bench = { "off", "on" },                                   -- charging something
     hydro = { "still", "turning" },                            -- water under the wheel
+    fence = { "off", "on" },                                   -- live wire
+    cooler = { "off", "on" },                                  -- cooling its room
     -- bank has no flat list: see P.statesFor.
 }
 -- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
@@ -295,6 +329,8 @@ P.ITEM = {
     rod = { ground = { standard = "Base.DazedGroundingRod" } },
     bench = { ground = { standard = "Base.DazedChargerBench" } },
     hydro = { ground = { standard = "Base.DazedWaterWheel" } },
+    fence = { ground = { standard = "Base.DazedElectricFence" } },
+    cooler = { wall = { standard = "Base.DazedRoomCooler" } },
 }
 
 -- Items that are not world parts.
@@ -381,6 +417,8 @@ function P.describe(obj)
         -- put the panel's sprite back. The engine's own test for rubble.
         if name and string.find(name, "_burnt_", 1, true) then return nil end
     end
+    -- getModData builds an empty table on every object it is asked of, so a square scan would leave one on each.
+    if obj.hasModData and not obj:hasModData() then return nil end
     local md = obj.getModData and obj:getModData()
     local d = md and md.dazedpower
     if d and d.kind then

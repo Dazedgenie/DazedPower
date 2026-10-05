@@ -84,6 +84,10 @@
     "ScrapDazedChargerBench": "Scrap Battery Charger Bench",
     "MakeDazedWaterWheel": "Build Micro-Hydro Wheel",
     "ScrapDazedWaterWheel": "Scrap Micro-Hydro Wheel",
+    "MakeDazedElectricFence": "Build Electric Fence",
+    "ScrapDazedElectricFence": "Scrap Electric Fence",
+    "MakeDazedRoomCooler": "Build Room Cooler",
+    "ScrapDazedRoomCooler": "Scrap Room Cooler",
     "MakeDazedGearKitLow": "Make Low-Ratio Gear Kit",
     "MakeDazedGearKitStock": "Make Stock Gear Kit",
     "MakeDazedGearKitRacing": "Make Racing Gear Kit"

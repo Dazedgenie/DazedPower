@@ -29,8 +29,10 @@ S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping" }
 S.live = S.live or {}       -- key -> { emitter, ids, kind, state }
 S.seen = S.seen or {}       -- key -> state at the last scan
 
-local PREFIX = "dazedpower_"
-local PLEN = #PREFIX
+-- Anchored, so a vanilla name fails on its first character without a substring being made.
+local PREFIX_PATTERN = "^dazedpower_"
+-- Our sprite name -> { kind, state } or false: the same name always decodes the same way.
+local soundOf = {}
 
 local function keyOf(sq) return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ() end
 
@@ -83,9 +85,14 @@ local function machineOn(sq)
         local obj = objs:get(i)
         local spr = obj and obj:getSprite()
         local name = spr and spr:getName()
-        if name and string.sub(name, 1, PLEN) == PREFIX then
-            local info = R.spriteInfo(name)
-            if info and S.LOOPS[info.kind] then return info.kind, info.state end
+        if name and string.find(name, PREFIX_PATTERN) then
+            local hit = soundOf[name]
+            if hit == nil then
+                local info = R.spriteInfo(name)
+                hit = (info and S.LOOPS[info.kind]) and { info.kind, info.state } or false
+                soundOf[name] = hit
+            end
+            if hit then return hit[1], hit[2] end
         end
     end
     return nil
@@ -96,13 +103,14 @@ function S.scan()
     local cell = getCell and getCell()
     if not cell then return end
     local heard, seen = {}, {}
+    local range, floors, floor = S.RANGE, S.FLOORS, math.floor
     for p = 0, (getNumActivePlayers and getNumActivePlayers() or 1) - 1 do
         local pl = getSpecificPlayer(p)
         if pl and not pl:isDead() then
-            local px, py, pz = math.floor(pl:getX()), math.floor(pl:getY()), math.floor(pl:getZ())
-            for z = math.max(0, pz - S.FLOORS), pz + S.FLOORS do
-                for x = px - S.RANGE, px + S.RANGE do
-                    for y = py - S.RANGE, py + S.RANGE do
+            local px, py, pz = floor(pl:getX()), floor(pl:getY()), floor(pl:getZ())
+            for z = math.max(0, pz - floors), pz + floors do
+                for x = px - range, px + range do
+                    for y = py - range, py + range do
                         local sq = cell:getGridSquare(x, y, z)
                         if sq then
                             local kind, state = machineOn(sq)

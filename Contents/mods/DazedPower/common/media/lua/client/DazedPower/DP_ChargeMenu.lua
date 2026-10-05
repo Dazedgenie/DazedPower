@@ -2,6 +2,7 @@
 
 require "DazedPower/DP_Parts"
 require "DazedPower/DP_Charge"
+require "DazedPower/DP_Alternator"
 require "DazedPower/DP_Context"
 
 DazedPower.ChargeMenu = DazedPower.ChargeMenu or {}
@@ -88,6 +89,23 @@ function CM.onCar(vehicle, playerObj, node)
     ISTimedActionQueue.add(DP_ChargeAction:new(playerObj, node, nil, vehicle))
 end
 
+--- Hook the car's alternator to the node's system, or unhook it.
+function CM.alternatorRow(context, vehicle, playerObj, node)
+    local A = DazedPower.Alternator
+    local id = A and A.idOf(vehicle)
+    local sys = P.data(node).sys
+    local M = DazedPower.Model
+    local cx, cy, cz = M.parseNodeKey(sys)
+    local gen = cx and P.objectAt(cx, cy, cz, "controller")
+    if not (id and gen) then return end
+    local on = A.linked(P.data(gen).cars, id)
+    local sq = node:getSquare()
+    context:addOption(getText(on and "ContextMenu_DazedPower_AltUnhook" or "ContextMenu_DazedPower_AltHook"), vehicle,
+        function()
+            DazedPower.Context.send(playerObj, "carLink", { x = sq:getX(), y = sq:getY(), z = sq:getZ(), vid = id, on = not on })
+        end)
+end
+
 local function hookVehicle()
     if not ISVehicleMenu or ISVehicleMenu.dazedChargeHooked then return end
     ISVehicleMenu.dazedChargeHooked = true
@@ -98,12 +116,11 @@ local function hookVehicle()
         local playerObj = getSpecificPlayer(player)
         local part = vehicle and vehicle:getPartById("Battery")
         local bat = part and part:getInventoryItem()
-        if bat and playerObj and Ch.itemWh(bat) and Ch.needWh(bat) > 1 then
-            local node = CM.nodeNear(vehicle)
-            if node then
-                context:addOption(getText("ContextMenu_DazedPower_ChargeCar", pct(bat)), vehicle, CM.onCar, playerObj, node)
-            end
+        local node = playerObj and CM.nodeNear(vehicle)
+        if node and bat and Ch.itemWh(bat) and Ch.needWh(bat) > 1 then
+            context:addOption(getText("ContextMenu_DazedPower_ChargeCar", pct(bat)), vehicle, CM.onCar, playerObj, node)
         end
+        if node then CM.alternatorRow(context, vehicle, playerObj, node) end
         return r
     end
 end

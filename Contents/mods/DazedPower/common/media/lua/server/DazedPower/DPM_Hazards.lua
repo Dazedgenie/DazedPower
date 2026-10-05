@@ -73,6 +73,11 @@ end
 function H.ventilated(sq)
     if not sq then return true end
     if sq.isOutside and sq:isOutside() then return true end
+    return H.windowOpenNear(sq)
+end
+
+--- The 9x9 window walk behind H.ventilated, uncached.
+function H.windowOpenNear(sq)
     for dx = -4, 4 do
         for dy = -4, 4 do
             local s = getSquare(sq:getX() + dx, sq:getY() + dy, sq:getZ())
@@ -86,20 +91,64 @@ function H.ventilated(sq)
     return false
 end
 
+-- How long a rack's ventilation answer is trusted, in in-game hours; the gas counter moves a minute at a time.
+H.VENT_TTL_H = 5 / 60
+H.ventMemo = H.ventMemo or {}      -- "x,y,z" -> { at = world hours, open = bool, sq }
+local ventWrites = 0
+
+local function worldHours()
+    return E.worldHours and E.worldHours() or 0
+end
+
+--- H.ventilated for a rack, with the window walk remembered for H.VENT_TTL_H so a busy rack does not walk 81 squares every minute.
+function H.ventilatedCached(sq)
+    if not sq then return true end
+    if sq.isOutside and sq:isOutside() then return true end
+    local k = sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ()
+    local now = worldHours()
+    local c = H.ventMemo[k]
+    -- age < 0 means the clock was set back; look again.
+    if c and c.sq == sq and now - c.at >= 0 and now - c.at < H.VENT_TTL_H then return c.open end
+    local open = H.windowOpenNear(sq)
+    H.ventMemo[k] = { at = now, open = open, sq = sq }
+    -- Now and then drop expired answers, so racks that were lifted do not stay in the table.
+    ventWrites = ventWrites + 1
+    if ventWrites >= 256 then
+        ventWrites = 0
+        for mk, mc in pairs(H.ventMemo) do
+            if now - mc.at >= H.VENT_TTL_H or now < mc.at then H.ventMemo[mk] = nil end
+        end
+    end
+    return open
+end
+
+--- Forget remembered ventilation, everywhere or on one square ("x,y,z").
+function H.forgetVent(k)
+    if k then H.ventMemo[k] = nil else H.ventMemo = {} end
+end
+
 function H.gas(rec, gen, chargeW)
     if P.sandbox("HydrogenRisk") == false or #(rec.banks or {}) == 0 then return end
+    -- One state table per controller, so forgetting its gone racks never walks every other controller's.
+    local mine = H2[rec.key]
+    if not mine then
+        mine = {}
+        H2[rec.key] = mine
+    end
     local seen = {}
+    local perRack = chargeW / math.max(1, #rec.banks)
     for _, o in ipairs(rec.banks or {}) do
         local info = P.describe(o)
         local sq = o:getSquare()
         if info and sq then
-            local perRack = chargeW / math.max(1, #rec.banks)
-            local k = rec.key .. ":" .. sq:getX() .. "," .. sq:getY()
-            local st = H2[k] or { m = 0, warned = false }
-            local risk = H.atRisk(info.tier, perRack, perRack >= H.H2_RATE_W and H.ventilated(sq))
+            local k = sq:getX() .. "," .. sq:getY()
+            local st = mine[k] or { m = 0, warned = false }
+            -- Only a Makeshift rack charging hard can be at risk, so only that one needs its air looked at.
+            local vent = perRack >= H.H2_RATE_W and info.tier == "makeshift" and H.ventilatedCached(sq)
+            local risk = H.atRisk(info.tier, perRack, vent)
             local ev
             st.m, st.warned, ev = H.h2Step(st.m, st.warned, risk, ZombRandFloat and ZombRandFloat(0, 1) or math.random())
-            H2[k] = st
+            mine[k] = st
             seen[k] = true
             if ev == "warn" then tell(sq, "IGUI_DazedPower_Hydrogen", true)
             elseif ev == "fire" and IsoFireManager and getCell then
@@ -111,10 +160,13 @@ function H.gas(rec, gen, chargeW)
         end
     end
     -- forget racks of this controller that are gone
-    for k in pairs(H2) do
-        if string.sub(k, 1, #rec.key + 1) == rec.key .. ":" and not seen[k] then H2[k] = nil end
+    for k in pairs(mine) do
+        if not seen[k] then mine[k] = nil end
     end
 end
+
+--- The hydrogen counters, for the headless checks: controller key -> "x,y" -> { m, warned }.
+function H.h2State() return H2 end
 
 if not H.wrapped then
     H.wrapped = true
@@ -127,16 +179,19 @@ if not H.wrapped then
         local gen = P.objectAt(rec.x, rec.y, rec.z, "controller")
         if not gen then return r end
         -- A bench's lamp shows whether its system is up.
-        local up = P.data(gen).online ~= false and not P.data(gen).trip
+        local gd = P.data(gen)
+        local up = gd.online ~= false and not gd.trip
+        local want = up and "on" or "off"
         for _, b in ipairs((rec.dpm and rec.dpm.bench) or {}) do
-            local want = up and "on" or "off"
-            if P.describe(b) and P.describe(b).state ~= want then P.setState(b, want) end
+            local bi = P.describe(b)
+            if bi and bi.state ~= want then P.setState(b, want) end
         end
         local after = 0
         for _, o in ipairs(rec.banks or {}) do after = after + (P.data(o).charge or 0) end
         pcall(H.gas, rec, gen, math.max(0, (after - before) / dt))
         local env = E.read()
-        if env.thunder and P.data(gen).online ~= false and not P.data(gen).trip then
+        gd = P.data(gen)
+        if env.thunder and gd.online ~= false and not gd.trip then
             local roll = ZombRandFloat and ZombRandFloat(0, 1) or math.random()
             if roll < H.strikeChance(P.sandbox("StormRate") or 100) * (dt * 60) then pcall(H.strike, rec, gen) end
         end

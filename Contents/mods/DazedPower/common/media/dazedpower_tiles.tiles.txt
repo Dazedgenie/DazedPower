@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,33
+    size = 4,37
     id = 2
     // dazedpower_02_0
     tile
@@ -15037,5 +15037,373 @@ tileset
         Noffset = 0
         solidtrans = 
         ItemHeight = 80
+    }
+    // dazedpower_02_132
+    tile
+    {
+        xy = 0,33
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_133
+    tile
+    {
+        xy = 1,33
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_134
+    tile
+    {
+        xy = 2,33
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_135
+    tile
+    {
+        xy = 3,33
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_136
+    tile
+    {
+        xy = 0,34
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_137
+    tile
+    {
+        xy = 1,34
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_138
+    tile
+    {
+        xy = 2,34
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_139
+    tile
+    {
+        xy = 3,34
+        CustomName = Electric Fence
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedElectricFence
+        PickUpWeight = 120
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solid = 
+        ItemHeight = 70
+    }
+    // dazedpower_02_140
+    tile
+    {
+        xy = 0,35
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_141
+    tile
+    {
+        xy = 1,35
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_142
+    tile
+    {
+        xy = 2,35
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_143
+    tile
+    {
+        xy = 3,35
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_144
+    tile
+    {
+        xy = 0,36
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_145
+    tile
+    {
+        xy = 1,36
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_146
+    tile
+    {
+        xy = 2,36
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        IsHigh = 
+        ItemHeight = 60
+    }
+    // dazedpower_02_147
+    tile
+    {
+        xy = 3,36
+        CustomName = Room Cooler
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedRoomCooler
+        PickUpWeight = 140
+        PickUpLevel = 0
+        MoveType = WallObject
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        IsHigh = 
+        ItemHeight = 60
     }
 }

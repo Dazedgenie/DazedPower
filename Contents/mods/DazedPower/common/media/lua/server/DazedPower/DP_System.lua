@@ -35,6 +35,7 @@ require "DazedPower/DP_Shock"
 require "DazedPower/DP_Priority"
 require "DazedPower/DP_Electrician"
 require "DazedPower/DP_GenPanel"
+require "DazedPower/DP_Admin"
 
 DazedPower = DazedPower or {}
 DazedPower.System = DazedPower.System or {}
@@ -307,6 +308,11 @@ local function releaseClaim(nk, root)
         -- system's tick turns it off. One left behind by a lift upstream kept
         -- it lit with nothing behind it (live, 2026-09-24).
         if kind == "transformer" or kind == "gauge" then P.setState(obj, "off") end
+        -- A fence or cooler cut loose goes dark at once (DP_ApplianceTick only visits wired ones).
+        if kind == "fence" or kind == "cooler" then
+            P.setState(obj, "off")
+            pd.live, pd.why = nil, nil
+        end
         sync(obj)
     end
 end
@@ -2273,6 +2279,8 @@ end
 --  for the time a chunk spent unloaded.
 function S.tick()
     local now = E.worldHours()
+    -- One climate read for every controller this minute, instead of one per controller and per wrapper.
+    if E.holdRead then E.holdRead(true) end
     healSuspects()
     -- Once per minute for the whole world; see the note in updateController.
     local wet = sprinklersRunning()
@@ -2306,6 +2314,7 @@ function S.tick()
     -- system adds goes into the registry, and the registry goes to clients
     -- in one message however many systems changed.
     if DazedPower.Distrib then DazedPower.Distrib.afterTick() end
+    if E.holdRead then E.holdRead(false) end
 end
 
 --------------------------------------------------------- commands from a client
@@ -2342,6 +2351,8 @@ local function commandTarget(playerObj, args, kind)
 end
 
 local COMMANDS = {}
+-- Other server files add their own commands here (DP_Alternator).
+S.COMMANDS = COMMANDS
 
 function COMMANDS.connect(playerObj, args)
     local ok, why = S.connect(playerObj, args)
@@ -2398,6 +2409,67 @@ function COMMANDS.priority(playerObj, args)
     if DazedPower.Priority and DazedPower.Priority.set(d, args.kind, args.value) then sync(obj) end
 end
 
+-- Admin tools (DP_Admin). Each re-checks staff here on the authority, whatever the client menu showed.
+local function adminTarget(playerObj, args)
+    local A = DazedPower.Admin
+    if not (A and A.allowed(playerObj)) then
+        print("DazedPower: refused an admin command, not staff")
+        return nil
+    end
+    local ctrl = commandTarget(playerObj, args, "controller")
+    if not ctrl then return nil end
+    local sq = ctrl:getSquare()
+    local rec = sq and S.controllers[key(sq:getX(), sq:getY(), sq:getZ())]
+    -- A fresh walk first, so the lists below are the parts standing there now.
+    if rec then S.relink(rec) end
+    return ctrl, rec, A
+end
+
+--- Every part the record holds back to full condition, each rack cell to its wear ceiling, and the controller itself.
+function COMMANDS.adminRepair(playerObj, args)
+    local ctrl, rec, A = adminTarget(playerObj, args)
+    if not ctrl then return end
+    local parts = A.partsOf(rec)
+    for i = 1, #parts do
+        A.repairPart(parts[i])
+        sync(parts[i])
+    end
+    if ctrl.setCondition then ctrl:setCondition(100) end
+    P.data(ctrl).condition = 100
+    if rec then rec.syncIn = 0 end
+    sync(ctrl)
+end
+
+--- Clear the breaker trip and the low-voltage disconnect, switch on, stop any equalisation and relink on the next tick.
+function COMMANDS.adminReset(playerObj, args)
+    local ctrl, rec = adminTarget(playerObj, args)
+    if not ctrl then return end
+    if DazedPower.Place and DazedPower.Place.adopt then DazedPower.Place.adopt(ctrl) end
+    local d = P.data(ctrl)
+    d.trip = false
+    d.lvd = false
+    d.lvdAt = nil
+    d.online = true
+    d.equalise = false
+    if rec then
+        rec.relinkAt = -1
+        rec.syncIn = 0
+    end
+    sync(ctrl)
+end
+
+--- Every rack in the system filled to its nominal capacity.
+function COMMANDS.adminFill(playerObj, args)
+    local ctrl, rec, A = adminTarget(playerObj, args)
+    if not (ctrl and rec) then return end
+    for i = 1, #(rec.banks or {}) do
+        A.fillBank(rec.banks[i])
+        sync(rec.banks[i])
+    end
+    rec.syncIn = 0
+    sync(ctrl)
+end
+
 -- The Electrician's Makeshift builds, learned on the server's copy of the character too (DP_Electrician).
 function COMMANDS.electrician(playerObj, args)
     if playerObj and DazedPower.Electrician then DazedPower.Electrician.grant(playerObj) end
@@ -2426,11 +2498,28 @@ end
 --  bleed. This sweep runs per render tick and normally does nothing: it only
 --  pays when a managed controller's building actually reads toxic, and it
 --  still defers to any real generator sharing the house.
+--- The controller object for a record, kept on the record between frames.
+--  Trusted while it is still listed on the record's square and that square is the one in memory now.
+local function cachedController(rec)
+    local gen = rec.toxGen
+    if gen then
+        local ix = try(gen, "getObjectIndex")
+        local sq = type(ix) == "number" and ix >= 0 and try(gen, "getSquare")
+        -- A chunk that streamed out and back builds new squares, so the cached one must still be the live one.
+        if sq and sq == rec.toxSq and getSquare(rec.x, rec.y, rec.z) == sq then return gen end
+    end
+    gen = objectOn(rec.x, rec.y, rec.z, "controller")
+    rec.toxGen = gen
+    rec.toxSq = gen and gen:getSquare() or nil
+    return gen
+end
+S.cachedController = cachedController
+
 local function clearToxicFast()
     for i = 1, #S.order do
         local rec = S.controllers[S.order[i]]
         if rec then
-            local gen = objectOn(rec.x, rec.y, rec.z, "controller")
+            local gen = cachedController(rec)
             if gen and try(gen, "isActivated") then
                 local sq = gen:getSquare()
                 clearOurToxic(sq and sq:getBuilding())
@@ -2491,7 +2580,8 @@ end
 registerSprites()
 Events.OnGameStart.Add(registerSprites)
 Events.OnServerStarted.Add(registerSprites)
-Events.EveryOneMinute.Add(S.tick)
+-- Looked up on every call, so a wrapper put on S.tick later (DP_Stats) is the one that runs.
+Events.EveryOneMinute.Add(function() S.tick() end)
 Events.OnClientCommand.Add(onClientCommand)
 
 --- What DP_Distrib shares with this file. Its sweep and its commands must read

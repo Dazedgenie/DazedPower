@@ -57,7 +57,7 @@ function X.rows(s)
 end
 
 local KIND = { pedal = "IGUI_DazedPower_SrcPedal", windmill = "IGUI_DazedPower_SrcWind", steam = "IGUI_DazedPower_SrcSteam",
-               propane = "IGUI_DazedPower_SrcPropane", petrol = "IGUI_DazedPower_SrcPetrol", hydro = "IGUI_DazedPower_SrcHydro",
+               propane = "IGUI_DazedPower_SrcPropane", petrol = "IGUI_DazedPower_SrcPetrol", hydro = "IGUI_DazedPower_SrcHydro", car = "IGUI_DazedPower_SrcCar",
                solar = "IGUI_DazedPower_SrcSolar", backup = "IGUI_DazedPower_SrcBackup" }
 
 local function stateText(st)

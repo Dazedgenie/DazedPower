@@ -45,6 +45,8 @@ DazedPower.RecipeLists = {
         "MakeDazedPropaneWorkshop",
         "MakeDazedPetrolWorkshop",
         "MakeDazedWaterWheel",
+        "MakeDazedElectricFence",
+        "MakeDazedRoomCooler",
         "MakeDazedGearKitRacing",
     },
     ELECTRICIAN = {
