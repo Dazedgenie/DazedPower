@@ -78,6 +78,20 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.5.0 (ui-redesign branch).**
+  - **Analog charge board** replaces the OG-1200 face. One board shows everything at once, with no pages:
+    - two dials, SOURCES IN (every source) and LOAD OUT, whose ranges grow to fit what they read
+    - NET on number wheels
+    - the battery column with its floor in red, and the bank's cells, amber for a worn cell
+    - the status lamps
+    - today's history on chart paper
+    - the SOURCES IN list (what used to be the SOURCE page) and the circuits list with its total
+    - the main isolator knob
+  - **Generator card:** its MASTER (the old master AUTO), AUTO and ON switches and the START BELOW / STOP ABOVE wheels
+    with - and +. Two or more generators page with < and >.
+  - Locks, read-only wall gauges and the switch-in-flight hold work as before.
+  - Stand-in art until the Blender pass (`tools/blender/board_render.py`). Tests: `tools/tests/board_test.lua`.
+
 - **0.4.0.** Needs DazedCore 1.2.0.
   - **Admin tools:** an Admin submenu on controllers (staff, or single-player debug): Inspect system, Repair whole
     system, Reset system, Fill batteries. A `DazedPower: stats -- ...` server console line every 10 in-game minutes.
