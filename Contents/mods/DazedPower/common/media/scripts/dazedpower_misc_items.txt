@@ -12,7 +12,7 @@ module Base
         Icon                = DazedPowerManual,
         BoredomChange       = -18,
         StressChange        = -10,
-        LearnedRecipes      = MakeDazedArrayMakeshift;MakeDazedArraySalvaged;MakeDazedTrackerMakeshift;MakeDazedTrackerSalvaged;MakeDazedArrayXLMakeshift;MakeDazedArrayXLSalvaged;MakeDazedBankMakeshift;MakeDazedBankSalvaged;MakeDazedWallBankMakeshift;MakeDazedWallBankSalvaged;MakeDazedControllerMakeshift;MakeDazedTransformer;MakeDazedPedalMakeshift;MakeDazedPedalSalvaged;MakeDazedWindMakeshift;MakeDazedWindSalvaged;MakeDazedSteamMakeshift;MakeDazedSteamSalvaged;MakeDazedPropaneMakeshift;MakeDazedPropaneSalvaged;MakeDazedPetrolMakeshift;MakeDazedPetrolSalvaged;MakeDazedPowerGauge;MakeDazedGroundingRod;MakeDazedChargerBench;MakeDazedGearKitLow;MakeDazedGearKitStock,
+        LearnedRecipes      = MakeDazedArrayMakeshift;MakeDazedArraySalvaged;MakeDazedTrackerMakeshift;MakeDazedTrackerSalvaged;MakeDazedArrayXLMakeshift;MakeDazedArrayXLSalvaged;MakeDazedBankMakeshift;MakeDazedBankSalvaged;MakeDazedWallBankMakeshift;MakeDazedWallBankSalvaged;MakeDazedControllerMakeshift;MakeDazedTransformer;MakeDazedPedalMakeshift;MakeDazedPedalSalvaged;MakeDazedWindMakeshift;MakeDazedWindSalvaged;MakeDazedSteamMakeshift;MakeDazedSteamSalvaged;MakeDazedPropaneMakeshift;MakeDazedPropaneSalvaged;MakeDazedPetrolMakeshift;MakeDazedPetrolSalvaged;MakeDazedPowerGauge;MakeDazedGroundingRod;MakeDazedChargerBench;MakeDazedSpaceHeater;MakeDazedGearKitLow;MakeDazedGearKitStock,
         StaticModel         = Magazine,
         WorldStaticModel    = MagazineElec1Ground,
         Tags                = base:magazine,

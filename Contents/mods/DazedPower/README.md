@@ -1,4 +1,4 @@
-# Dazed Utilities: Power  (v0.4.0, Build 42)
+# Dazed Utilities: Power  (v0.5.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Utilities: Core** (`DazedCore`), loaded first. Works with
@@ -27,7 +27,8 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Windsock, weather vane | Read the wind; never wired. |
 | Wall power gauge | Hangs on a wall; cable it to any part of a system. Its lamp shows the charge band, and Read Gauge (or a click) opens that system's monitor, read only. Takes no controller slot. |
 | Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. Sandbox *Electric fence hurts zombies*. |
-| Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. |
+| Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. With Dazed Climate it also chills the room's air. |
+| Electric space heater | Stands on the floor; cabled like the fence, with its own on/off switch (starts off). 1500 W while it runs, Low priority. With Dazed Climate it warms the room it stands in (18, a lit fireplace is 22). |
 
 **Wiring.** A cable costs Electric Wire by length: one per 4 tiles by default (sandbox *Tiles per Electric Wire*,
 0 = free), and cutting it gives half of what it cost back (cables from found rigs, or run while cables were free, give nothing). Running or cutting a cable while the controller is switched on can burn
@@ -56,15 +57,16 @@ shut room for the hydrogen warning; the presets.
 ## Console lines to check
 
 ```
-DazedCore: ready -- 1.2.0, heavy parts v3, 1 power provider, N loads, mods: DazedPower 0.4.0, ...
-DazedPower: ready -- 660/660 tiles, 66/66 items
+DazedCore: ready -- 1.3.0, heavy parts v3, 1 power provider, N loads, mods: DazedPower 0.5.0, ...
+DazedPower: ready -- 668/668 tiles, 67/67 items
 ```
 
 ## Tools
 
 - `tools/dp_taxonomy.py` is the one description of every kind, mount, tier and state; `DP_Parts.lua` mirrors it.
 - `tools/build_sheet.py` builds the tiledef, the texture pack, the part items, the icons and the Moveables/ItemName
-  keys from it. Art: `tools/art/<sprite index>.png` (128x256) when present, else the old sheets in `tools/art/src`
+  keys from it. `--append` only adds the rows the committed pack and tiledef lack, on a new pack page, and leaves every
+  existing sprite and tile as it is (the fence and cooler art lives only in the pack). Art: `tools/art/<sprite index>.png` (128x256) when present, else the old sheets in `tools/art/src`
   as stand-ins (only the power sources still use them).
 - `tools/blender/dp_render.py` renders every new part in Blender (Cycles, 2x, the Dazed Power / Plumbing rig): paste
   `ART = r"<folder>"; FAMILIES = ["all"]; exec(open(ART + r"\dp_render.py").read())` into Blender's Python console.
@@ -77,6 +79,20 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   `cd tools/tests && lua load_test.lua` (expects `DazedCore` checked out beside this folder).
 
 ## Changes
+
+- **0.5.0.** Works with DazedCore 1.2.0; the climate features need DazedCore 1.3.0 (and Dazed Climate for room heat).
+  - **Climate lookup:** the county temperature, each part's own air and the almanac's forecast temperatures come from
+    DazedCore's climate lookup, so with Dazed Climate a battery rack in a heated room keeps its capacity on a freezing
+    day, and solar panels and windmills see Dazed Climate's air. Without it nothing changes.
+  - **Cold starts:** below -5 C at the engine a propane or petrol generator can fail to start: up to 60% at -25 C,
+    more for Makeshift, less for Workshop. A failed start stays off and says so (menu, GEN page COLD, a note); ON goes
+    back to OFF, AUTO waits until it is warmer or someone switches it. Sandbox `ColdStarts`.
+  - **Electric space heater** (Dazed Power Handbook, Electricity 3): a floor appliance with an on/off switch, 1500 W
+    while running. Found new in tool and electronics stores. Placeholder art.
+  - **Room heat:** with Dazed Climate the heater warms its room and the room cooler chills its room's air. Sandbox
+    `RoomHeat`.
+  - Tools: `dp_taxonomy.py` and `build_recipes.py` now list the fence and cooler too; `build_sheet.py --append`.
+  - Tests: `tools/tests/climate_power_test.lua`; the load test's sheet and item counts are current again.
 
 - **0.4.0.** Needs DazedCore 1.2.0.
   - **Admin tools:** an Admin submenu on controllers (staff, or single-player debug): Inspect system, Repair whole

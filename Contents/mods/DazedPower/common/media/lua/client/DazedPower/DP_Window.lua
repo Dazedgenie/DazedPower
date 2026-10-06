@@ -254,7 +254,7 @@ local GEN_STATE = {
     running = "IGUI_DazedPower_GenRun", standby = "IGUI_DazedPower_GenStandby",
     off = "IGUI_DazedPower_GenOff", nofuel = "IGUI_DazedPower_GenNoFuel",
     fault = "IGUI_DazedPower_GenFault", indoors = "IGUI_DazedPower_GenIndoors",
-    server = "IGUI_DazedPower_GenServer",
+    server = "IGUI_DazedPower_GenServer", cold = "IGUI_DazedPower_GenCold",
 }
 -- Each gas engine's LCD name, by the row's t (kind_tier, DP_GenPanel.row).
 local GEN_BRAND = {

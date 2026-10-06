@@ -570,6 +570,9 @@ function C.onFill(playerNum, context, worldobjects, test)
     elseif part == "cooler" and DazedPower.ApplianceMenu then
         DazedPower.ApplianceMenu.coolerMenu(menu, target)
 
+    elseif part == "heater" and DazedPower.ApplianceMenu then
+        DazedPower.ApplianceMenu.heaterMenu(menu, worldobjects, target, playerObj)
+
     elseif part == "gauge" then
         C.icon(menu:addOption(getText("ContextMenu_DazedPower_ReadGauge"), worldobjects,
                               C.onGauge, target, playerObj), menu, "monitor")

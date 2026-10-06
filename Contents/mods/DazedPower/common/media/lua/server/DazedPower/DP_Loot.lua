@@ -137,6 +137,7 @@ L.RETAIL = {
         DazedArraySalvaged = 0.5, DazedTrackerSalvaged = 0.5, DazedBankSalvaged = 0.4,
         DazedWallBankSalvaged = 0.4, DazedControllerMakeshift = 0.4,
         DazedGardenLampMakeshift = 0.6, DazedGroundingRod = 0.2,
+        DazedSpaceHeater = 0.3,
     },
     -- The solar garden light is a garden-centre shelf item, boxed and cheap:
     -- the one Dazed Power thing a player is likely to find new rather than build.
@@ -150,7 +151,7 @@ L.RETAIL = {
         DazedWallBankSalvaged = 0.3, DazedControllerMakeshift = 0.5,
         DazedControllerWorkshop = 0.15,
         DazedArrayWorkshop = 0.1, DazedBankWorkshop = 0.1,
-        DazedGardenLampMakeshift = 0.4,
+        DazedGardenLampMakeshift = 0.4, DazedSpaceHeater = 0.5,
     },
     -- Reached by electronicstore.locker and technical.other only: 27
     -- containers on the whole map, 14 of them lockers that hold 10 kg, which

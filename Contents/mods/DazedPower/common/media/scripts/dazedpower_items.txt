@@ -915,4 +915,18 @@ module Base
         Tags                = base:heavyitem;base:hasmetal;base:showcondition,
     }
 
+    item DazedSpaceHeater
+    {
+        DisplayName         = Electric Space Heater,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 6.0,
+        Icon                = DazedSpaceHeater,
+        WorldObjectSprite   = dazedpower_02_149,
+        ConditionMax        = 100,
+        MetalValue          = 15.0,
+        Tooltip             = Tooltip_DazedSpaceHeater,
+        Tags                = base:hasmetal;base:showcondition,
+    }
+
 }

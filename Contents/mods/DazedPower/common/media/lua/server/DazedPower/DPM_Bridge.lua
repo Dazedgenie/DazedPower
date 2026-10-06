@@ -78,7 +78,7 @@ end
 --  through the wrapped P.spriteInfo) and stamped their system claim; it just
 --  had no list to file them in.
 local function collect(rec)
-    local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {} }
+    local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {}, heater = {} }
     local root = UM.nodeKey(rec.x, rec.y, rec.z, "controller")
     for nk in pairs((S.claimed or {})[root] or {}) do
         local x, y, z, kind = UM.parseNodeKey(nk)
@@ -130,11 +130,14 @@ end
 --  can mutate them and a replay can write them back.
 local genEntry, genEffects
 B.GEN_FIELDS = { "mode", "running", "lpg", "feedTank", "lineTx", "lineTy", "lineTz", "t1Type", "t1Fill", "t1Cond", "t2Type", "t2Fill",
-                 "t2Cond", "condition", "startPct", "stopPct", "hold", "noFuel" }
+                 "t2Cond", "condition", "startPct", "stopPct", "hold", "noFuel", "coldFail" }
 genEntry = function(obj, info, d)
     local g = { obj = obj, tier = info.tier, kind = info.kind, amp = d.amp == true }
     for _, f in ipairs(B.GEN_FIELDS) do g[f] = d[f] end
     if g.condition == nil then g.condition = 100 end
+    -- The air at the engine, for a cold start or to clear an old failure: only a stopped one that may start needs it.
+    local env = DazedPower.Env
+    if not g.running and (g.mode ~= "off" or g.coldFail) and env and env.engineAir then g.ambient = env.engineAir(obj) end
     g.fuel0 = MM.propaneFuel(g)      -- what it held before this step, for the GEN page's fuel today
     return g
 end
@@ -484,7 +487,7 @@ local function billWater(sys)
     CTX.waterDone = true
     local rec = CTX.rec
     local active, idle, total = waterDraw(rec)
-    -- The fences and coolers (DP_ApplianceTick) are billed the same way, on the same LOADS rows.
+    -- The fences, coolers and heaters (DP_ApplianceTick) are billed the same way, on the same LOADS rows.
     local Ap = DazedPower.Appliances
     if Ap and Ap.draw then
         local a2, i2, t2 = Ap.draw(rec)

@@ -44,6 +44,31 @@ local function today()
     return gt:getYear(), gt:getMonth(), gt:getDayPlusOne()
 end
 
+-- Dazed Core's shared climate lookup (1.3.0 and later), or nil on an older Core.
+local function climate()
+    local C = DazedCore and DazedCore.Climate
+    return type(C) == "table" and C or nil
+end
+
+-- Ask the climate lookup for a finite number, or nil when it is absent, fails or has no answer.
+local function askClimate(name, ...)
+    local C = climate()
+    local fn = C and C[name]
+    if type(fn) ~= "function" then return nil end
+    local ok, v = pcall(fn, ...)
+    if ok and type(v) == "number" and M.finite(v) then return v end
+    return nil
+end
+
+--- The county's air in C: Dazed Core's climate lookup (Dazed Climate's curve when it runs), else the game's.
+function E.outdoorTemp()
+    local t = askClimate("outdoor")
+    if t ~= nil then return t end
+    t = P.try(getClimateManager and getClimateManager(), "getTemperature")
+    if type(t) == "number" and M.finite(t) then return t end
+    return nil
+end
+
 --- Read the world into the environment table DP_Model.step expects.
 --  Every field degrades to a sane default if the engine hands back nil,
 --  because a nil arithmetic error inside a per-hour tick would take the
@@ -97,7 +122,7 @@ function E.readFresh()
         env.cloud = cm:getCloudIntensity() or 0
         env.fog = cm:getFogIntensity() or 0
         env.precipitation = cm:getPrecipitationIntensity() or 0
-        env.temperature = cm:getTemperature() or 18
+        env.temperature = E.outdoorTemp() or 18
         env.groundSnow = cm:getSnowFracNow() or 0
         env.daylight = cm:getDayLightStrength()
         -- what vanilla's street lights switch on, and the solar lamps with them
@@ -133,17 +158,26 @@ end
 --  `fallback` is the county figure to use when there is no square to ask
 --  about, which is a rack in an unloaded chunk.
 function E.tempAt(obj, fallback)
-    local cm = getClimateManager and getClimateManager()
-    if not cm or not cm.getAirTemperatureForSquare then return fallback end
     local sq = obj
     if obj and obj.getSquare then
         local ok, s = pcall(obj.getSquare, obj)
         sq = ok and s or nil
     end
     if not sq then return fallback end
+    -- Dazed Core's climate lookup first: a room's own temperature when Dazed Climate keeps rooms.
+    local ct = askClimate("temperatureAt", sq)
+    if ct ~= nil then return ct end
+    local cm = getClimateManager and getClimateManager()
+    if not cm or not cm.getAirTemperatureForSquare then return fallback end
     local ok, t = pcall(cm.getAirTemperatureForSquare, cm, sq)
     if ok and type(t) == "number" and M.finite(t) then return t end
     return fallback
+end
+
+--- The air at a gas engine for its cold start, or nil while the ColdStarts sandbox option is off.
+function E.engineAir(obj)
+    if P.sandbox("ColdStarts") == false then return nil end
+    return E.tempAt(obj, E.outdoorTemp())
 end
 
 --- Whether a square can see the sky. An array under a roof makes nothing.
@@ -307,6 +341,18 @@ function E.monthName(month0)
     return getText("Farming_Month_" .. ((month0 or 0) + 1))
 end
 
+--- Low, high and mean in C for the day `offset` days ahead from the climate lookup, or nil when nothing forecasts.
+function E.climateForecast(offset)
+    local C = climate()
+    if not (C and type(C.forecast) == "function") then return nil end
+    local ok, f = pcall(C.forecast, offset)
+    if not (ok and type(f) == "table") then return nil end
+    local lo, hi, mean = f.min, f.max, f.mean
+    if not (type(lo) == "number" and type(hi) == "number" and type(mean) == "number") then return nil end
+    if not (M.finite(lo) and M.finite(hi) and M.finite(mean)) then return nil end
+    return { min = lo, max = hi, mean = mean }
+end
+
 --- Snapshot the engine's forecast ring into a plain, saveable table.
 --
 --  ONLY CALL THIS ON THE AUTHORITY. The ring is populated at world load on
@@ -336,6 +382,8 @@ function E.readForecast(span)
         if not day then break end
         local cloud = day:getCloudiness()
         local temp = day:getTemperature()
+        -- Dazed Climate's curve for the day's temperatures when it forecasts; the sky stays the engine's.
+        local own = E.climateForecast(i)
         local w = 0
         if day:isHasStorm() then w = w + E.SKY_STORM end
         if day:isHasBlizzard() then w = w + E.SKY_BLIZZARD end
@@ -348,9 +396,9 @@ function E.readForecast(span)
             -- the whole readout turns on.
             c = M.round(M.clamp(cloud and cloud:getDayMean() or 0, 0, 1), 3),
             g = day:isHasFog() and M.round(M.clamp(day:getFogStrength() or 0, 0, 1), 3) or 0,
-            t = M.round(temp and temp:getDayMean() or 15, 1),
-            n = M.round(temp and temp:getTotalMin() or 10, 1),
-            x = M.round(temp and temp:getTotalMax() or 20, 1),
+            t = M.round((own and own.mean) or (temp and temp:getDayMean()) or 15, 1),
+            n = M.round((own and own.min) or (temp and temp:getTotalMin()) or 10, 1),
+            x = M.round((own and own.max) or (temp and temp:getTotalMax()) or 20, 1),
             w = w,
         }
     end

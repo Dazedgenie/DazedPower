@@ -161,6 +161,16 @@ make("hydro", "ground", "standard", 900, "Electricity:4;MetalWelding:2", "Electr
      [SCREW, torch(2), MASK, it(4, "ElectronicsScrap"), it(4, "SheetMetal"), it(3, "MetalBar"), it(3, "ElectricWire"), it(6, "Screws")],
      ["item 2 Base.ElectronicsScrap", "item 2 Base.SheetMetal", "item 1 Base.MetalBar"], "adv", scrapTime=450, scrapXp="Electricity:12")
 
+make("fence", "ground", "standard", 700, "Electricity:3;MetalWelding:2", "Electricity:30;MetalWelding:15",
+     [SCREW, PLIERS, torch(1), MASK, it(3, "MetalPipe"), it(1, "SheetMetal"), it(3, "ElectricWire"), it(2, "ElectronicsScrap"), it(4, "Screws")],
+     ["item 2 Base.MetalPipe", "item 1 Base.ElectronicsScrap"], "adv", scrapTime=350, scrapXp="Electricity:8")
+make("cooler", "wall", "standard", 900, "Electricity:4", "Electricity:45",
+     [SCREW, PLIERS, it(2, "EngineParts"), it(2, "SheetMetal"), it(4, "ElectronicsScrap"), it(2, "ElectricWire"), it(1, "MetalPipe"), it(4, "Screws")],
+     ["item 1 Base.EngineParts", "item 2 Base.ElectronicsScrap", "item 1 Base.SheetMetal"], "adv", scrapTime=450)
+make("heater", "ground", "standard", 500, "Electricity:3", "Electricity:25",
+     [SCREW, PLIERS, it(2, "ElectronicsScrap"), it(1, "SheetMetal"), it(2, "ElectricWire"), it(1, "SmallSheetMetal"), it(3, "Screws")],
+     ["item 1 Base.ElectronicsScrap", "item 1 Base.SheetMetal"], "basic", scrapTime=300, scrapXp="Electricity:8")
+
 # Items that are not parts: (name, recipe lines) -- the gear kits and nothing else is crafted
 MISC_RECIPES = [
     ("DazedGearKitLow", 300, "Electricity:2", "Electricity:12", [SCREW, it(1, "ElectronicsScrap"), it(2, "MetalBar"), it(2, "Screws")], "basic"),

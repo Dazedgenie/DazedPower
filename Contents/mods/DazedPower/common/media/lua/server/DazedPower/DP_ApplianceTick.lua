@@ -1,4 +1,4 @@
---[[ DazedPower -- the electric fence and the room cooler on the authority: sprites and status each controller tick,
+--[[ DazedPower -- the electric fence, the room cooler and the space heater on the authority: sprites and status each controller tick,
      zaps every few ticks, the cooler's food credit every ten game minutes (their watts are billed by DPM_Bridge via A.draw). ]]
 
 if isClient() then return end
@@ -23,7 +23,7 @@ end
 
 -- Shared and never written: listOf runs for every controller every few ticks, so it hands this out instead of a new table.
 local EMPTY = {}
-local KINDS = { "fence", "cooler" }
+local KINDS = { "fence", "cooler", "heater" }
 
 local function listOf(rec, kind)
     return (rec and rec.dpm and rec.dpm[kind]) or EMPTY
@@ -39,14 +39,15 @@ end
 
 --------------------------------------------------------------- billing
 
---- What the wired fences and coolers draw on this controller: watts per kind while running, rated watts idle.
+--- What the wired fences, coolers and heaters draw on this controller: watts per kind while running, rated watts idle.
 function A.draw(rec)
     local active, idle, total = {}, {}, 0
     for _, kind in ipairs(KINDS) do
         for _, o in ipairs(listOf(rec, kind)) do
             if alive(o) then
                 local d = P.data(o)
-                local w = (kind == "fence") and A.FENCE_IDLE_W or A.coolerWatts(d.cooled or 0)
+                local w = (kind == "fence") and A.FENCE_IDLE_W or (kind == "heater") and A.HEATER_W
+                          or A.coolerWatts(d.cooled or 0)
                 if d.live == true and not (kind == "cooler" and d.noRoom) then
                     active[kind] = (active[kind] or 0) + w
                     total = total + w
@@ -69,6 +70,7 @@ function A.refresh(o, kind)
     if kind == "cooler" then
         noRoom = (A.roomOf(o) == nil) or nil
         if noRoom then live = false end
+        A.noteCooler(o)
     end
     local changed = (d.live == true) ~= (live == true) or d.why ~= why or d.noRoom ~= noRoom
     d.live, d.why, d.noRoom = live or nil, why, noRoom

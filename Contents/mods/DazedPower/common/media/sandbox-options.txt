@@ -213,3 +213,21 @@ option DazedPower.FenceDamage
     page = DazedPower,
     translation = DazedPower_FenceDamage,
 }
+
+/* Climate (0.5.0). ColdStarts: a gas engine below -5 C at its own square may fail to start (60% at -25 C).
+   RoomHeat: with Dazed Climate, a running space heater warms its room and a running room cooler chills it. */
+option DazedPower.ColdStarts
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_ColdStarts,
+}
+
+option DazedPower.RoomHeat
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_RoomHeat,
+}

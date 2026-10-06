@@ -1,4 +1,4 @@
---[[ DazedPower -- the electric fence's and the room cooler's menu rows, and the fence's zap on a client.
+--[[ DazedPower -- the electric fence's, the room cooler's and the space heater's menu rows, and the fence's zap on a client.
 
      The rows only read: the state the server last wrote (on or off, and why), the fence's zaps today
      and the containers the cooler keeps cold. A zap in multiplayer arrives as `fenceZap` and is applied
@@ -45,6 +45,27 @@ function AM.coolerMenu(menu, obj)
     else
         infoRow(menu, P.txt("ContextMenu_DazedPower_CoolerCount", P.data(obj).cooled or 0))
     end
+end
+
+--- The heater's rows: its state and its switch. The switch is greyed for anyone the pick-up lock refuses.
+function AM.heaterMenu(menu, worldobjects, obj, playerObj)
+    infoRow(menu, AM.stateText(obj, "heater"))
+    local on = A.switchedOn(P.data(obj))
+    local C = DazedPower.Context
+    local opt = menu:addOption(getText(on and "ContextMenu_DazedPower_SwitchOff" or "ContextMenu_DazedPower_SwitchOn"), worldobjects,
+                               AM.onHeaterSwitch, obj, playerObj, not on)
+    if C and C.icon then C.icon(opt, menu, on and "switchOff" or "switchOn") end
+    local lock = C and C.lockOf and C.lockOf(playerObj, obj)
+    if lock then
+        opt.notAvailable = true
+        if C.tip then opt.toolTip = C.tip(getText(lock)) end
+    end
+end
+
+function AM.onHeaterSwitch(worldobjects, obj, playerObj, on)
+    local C = DazedPower.Context
+    if C and C.approach and not C.approach(playerObj, obj) then return end
+    if DP_HeaterSwitch and DP_HeaterSwitch.new then ISTimedActionQueue.add(DP_HeaterSwitch:new(playerObj, obj, on)) end
 end
 
 --------------------------------------------------------------- the zap, multiplayer

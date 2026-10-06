@@ -340,8 +340,8 @@ function G.seed(obj, item, info)
     -- It starts dark; its controller lights it once it is wired in. A
     -- rotation keeps its system, and its lamp with it.
     if info.kind == "transformer" and not d.sys then P.setState(obj, "off") end
-    -- A fence or cooler likewise starts dark until its system's tick lights it.
-    if (info.kind == "fence" or info.kind == "cooler") and not d.sys then
+    -- A fence, cooler or heater likewise starts dark until its system's tick lights it.
+    if (info.kind == "fence" or info.kind == "cooler" or info.kind == "heater") and not d.sys then
         P.setState(obj, "off")
         d.live, d.why = nil, nil
     end

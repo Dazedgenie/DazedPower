@@ -569,14 +569,22 @@ function DPM_PropaneSwitch:complete()
     if mode ~= "off" and mode ~= "on" and mode ~= "auto" then return true end
     if mode == "auto" and not spec.auto then return true end
     d.mode = mode
+    -- A hand on the switch clears a cold failure, so AUTO tries again and ON rolls afresh.
+    d.coldFail = nil
     if mode == "off" then
         d.running = false
     elseif mode == "on" then
         local g = { tier = info.tier, kind = info.kind, mode = "on", condition = d.condition, lpg = d.lpg, feedTank = d.feedTank,
                     lineTx = d.lineTx, lineTy = d.lineTy, lineTz = d.lineTz,
-                    t1Type = d.t1Type, t1Fill = d.t1Fill, t2Type = d.t2Type, t2Fill = d.t2Fill }
+                    t1Type = d.t1Type, t1Fill = d.t1Fill, t2Type = d.t2Type, t2Fill = d.t2Fill,
+                    running = d.running, ambient = (not d.running) and E.engineAir(self.object) or nil }
         d.running = M.propaneSwitch(g, nil)
         d.noFuel = g.noFuel
+        d.coldFail = g.coldFail
+        d.mode = g.mode
+        if g.coldFail and DazedCore and DazedCore.Note then
+            DazedCore.Note.say(self.character, "IGUI_DazedPower_GenColdNote", nil, true)
+        end
     end
     R.setVariant(self.object, ((d.condition or 100) <= 35 and "broken") or (d.running and "running") or "off")
     self.object:transmitModData()
