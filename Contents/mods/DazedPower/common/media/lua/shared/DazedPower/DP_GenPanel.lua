@@ -164,14 +164,17 @@ function GP.start(obj, info, gd)
         g[f] = gd[f]
     end
     if not g.running and E and E.engineAir then g.ambient = E.engineAir(obj) end
+    g.now = E and E.worldHours and E.worldHours() or nil
     local run = MM.propaneSwitch(g, nil)
-    gd.running, gd.noFuel, gd.coldFail = run, g.noFuel, g.coldFail
+    gd.running, gd.noFuel, gd.coldFail, gd.coldFailAt = run, g.noFuel, g.coldFail, g.coldFailAt
     return run
 end
 
-local function setMode(obj, mode)
+-- A press on the page clears a cold failure (AUTO tries afresh, OFF shows OFF); `keepCold` keeps one just made.
+local function setMode(obj, mode, keepCold)
     local d = P.data(obj)
     d.mode = mode
+    if not keepCold then d.coldFail, d.coldFailAt = nil, nil end
     if mode == "off" then d.running = false end
     if DazedPower.More.Parts and DazedPower.More.Parts.setVariant then
         local broken = (d.condition or 100) <= GP.FAULT_AT
@@ -218,14 +221,13 @@ function GP.command(playerObj, ctrl, cmd, args)
                 if (gd.condition or 100) <= GP.FAULT_AT or MM.propaneFuel(gd) <= 0 then return false end
                 if not GP.start(obj, info, gd) then
                     if DazedCore.Note then DazedCore.Note.say(playerObj, "IGUI_DazedPower_GenColdNote", nil, true) end
-                    setMode(obj, "off")
+                    setMode(obj, "off", true)
                     d.bkSig = nil
                     ctrl:transmitModData()
                     return true
                 end
                 setMode(obj, "on")
             else
-                gd.coldFail = nil
                 setMode(obj, "off")
             end
         end

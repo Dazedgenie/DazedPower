@@ -326,6 +326,13 @@ def cell_from_pack(pack, name):
     return None
 
 
+def pow2(n):
+    """The smallest power of two at least n, at most 2048."""
+    p = 1
+    while p < n and p < 2048: p *= 2
+    return p
+
+
 def shelf_pages(cells, first=0):
     """Shelf-pack the cells onto as many 2048x2048 pages as they need (tallest first), numbered from `first`."""
     sprites = []
@@ -348,6 +355,10 @@ def shelf_pages(cells, first=0):
         x += e.w + 2; shelf = max(shelf, e.h)
     out = []
     for k, pg in enumerate(pages):
+        if k == len(pages) - 1:
+            # The last page holds only what is left over, so it shrinks to the power-of-two size that fits it.
+            used_w = max(e.x + e.w for e in pg["entries"]); used_h = max(e.y + e.h for e in pg["entries"])
+            pg["img"] = pg["img"].crop((0, 0, pow2(used_w), pow2(used_h)))
         buf = io.BytesIO(); pg["img"].save(buf, "PNG")
         out.append(PackPage("dazedpower_page%d" % (first + k), buf.getvalue(), pg["entries"], 1))
     return out

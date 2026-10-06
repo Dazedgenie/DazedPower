@@ -106,12 +106,20 @@ return function(check, E)
     MM.coldRoll = function() return 0.99 end
     g = gen({ ambient = -25, coldFail = true })
     check(MM.propaneSwitch(g, nil) == true and g.coldFail == nil, "a start that works clears the failure")
-    -- AUTO locks out after a failed start while the cold lasts.
+    -- AUTO waits an hour after a failed start, then tries again, rolling each time.
     MM.coldRoll = function() return 0 end
-    g = gen({ mode = "auto", ambient = -20 })
-    check(MM.propaneSwitch(g, 10) == false and g.coldFail and g.mode == "auto", "AUTO fails a cold start and stays on AUTO")
+    g = gen({ mode = "auto", ambient = -6, now = 100 })
+    check(MM.propaneSwitch(g, 10) == false and g.coldFail and g.coldFailAt == 100 and g.mode == "auto", "AUTO fails a cold start, stamped, stays on AUTO")
     MM.coldRoll = function() return 0.99 end
-    check(MM.propaneSwitch(g, 10) == false, "AUTO does not retry while it is still that cold")
+    g.now = 100.5
+    check(MM.propaneSwitch(g, 10) == false, "AUTO does not retry within the hour")
+    MM.coldRoll = function() return 0 end
+    g.now = 101
+    check(MM.propaneSwitch(g, 10) == false and g.coldFailAt == 101, "after an hour it tries again, and a second failure restamps")
+    MM.coldRoll = function() return 0.99 end
+    g.now = 102
+    check(MM.propaneSwitch(g, 10) == true and g.coldFail == nil and g.coldFailAt == nil, "a retry that works runs and clears the failure")
+    g = gen({ mode = "auto", ambient = -20, coldFail = true, coldFailAt = 100, now = 100.2 })
     g.ambient = 2
     check(MM.propaneSwitch(g, 10) == true and g.coldFail == nil, "AUTO starts once the air warms, and clears the failure")
     g = gen({ mode = "off", ambient = 3, coldFail = true })
@@ -136,8 +144,29 @@ return function(check, E)
     MM.coldRoll = function() return 0.99 end
     gd = { condition = 100, lpg = 5, mode = "off", coldFail = true }
     check(GP.start(engine, { tier = "salvaged", kind = "propane" }, gd) == true and gd.running and gd.coldFail == nil, "and can succeed")
+    -- An away system's engine has no square to read, so the county's air decides its start.
+    local D = DazedPower.Distrib
+    local bank = { cells = 0, charge = 0, capacity = 0, health = 1 }
+    local snapGen = { tier = "salvaged", kind = "propane", mode = "on", lpg = 5, condition = 100 }
+    local store = ModData.getOrCreate(D.REMOTE_TAG)
+    store.coldTest = { bank = bank, dpm = { turbines = {}, boilers = {}, pedals = {}, gens = { snapGen }, solar = {}, hydros = {} } }
+    MM.coldRoll = function() return 0 end
+    M.step({ arrays = {}, bank = bank, load = 0, online = true }, 1 / 60, { temperature = -25, hour = 12, dayOfYear = 1, cloud = 0 })
+    check(snapGen.coldFail == true and snapGen.mode == "off" and type(snapGen.coldFailAt) == "number", "an unloaded engine rolls against the county's air")
+    store.coldTest = nil
     MM.coldRoll = roll0
-    check(DazedPower.More.Bridge.GEN_FIELDS[#DazedPower.More.Bridge.GEN_FIELDS] == "coldFail", "the failure is saved with the engine")
+    local GF = DazedPower.More.Bridge.GEN_FIELDS
+    check(GF[#GF - 1] == "coldFail" and GF[#GF] == "coldFailAt", "the failure and its hour are saved with the engine")
+
+    -- A failure in the tick is told to the players within ten squares, on the authority.
+    local said, say0, op0 = {}, DazedCore.Note.say, getOnlinePlayers
+    DazedCore.Note.say = function(pl, key) said[#said + 1] = { pl, key } end
+    local function player(x, y) return { getX = function() return x end, getY = function() return y end, getZ = function() return 0 end } end
+    local near, far = player(45, 44), player(70, 40)
+    getOnlinePlayers = function() return { size = function() return 2 end, get = function(_, i) return i == 0 and near or far end } end
+    DazedPower.More.Bridge.coldNote(engine)
+    check(#said == 1 and said[1][1] == near and said[1][2] == "IGUI_DazedPower_GenColdNote", "only the player near the engine hears it")
+    DazedCore.Note.say, getOnlinePlayers = say0, op0
 
     ------------------------------------------------------------ the space heater
     check(P.KINDS[#P.KINDS] == "heater" and #P.ROWS == 167, "the heater is appended at the end of the sheet")
@@ -196,7 +225,30 @@ return function(check, E)
     check(heatOf.heater == 18 and heatOf.cooler == -12, "Dazed Climate reads the heater's warmth and the cooler's chill")
     A.outsideCoolers[cooler] = "1,2,0"
     check(roomSrc[1]({ key = "1,2,0" }) == -12 and roomSrc[1]({ key = "9,9,0" }) == 0, "a cooler hung from outside chills the room it serves")
+    -- Cold storage: only the cooler's source says it cools, and only while it is powered and serves a room.
+    check(objSrc[1].cools == nil and type(objSrc[2].cools) == "function", "the cooler's source answers cools, the heater's does not")
+    local status0, roomOf0 = A.status, A.roomOf
+    A.roomOf = function() return {} end
+    A.status = function() return true end
+    check(objSrc[2].cools(cooler) and A.outsideCoolerCools({ key = "1,2,0" }) and not A.outsideCoolerCools({ key = "9,9,0" }),
+          "a running cooler in a room keeps the food cold")
+    SandboxVars = { DazedPower = { RoomHeat = false } }
+    check(objSrc[2].cools(cooler), "whatever the RoomHeat option says")
+    SandboxVars = sv0
+    A.status = function() return false, "IGUI_DazedPower_ApplOffline" end
+    check(not objSrc[2].cools(cooler) and not A.outsideCoolerCools({ key = "1,2,0" }), "an unpowered cooler keeps nothing cold")
+    A.status, A.roomOf = status0, roomOf0
     A.outsideCoolers[cooler] = nil
+
+    -- Placing or lifting one marks its Dazed Climate room stale.
+    local def = { getX = function() return 3 end, getY = function() return 4 end, getZ = function() return 0 end }
+    local roomSq = E.square(46, 40, 0)
+    roomSq.getRoom = function() return { getRoomDef = function() return def end } end
+    local placed = E.object(P.sprite("heater", "ground", "standard", "off", "S"), roomSq)
+    DazedClimate.Rooms.info = { ["3,4,0"] = { stale = false } }
+    DazedClimate.Rooms.keyOf = function(d) return d:getX() .. "," .. d:getY() .. "," .. d:getZ() end
+    A.markRoomStale(placed)
+    check(DazedClimate.Rooms.info["3,4,0"].stale == true, "the heater's room is read again")
     DazedClimate = nil
 
     getClimateManager, SandboxVars, getGameTime = cm0, sv0, gt0

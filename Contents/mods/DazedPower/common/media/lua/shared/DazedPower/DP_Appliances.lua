@@ -207,6 +207,22 @@ function A.outsideCoolerHeat(info)
     return total
 end
 
+--- Is this cooler keeping its room's food cold now? The same test its food pass uses, whatever RoomHeat says.
+function A.coolerKeepsCold(o)
+    return (A.status(o, "cooler")) == true and A.roomOf(o) ~= nil
+end
+
+--- Dazed Climate's cold-storage question for a room: does a running cooler hung from outside serve it?
+function A.outsideCoolerCools(info)
+    local key = type(info) == "table" and info.key
+    if not key then return false end
+    for o, k in pairs(A.outsideCoolers) do
+        local ix = P.try(o, "getObjectIndex")
+        if k == key and type(ix) == "number" and ix >= 0 and A.coolerKeepsCold(o) then return true end
+    end
+    return false
+end
+
 --- Dazed Climate's object sources for the heater and the cooler, as it takes them.
 function A.climateSources()
     local out = {}
@@ -216,7 +232,23 @@ function A.climateSources()
             heat = function(o) return A.roomHeat(kind, rawData(o)) end,
         }
     end
+    -- Its cold storage asks the cooler whether it is already keeping the food cold.
+    out[2].cools = function(o) return A.coolerKeepsCold(o) end
     return out
+end
+
+--- Have Dazed Climate read the rooms around a heater or cooler again now, after one is placed or lifted.
+function A.markRoomStale(obj)
+    local Rm = DazedClimate and DazedClimate.Rooms
+    if not (Rm and type(Rm.info) == "table" and type(Rm.keyOf) == "function") then return end
+    local sq = P.try(obj, "getSquare")
+    local rooms = { sq and P.try(sq, "getRoom") or false, A.roomOf(obj) or false }
+    for i = 1, 2 do
+        local def = rooms[i] and P.try(rooms[i], "getRoomDef")
+        local ok, key = pcall(Rm.keyOf, def)
+        local info = def and ok and key and Rm.info[key]
+        if info then info.stale = true end
+    end
 end
 
 --- Hand the sources to Dazed Climate once, if it is loaded. True once they are registered.
@@ -228,7 +260,7 @@ function A.registerClimate()
         local ok, err = pcall(R.addObjectSource, src)
         if not ok then print("DazedPower: Dazed Climate refused a heat source: " .. tostring(err)) end
     end
-    if type(R.addRoomSource) == "function" then pcall(R.addRoomSource, A.outsideCoolerHeat) end
+    if type(R.addRoomSource) == "function" then pcall(R.addRoomSource, A.outsideCoolerHeat, A.outsideCoolerCools) end
     A.climateDone = true
     return true
 end

@@ -58,6 +58,33 @@ local PEDAL_FRESH_MS = 2500
 -- The controller Dazed Power is stepping right now, if any.
 local CTX = nil
 
+-- The world clock in hours (also what a cold failure is stamped with).
+local function hoursNow()
+    local gt = getGameTime and getGameTime()
+    return gt and gt:getWorldAgeHours() or 0
+end
+
+B.COLD_NOTE_RANGE = 10        -- squares: who hears an engine fail to start in the cold
+
+--- Tell the players near an engine that it would not start in the cold. Authority only.
+function B.coldNote(obj)
+    local sq = obj and P.try(obj, "getSquare")
+    if not (sq and DazedCore and DazedCore.Note) then return end
+    local players = {}
+    local list = getOnlinePlayers and getOnlinePlayers()
+    if list and list:size() > 0 then
+        for i = 0, list:size() - 1 do players[#players + 1] = list:get(i) end
+    elseif getSpecificPlayer then
+        for i = 0, ((getNumActivePlayers and getNumActivePlayers()) or 1) - 1 do players[#players + 1] = getSpecificPlayer(i) end
+    end
+    for _, pl in ipairs(players) do
+        if pl and math.abs(pl:getX() - sq:getX()) <= B.COLD_NOTE_RANGE and math.abs(pl:getY() - sq:getY()) <= B.COLD_NOTE_RANGE
+                and math.floor(pl:getZ()) == sq:getZ() then
+            DazedCore.Note.say(pl, "IGUI_DazedPower_GenColdNote", nil, true)
+        end
+    end
+end
+
 local function try(obj, method, ...)
     if not obj or not obj[method] then return nil end
     local ok, v = pcall(obj[method], obj, ...)
@@ -130,14 +157,14 @@ end
 --  can mutate them and a replay can write them back.
 local genEntry, genEffects
 B.GEN_FIELDS = { "mode", "running", "lpg", "feedTank", "lineTx", "lineTy", "lineTz", "t1Type", "t1Fill", "t1Cond", "t2Type", "t2Fill",
-                 "t2Cond", "condition", "startPct", "stopPct", "hold", "noFuel", "coldFail" }
+                 "t2Cond", "condition", "startPct", "stopPct", "hold", "noFuel", "coldFail", "coldFailAt" }
 genEntry = function(obj, info, d)
     local g = { obj = obj, tier = info.tier, kind = info.kind, amp = d.amp == true }
     for _, f in ipairs(B.GEN_FIELDS) do g[f] = d[f] end
     if g.condition == nil then g.condition = 100 end
     -- The air at the engine, for a cold start or to clear an old failure: only a stopped one that may start needs it.
     local env = DazedPower.Env
-    if not g.running and (g.mode ~= "off" or g.coldFail) and env and env.engineAir then g.ambient = env.engineAir(obj) end
+    if not g.running and (g.mode ~= "off" or g.coldFail) and env and env.engineAir then g.liveAir = env.engineAir(obj) end
     g.fuel0 = MM.propaneFuel(g)      -- what it held before this step, for the GEN page's fuel today
     return g
 end
@@ -389,9 +416,16 @@ local function stepSources(src, sys, dt, env, invEff, harvest)
         local need = math.max(0, drawW - solarW - windW - steamW - (src.pedalW or 0))
         if dt > 0 and chargeEff > 0 then need = need + room / dt / chargeEff end
         src.soc = soc
+        local coldOn = P.sandbox("ColdStarts") ~= false
         for i = 1, #gens do
             local g = gens[i]
+            -- Its own air when loaded, else the county's (an away snapshot or an engine read while running); stamped with this step's hour.
+            g.ambient = g.liveAir
+            if g.ambient == nil and coldOn and not g.running then g.ambient = env.temperature end
+            g.now = src.at
+            local failedAt = g.coldFailAt
             MM.propaneSwitch(g, soc)
+            g.coldNote = (g.coldFail and g.coldFailAt ~= failedAt) or nil
             local w, ran, leak = MM.propaneStep(g, dt, (invEff > 0) and need / invEff or 0)
             g.watts, g.ran, g.leak = w, ran, leak
             need = math.max(0, need - w * invEff)
@@ -531,8 +565,15 @@ if not B.wrappedStep then
         local invEff = sys.inverterEff or UM.INVERTER_EFF or 0.93
         local harvest = sys.harvest or 1.0
         src.invEff = invEff
+        src.at = (CTX and CTX.at) or hoursNow()
         -- what the sources make this step, already at the bus: the model adds it to the sun's
         sys.sourceW = stepSources(src, sys, dt, env or {}, invEff, harvest)
+        -- A failed cold start in a live step is told to whoever stands near; replays and away systems stay quiet.
+        for i = 1, #(src.gens or {}) do
+            local g = src.gens[i]
+            if g.coldNote and CTX and CTX.live and g.obj then pcall(B.coldNote, g.obj) end
+            g.coldNote = nil
+        end
         local ok, a, b = pcall(step0, sys, dt, env)
         sys.sourceW = nil
         if not ok then error(a, 0) end
@@ -885,7 +926,7 @@ if not B.wrappedUpdate then
     local update0 = S.updateController
     function S.updateController(rec, dt, hoursAgo, wet)
         local outer = CTX
-        CTX = { rec = rec }
+        CTX = { rec = rec, at = hoursNow() - math.max(0, hoursAgo or 0), live = (hoursAgo or 0) <= 0 }
         local ok, err = pcall(update0, rec, dt, hoursAgo, wet)
         local ctx = CTX
         CTX = outer
@@ -1050,7 +1091,10 @@ local function settleLoose(obj, now)
         local sq = obj:getSquare()
         d.indoors = (sq and not ME.isOutside(sq)) or nil
         local g = genEntry(obj, info, d)
+        g.ambient, g.now = g.liveAir, now
+        local failedAt = g.coldFailAt
         MM.propaneSwitch(g, nil)
+        if g.coldFail and g.coldFailAt ~= failedAt then pcall(B.coldNote, obj) end
         g.watts, g.ran, g.leak = MM.propaneStep(g, dt, 0)
         g.ran = dt > 0 and g.ran or 0
         for _, f in ipairs(B.GEN_FIELDS) do d[f] = g[f] end

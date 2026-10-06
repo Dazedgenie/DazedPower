@@ -796,6 +796,7 @@ M.COLD_START_FROM = -5         -- no failed starts at or above this, C at the en
 M.COLD_START_WORST = -25       -- the chance is at its highest from here down
 M.COLD_START_MAX = 0.60        -- the chance at COLD_START_WORST for a salvaged engine
 M.COLD_START_GRADE = { makeshift = 1.25, salvaged = 1.0, workshop = 0.75 }
+M.COLD_RETRY_HOURS = 1         -- AUTO tries a failed cold start again after this long
 
 --- The chance a start fails at `tempC` for a grade: 0 at -5 C rising linearly to 60% at -25 C, scaled by grade.
 function M.coldStartChance(tempC, tier)
@@ -808,6 +809,13 @@ end
 function M.coldRoll()
     if ZombRand then return ZombRand(10000) / 10000 end
     return math.random()
+end
+
+--- May AUTO try again after a failed cold start? `g.now` and `g.coldFailAt` are world hours; a missing stamp may retry.
+function M.coldRetryDue(g)
+    if type(g.now) ~= "number" then return false end
+    if type(g.coldFailAt) ~= "number" or g.now < g.coldFailAt then return true end
+    return g.now - g.coldFailAt >= M.COLD_RETRY_HOURS
 end
 
 --- Does this start fail from the cold? `g.ambient` is the air at the engine, nil when cold starts are off.
@@ -842,18 +850,18 @@ function M.propaneSwitch(g, soc)
         run = false
     end
     -- Warm enough again: a failure left on a stopped engine is history, not its state.
-    if g.coldFail and g.ambient ~= nil and M.coldStartChance(g.ambient, g.tier) <= 0 then g.coldFail = nil end
+    if g.coldFail and g.ambient ~= nil and M.coldStartChance(g.ambient, g.tier) <= 0 then g.coldFail, g.coldFailAt = nil, nil end
     -- A stopped engine that should start rolls for the cold (g.ambient); a failed ON goes back to OFF, to be tried by hand.
     if run and not g.running then
-        -- AUTO waits out a failure until the cold would no longer stop it.
-        if mode == "auto" and g.coldFail and M.coldStartChance(g.ambient, g.tier) > 0 then
+        -- AUTO waits an hour after a failure (g.now, world hours) before it cranks again, and each try rolls afresh.
+        if mode == "auto" and g.coldFail and M.coldStartChance(g.ambient, g.tier) > 0 and not M.coldRetryDue(g) then
             run = false
         elseif M.coldStartFails(g) then
             run = false
-            g.coldFail = true
+            g.coldFail, g.coldFailAt = true, g.now
             if mode == "on" then g.mode = "off" end
         else
-            g.coldFail = nil
+            g.coldFail, g.coldFailAt = nil, nil
         end
     end
     g.running = run

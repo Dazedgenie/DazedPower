@@ -85,12 +85,14 @@ DazedPower: ready -- 668/668 tiles, 67/67 items
     DazedCore's climate lookup, so with Dazed Climate a battery rack in a heated room keeps its capacity on a freezing
     day, and solar panels and windmills see Dazed Climate's air. Without it nothing changes.
   - **Cold starts:** below -5 C at the engine a propane or petrol generator can fail to start: up to 60% at -25 C,
-    more for Makeshift, less for Workshop. A failed start stays off and says so (menu, GEN page COLD, a note); ON goes
-    back to OFF, AUTO waits until it is warmer or someone switches it. Sandbox `ColdStarts`.
+    more for Makeshift, less for Workshop. A failed start stays off and says so (menu, GEN page COLD, a note to anyone
+    within 10 squares); ON goes back to OFF, AUTO tries again every in-game hour. Engines in unloaded areas roll
+    against the outdoor temperature. Sandbox `ColdStarts`.
   - **Electric space heater** (Dazed Power Handbook, Electricity 3): a floor appliance with an on/off switch, 1500 W
     while running. Found new in tool and electronics stores. Placeholder art.
   - **Room heat:** with Dazed Climate the heater warms its room and the room cooler chills its room's air. Sandbox
-    `RoomHeat`.
+    `RoomHeat`. Dazed Climate's cold storage is told when a cooler is really keeping food cold, so food is not
+    cooled twice, and placing or lifting a heater or cooler has Dazed Climate read the room again at once.
   - Tools: `dp_taxonomy.py` and `build_recipes.py` now list the fence and cooler too; `build_sheet.py --append`.
   - Tests: `tools/tests/climate_power_test.lua`; the load test's sheet and item counts are current again.
 
