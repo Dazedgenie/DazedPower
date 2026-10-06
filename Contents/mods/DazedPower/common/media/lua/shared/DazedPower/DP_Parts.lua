@@ -52,6 +52,8 @@ P.SANDBOX_DEFAULTS = {
     CableTilesPerWire = 4,
     LiveShock = true,
     FenceDamage = true,
+    ColdStarts = true,
+    RoomHeat = true,
 }
 
 -- The Dazed Utilities preset values for this page: { easy, standard, realistic, hardcore } per option.
@@ -65,6 +67,7 @@ P.PRESETS = {
     LiveShock = { false, true, true, true }, RigChance = { 25, 15, 10, 5 },
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
     FenceDamage = { true, true, true, true },
+    ColdStarts = { false, true, true, true }, RoomHeat = { true, true, true, true },
 }
 if DazedCore and DazedCore.Preset then DazedCore.Preset.register("DazedPower", P.PRESETS) end
 
@@ -177,7 +180,7 @@ P.FACING_INDEX = { E = 0, S = 1, W = 2, N = 3 }
 -- APPEND ONLY, and in the same order as tools/dp_taxonomy.py: a sprite index is row * COLS + facing, so a
 -- kind inserted anywhere but the end repoints every object already standing in a save.
 P.KINDS = { "array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler" }
+            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater" }
 P.KIND_SET = {}
 for _, k in ipairs(P.KINDS) do P.KIND_SET[k] = true end
 -- The mount is the form factor: a static, tracking or 2x2 array; a floor or wall bank; a garden or street lamp.
@@ -191,7 +194,7 @@ P.MOUNTS = {
     windsock = { "ground" }, vane = { "ground" },
     propane = { "ground" }, petrol = { "ground" },
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
-    fence = { "ground" }, cooler = { "wall" },
+    fence = { "ground" }, cooler = { "wall" }, heater = { "ground" },
 }
 local THREE = { "makeshift", "salvaged", "workshop" }
 P.TIERS = {
@@ -203,7 +206,7 @@ P.TIERS = {
     windsock = { "basic" }, vane = { "basic" },
     propane = THREE, petrol = THREE,
     gauge = { "standard" }, rod = { "standard" }, bench = { "standard" }, hydro = { "standard" },
-    fence = { "standard" }, cooler = { "standard" },
+    fence = { "standard" }, cooler = { "standard" }, heater = { "standard" },
 }
 P.STATES = {
     array = { "clear", "snow", "cracked" },
@@ -223,6 +226,7 @@ P.STATES = {
     hydro = { "still", "turning" },                            -- water under the wheel
     fence = { "off", "on" },                                   -- live wire
     cooler = { "off", "on" },                                  -- cooling its room
+    heater = { "off", "on" },                                  -- switched on and powered
     -- bank has no flat list: see P.statesFor.
 }
 -- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
@@ -331,6 +335,7 @@ P.ITEM = {
     hydro = { ground = { standard = "Base.DazedWaterWheel" } },
     fence = { ground = { standard = "Base.DazedElectricFence" } },
     cooler = { wall = { standard = "Base.DazedRoomCooler" } },
+    heater = { ground = { standard = "Base.DazedSpaceHeater" } },
 }
 
 -- Items that are not world parts.

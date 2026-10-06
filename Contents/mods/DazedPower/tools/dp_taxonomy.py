@@ -21,12 +21,13 @@ GROUP = "Dazed Power"
 PIECES_XL = 4                       # a 2x2 array: pieces 1..4 = NW, NE, SW, SE of its footprint
 
 KINDS = ["array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-         "propane", "petrol", "gauge", "rod", "bench", "hydro"]
+         "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater"]
 MOUNTS = {
     "array": ["ground", "tracker", "xl"], "bank": ["ground", "wall"], "controller": ["ground"],
     "transformer": ["ground"], "lamp": ["garden", "street"], "pedal": ["ground"], "windmill": ["ground"],
     "steam": ["ground"], "windsock": ["ground"], "vane": ["ground"], "propane": ["ground"], "petrol": ["ground"],
     "gauge": ["wall"], "rod": ["ground"], "bench": ["ground"], "hydro": ["ground"],
+    "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"],
 }
 THREE = ["makeshift", "salvaged", "workshop"]
 TIERS = {
@@ -34,6 +35,7 @@ TIERS = {
     "lamp": ["makeshift", "workshop"], "pedal": THREE, "windmill": THREE, "steam": THREE,
     "windsock": ["basic"], "vane": ["basic"], "propane": THREE, "petrol": THREE,
     "gauge": ["standard"], "rod": ["standard"], "bench": ["standard"], "hydro": ["standard"],
+    "fence": ["standard"], "cooler": ["standard"], "heater": ["standard"],
 }
 STATES = {
     "array": ["clear", "snow", "cracked"], "controller": ["off", "on"], "transformer": ["off", "on"],
@@ -41,6 +43,7 @@ STATES = {
     "steam": ["cold", "warming", "running", "broken"], "windsock": ["limp", "half", "full"], "vane": ["set"],
     "propane": ["off", "running", "broken"], "petrol": ["off", "running", "broken"],
     "gauge": ["off", "low", "mid", "full"], "rod": ["set"], "bench": ["off", "on"], "hydro": ["still", "turning"],
+    "fence": ["off", "on"], "cooler": ["off", "on"], "heater": ["off", "on"],
 }
 BANK_CELLS = {"ground": {"makeshift": 3, "salvaged": 6, "workshop": 8}, "wall": {"makeshift": 2, "salvaged": 3, "workshop": 4}}
 
@@ -93,6 +96,9 @@ ITEM = {
     "rod": {"ground": {"standard": "DazedGroundingRod"}},
     "bench": {"ground": {"standard": "DazedChargerBench"}},
     "hydro": {"ground": {"standard": "DazedWaterWheel"}},
+    "fence": {"ground": {"standard": "DazedElectricFence"}},
+    "cooler": {"wall": {"standard": "DazedRoomCooler"}},
+    "heater": {"ground": {"standard": "DazedSpaceHeater"}},
 }
 # Items that are not world parts.
 OTHER_ITEMS = ["DazedPowerManual", "DazedPowerManualAdv", "DazedAlmanac", "DazedAmplifier",
@@ -113,6 +119,7 @@ NAME = {
     ("petrol", "ground"): "{T} Petrol Generator",
     ("gauge", "wall"): "Wall Power Gauge",
     ("rod", "ground"): "Grounding Rod", ("bench", "ground"): "Battery Charger Bench", ("hydro", "ground"): "Micro-Hydro Wheel",
+    ("fence", "ground"): "Electric Fence", ("cooler", "wall"): "Room Cooler", ("heater", "ground"): "Electric Space Heater",
 }
 # Weight in kg (PickUpWeight is kg x 10). Anything over 30 comes apart into parts (DazedCore.Heavy).
 WEIGHT = {
@@ -131,6 +138,7 @@ WEIGHT = {
     ("petrol", "ground"): {"makeshift": 30, "salvaged": 45, "workshop": 60},
     ("gauge", "wall"): {"standard": 1.5},
     ("rod", "ground"): {"standard": 4}, ("bench", "ground"): {"standard": 18}, ("hydro", "ground"): {"standard": 26},
+    ("fence", "ground"): {"standard": 12}, ("cooler", "wall"): {"standard": 14}, ("heater", "ground"): {"standard": 6},
 }
 
 

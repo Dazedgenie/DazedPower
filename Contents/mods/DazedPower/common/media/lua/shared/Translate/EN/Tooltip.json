@@ -97,5 +97,6 @@
     "Tooltip_DazedPower_AdminFill": "Admin: fill every battery rack in this system to its capacity.",
     "Tooltip_DazedPower_AdminReach": "Stand next to the controller to use this.",
     "Tooltip_DazedElectricFence": "Wire it to a controller. While the system is on and above its discharge floor, a zombie that comes up against it is knocked down and stunned, for a few watt-hours a zap. People are not hurt.",
-    "Tooltip_DazedRoomCooler": "Hang it on a wall inside a room and wire it to a controller. While powered, food in every container in that room keeps like it does in a fridge. Draws 100 W plus 10 W for each container."
+    "Tooltip_DazedRoomCooler": "Hang it on a wall inside a room and wire it to a controller. While powered, food in every container in that room keeps like it does in a fridge. Draws 100 W plus 10 W for each container. With Dazed Climate it also chills the room's air.",
+    "Tooltip_DazedSpaceHeater": "Stand it on the floor and wire it to a controller, then switch it on. Draws 1500 W while it runs. With Dazed Climate it warms the room it stands in."
 }

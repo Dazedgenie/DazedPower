@@ -40,5 +40,9 @@
     "Sandbox_DazedPower_LiveShock": "Shock when wiring a live system",
     "Sandbox_DazedPower_LiveShock_tooltip": "Running or cutting a cable while the controller is switched on can burn the player's hand. The chance grows with the system's load and falls with Electricity skill. Never lethal.",
     "Sandbox_DazedPower_FenceDamage": "Electric fence hurts zombies",
-    "Sandbox_DazedPower_FenceDamage_tooltip": "A zap from a live electric fence takes a little health off the zombie as well as knocking it down. Off: it only knocks them down."
+    "Sandbox_DazedPower_FenceDamage_tooltip": "A zap from a live electric fence takes a little health off the zombie as well as knocking it down. Off: it only knocks them down.",
+    "Sandbox_DazedPower_ColdStarts": "Cold starts",
+    "Sandbox_DazedPower_ColdStarts_tooltip": "Below -5 C at the engine, a propane or petrol generator can fail to start, up to a 60% chance at -25 C. Makeshift engines fail more often, Workshop ones less. Keep the engine warm or try again.",
+    "Sandbox_DazedPower_RoomHeat": "Heaters and coolers change room temperature",
+    "Sandbox_DazedPower_RoomHeat_tooltip": "Needs Dazed Climate. A running Electric Space Heater warms the room it stands in and a running Room Cooler chills its room's air."
 }

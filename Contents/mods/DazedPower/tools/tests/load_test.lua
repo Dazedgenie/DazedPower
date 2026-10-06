@@ -149,6 +149,7 @@ check(t.sourceWatts == 500 and t.generated >= 500, "source watts counted in gene
 
 dofile("features_test.lua")(check, E)
 dofile("systems_test.lua")(check, E)
+dofile("board_test.lua")(check, E)
 
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)

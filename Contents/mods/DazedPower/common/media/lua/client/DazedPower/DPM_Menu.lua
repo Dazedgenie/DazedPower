@@ -158,6 +158,8 @@ local function status(obj, info)
             if d.leaking then bits[#bits + 1] = getText("IGUI_DazedPower_GenLeaking") end
         elseif d.noFuel and M.propaneFuel(d) <= 0 then
             bits[#bits + 1] = getText(info.kind == "petrol" and "IGUI_DazedPower_GenNoFuelPetrol" or "IGUI_DazedPower_GasNoFuel")
+        elseif d.coldFail then
+            bits[#bits + 1] = getText("IGUI_DazedPower_GenColdFail")
         elseif d.mode == "auto" and spec.auto then
             bits[#bits + 1] = P.txt("IGUI_DazedPower_GenAutoWaiting", d.startPct or M.PROPANE_START_SOC)
         else

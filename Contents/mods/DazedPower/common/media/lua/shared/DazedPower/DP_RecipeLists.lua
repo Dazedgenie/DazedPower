@@ -27,6 +27,7 @@ DazedPower.RecipeLists = {
         "MakeDazedPowerGauge",
         "MakeDazedGroundingRod",
         "MakeDazedChargerBench",
+        "MakeDazedSpaceHeater",
         "MakeDazedGearKitLow",
         "MakeDazedGearKitStock",
     },

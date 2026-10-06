@@ -20,7 +20,7 @@ local UM = DazedPower.Model
 local MM = DazedPower.More.Model
 local try = P.try
 
-GP.MAX_ROWS = 4                 -- the rows the page has room for (DP_Window's GEN.rows)
+GP.MAX_ROWS = 4                 -- the generators the charge board pages through
 GP.STEP = 0.05                  -- one press of a level's - or +
 GP.FAULT_AT = 35                -- condition at or under which an engine shows FAULT (as the bridge's "broken")
 GP.UNIT = { propane = "kg", petrol = "L" }

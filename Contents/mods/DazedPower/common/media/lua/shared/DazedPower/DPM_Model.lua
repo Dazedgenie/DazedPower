@@ -790,6 +790,40 @@ function M.propaneAvailable(g)
     return M.propaneSpec(g.tier, g.kind).rated * (0.25 + 0.75 * cond) * M.ampPower(g.amp)
 end
 
+------------------------------------------------------------ cold starts
+
+M.COLD_START_FROM = -5         -- no failed starts at or above this, C at the engine
+M.COLD_START_WORST = -25       -- the chance is at its highest from here down
+M.COLD_START_MAX = 0.60        -- the chance at COLD_START_WORST for a salvaged engine
+M.COLD_START_GRADE = { makeshift = 1.25, salvaged = 1.0, workshop = 0.75 }
+M.COLD_RETRY_HOURS = 1         -- AUTO tries a failed cold start again after this long
+
+--- The chance a start fails at `tempC` for a grade: 0 at -5 C rising linearly to 60% at -25 C, scaled by grade.
+function M.coldStartChance(tempC, tier)
+    if type(tempC) ~= "number" or tempC >= M.COLD_START_FROM then return 0 end
+    local share = clamp((M.COLD_START_FROM - tempC) / (M.COLD_START_FROM - M.COLD_START_WORST), 0, 1)
+    return clamp(M.COLD_START_MAX * share * (M.COLD_START_GRADE[tier] or 1), 0, 1)
+end
+
+--- A number in 0..1 for the roll. Tests replace it; ZombRand where the engine has it, math.random otherwise.
+function M.coldRoll()
+    if ZombRand then return ZombRand(10000) / 10000 end
+    return math.random()
+end
+
+--- May AUTO try again after a failed cold start? `g.now` and `g.coldFailAt` are world hours; a missing stamp may retry.
+function M.coldRetryDue(g)
+    if type(g.now) ~= "number" then return false end
+    if type(g.coldFailAt) ~= "number" or g.now < g.coldFailAt then return true end
+    return g.now - g.coldFailAt >= M.COLD_RETRY_HOURS
+end
+
+--- Does this start fail from the cold? `g.ambient` is the air at the engine, nil when cold starts are off.
+function M.coldStartFails(g)
+    local chance = M.coldStartChance(g.ambient, g.tier)
+    return chance > 0 and M.coldRoll() < chance
+end
+
 --- Should it be running? Applies the switch: "off", "on", or (standby
 --  grades only) "auto" against the battery's charge `soc` (percent, nil if
 --  there is no bank to read). Sets g.running and returns it.
@@ -814,6 +848,21 @@ function M.propaneSwitch(g, soc)
         end
     else
         run = false
+    end
+    -- Warm enough again: a failure left on a stopped engine is history, not its state.
+    if g.coldFail and g.ambient ~= nil and M.coldStartChance(g.ambient, g.tier) <= 0 then g.coldFail, g.coldFailAt = nil, nil end
+    -- A stopped engine that should start rolls for the cold (g.ambient); a failed ON goes back to OFF, to be tried by hand.
+    if run and not g.running then
+        -- AUTO waits an hour after a failure (g.now, world hours) before it cranks again, and each try rolls afresh.
+        if mode == "auto" and g.coldFail and M.coldStartChance(g.ambient, g.tier) > 0 and not M.coldRetryDue(g) then
+            run = false
+        elseif M.coldStartFails(g) then
+            run = false
+            g.coldFail, g.coldFailAt = true, g.now
+            if mode == "on" then g.mode = "off" end
+        else
+            g.coldFail, g.coldFailAt = nil, nil
+        end
     end
     g.running = run
     return run

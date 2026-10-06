@@ -308,8 +308,8 @@ local function releaseClaim(nk, root)
         -- system's tick turns it off. One left behind by a lift upstream kept
         -- it lit with nothing behind it (live, 2026-09-24).
         if kind == "transformer" or kind == "gauge" then P.setState(obj, "off") end
-        -- A fence or cooler cut loose goes dark at once (DP_ApplianceTick only visits wired ones).
-        if kind == "fence" or kind == "cooler" then
+        -- A fence, cooler or heater cut loose goes dark at once (DP_ApplianceTick only visits wired ones).
+        if kind == "fence" or kind == "cooler" or kind == "heater" then
             P.setState(obj, "off")
             pd.live, pd.why = nil, nil
         end

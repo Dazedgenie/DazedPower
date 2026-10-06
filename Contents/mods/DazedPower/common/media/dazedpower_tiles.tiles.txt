@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,37
+    size = 4,39
     id = 2
     // dazedpower_02_0
     tile
@@ -15405,5 +15405,189 @@ tileset
         Noffset = 0
         IsHigh = 
         ItemHeight = 60
+    }
+    // dazedpower_02_148
+    tile
+    {
+        xy = 0,37
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_149
+    tile
+    {
+        xy = 1,37
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_150
+    tile
+    {
+        xy = 2,37
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_151
+    tile
+    {
+        xy = 3,37
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_152
+    tile
+    {
+        xy = 0,38
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_153
+    tile
+    {
+        xy = 1,38
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_154
+    tile
+    {
+        xy = 2,38
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 40
+    }
+    // dazedpower_02_155
+    tile
+    {
+        xy = 3,38
+        CustomName = Electric Space Heater
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedSpaceHeater
+        PickUpWeight = 60
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 40
     }
 }
