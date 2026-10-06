@@ -392,13 +392,13 @@ function Board.build(s, o)
         if starred then text(T("IGUI_DazedPower_BoardCompressor"), x, ny, C.muted, "NewSmall") end
     end
 
-    -- The main isolator: click to throw it.
+    -- The main isolator: a big flip switch, up for on; click to throw it.
     do
         local x, y, w, h = 394, 490, 182, 58
         local inert = s.rigLock ~= nil and s.rigLock ~= false
         local a = inert and 0.4 or 1
         card(x, y, w, h, C.dark, C.dark)
-        tex(online and "isolator_on.png" or "isolator_off.png", x + 8, y + 5, 48, 48, a)
+        tex(online and "isolator_on.png" or "isolator_off.png", x + 16, y + 3, 38, 52, a)
         text(T("IGUI_DazedPower_Isolator"), x + 64, y + 7, C.cream, "NewSmall", "left", a)
         text(online and T("IGUI_DazedPower_BoardOn") or T("IGUI_DazedPower_BoardOff"), x + 64, y + 7 + fh("NewSmall"),
             online and C.segOn or C.segLow, "Medium", "left", a)

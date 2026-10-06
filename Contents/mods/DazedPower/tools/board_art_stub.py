@@ -37,10 +37,13 @@ for up in (True, False):
 part("wheel", 22, 32, lambda d, s: (rr(d, s, 0, 0, 22, 32, 2, fill=(30, 30, 28)), d.rectangle([0, 15.5 * s, 22 * s, 16.5 * s], fill=(52, 52, 50))))
 for on in (True, False):
     def iso(d, s, on=on):
-        ell(d, s, 32, 32, 30, fill=(226, 160, 52))
-        if on: rr(d, s, 26, 4, 38, 60, 5, fill=(192, 46, 36))
-        else: rr(d, s, 4, 26, 60, 38, 5, fill=(192, 46, 36))
-    part("isolator_on" if on else "isolator_off", 64, 64, iso)
+        rr(d, s, 1, 1, 37, 51, 5, fill=(70, 72, 74))
+        for y in (6, 46): ell(d, s, 19, y, 2.4, fill=(170, 170, 166))
+        rr(d, s, 10, 19, 28, 33, 3, fill=(28, 28, 26))
+        ty = 8 if on else 44
+        d.line([(19 * s, 26 * s), (19 * s, ty * s)], fill=(192, 46, 36), width=7 * s)
+        ell(d, s, 19, ty, 5.2, fill=(210, 60, 46))
+    part("isolator_on" if on else "isolator_off", 38, 52, iso)
 for kind, col in (("green", (92, 200, 84)), ("amber", (240, 170, 50)), ("red", (226, 60, 48)), ("off", (44, 42, 38))):
     part("lamp_" + kind, 24, 24, lambda d, s, col=col: (ell(d, s, 12, 12, 11.5, fill=(180, 180, 176)), ell(d, s, 12, 12, 9.5, fill=col)))
 print("stubs in", OUT)

@@ -86,11 +86,13 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
     - the status lamps
     - today's history on chart paper
     - the SOURCES IN list (what used to be the SOURCE page) and the circuits list with its total
-    - the main isolator knob
+    - the main isolator switch
   - **Generator card:** its MASTER (the old master AUTO), AUTO and ON switches and the START BELOW / STOP ABOVE wheels
     with - and +. Two or more generators page with < and >.
   - Locks, read-only wall gauges and the switch-in-flight hold work as before.
-  - Stand-in art until the Blender pass (`tools/blender/board_render.py`). Tests: `tools/tests/board_test.lua`.
+  - The main isolator is a big red flip switch: up is on, down is off.
+  - The art is Blender renders (`tools/blender/board_render.py`): dials, needle, battery case, toggles, number wheels, the
+    isolator switch and the lamps. Tests: `tools/tests/board_test.lua`.
 
 - **0.4.0.** Needs DazedCore 1.2.0.
   - **Admin tools:** an Admin submenu on controllers (staff, or single-player debug): Inspect system, Repair whole

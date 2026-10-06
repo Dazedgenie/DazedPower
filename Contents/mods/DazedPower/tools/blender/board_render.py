@@ -97,7 +97,7 @@ def setup(w, h):
     co.location = (0, 0, 100 * U)
     sc.collection.objects.link(co)
     sc.camera = co
-    for name, loc, power, size in (("key", (-60, 80, 120), 9000, 80), ("fill", (70, -40, 90), 2500, 120)):
+    for name, loc, power, size in (("key", (-60, 80, 120), 30000, 80), ("fill", (70, -40, 90), 10000, 120)):
         ld = bpy.data.lights.new(name, "AREA")
         ld.energy = power * U * U
         ld.size = size * U
@@ -111,7 +111,7 @@ def setup(w, h):
     sc.world = world
     world.use_nodes = True
     world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.5, 0.5, 0.5, 1)
-    world.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.35
+    world.node_tree.nodes["Background"].inputs["Strength"].default_value = 1.0
 
 
 def shoot(name):
@@ -127,20 +127,22 @@ CHROME = lambda: mat("chrome", srgb(200, 200, 196), 0.18, 1.0)
 def gauge_face():
     setup(176, 176)
     torus(84, 4.5, 0, BLACK())
-    cyl(82, 2, -2, mat("dial", srgb(238, 230, 208), 0.7))
+    # A little of the dial's own colour as emission keeps the printed face bright from edge to edge.
+    cream = srgb(238, 230, 208)
+    cyl(82, 2, -2, mat("dial", cream, 0.7, emit=cream, strength=0.45))
     torus(79.5, 0.8, -0.6, mat("rim", srgb(150, 140, 120), 0.5, 0.3))
 
 
 def needle():
-    # Points right; the pivot is 14 px from the left edge, at mid height (see DP_BoardLayout's NEEDLE).
+    # Points right; the pivot is 14 px from the left edge (world x -34), the tip at 94 px (x 46), mid height.
     setup(96, 16)
     red = mat("red", srgb(186, 38, 30), 0.35, 0.1)
-    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=3.2 * U, radius2=0.5 * U, depth=78 * U, location=(25 * U, 0, 0))
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=3.2 * U, radius2=0.5 * U, depth=80 * U, location=(6 * U, 0, 0))
     o = bpy.context.object
     o.rotation_euler = (0, math.pi / 2, 0)
     o.scale = (0.5, 1, 1)
     put(o, red)
-    box(14, 5, 2, 0, red, x=-37)
+    box(16, 5, 2, 0, red, x=-38)
 
 
 def hub():
@@ -163,10 +165,10 @@ def toggle(up):
     cyl(6, 3, 3, CHROME(), verts=48)
     bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=2.8 * U, depth=18 * U, location=(0, 0, 0))
     lever = put(bpy.context.object, CHROME())
-    tilt = math.radians(55)
+    tilt = math.radians(72)
     lever.rotation_euler = (-tilt if up else tilt, 0, 0)
-    lever.location = (0, (7 if up else -7) * U, 9 * U)
-    sphere(3.6, 9 + 7 * math.cos(tilt), CHROME(), y=(7 + 7 * math.sin(tilt)) * (1 if up else -1))
+    lever.location = (0, (8 if up else -8) * U, 7 * U)
+    sphere(3.6, 7 + 8 * math.cos(tilt), CHROME(), y=(8 + 8 * math.sin(tilt)) * (1 if up else -1))
 
 
 def wheel():
@@ -178,12 +180,20 @@ def wheel():
 
 
 def isolator(on):
-    setup(64, 64)
-    cyl(30, 4, 0, mat("amber", srgb(226, 160, 52), 0.45))
-    torus(30, 1.2, 1.5, mat("amberrim", srgb(180, 120, 36), 0.4))
-    h = box(12, 56, 8, 6, mat("handle", srgb(192, 46, 36), 0.35), bevel=4)
-    if not on:
-        h.rotation_euler = (0, 0, math.pi / 2)
+    # A heavy flip switch on a steel plate: a red lever with a ball end, up for on and down for off.
+    setup(38, 52)
+    box(36, 50, 4, 0, mat("plate", srgb(70, 72, 74), 0.4, 0.8), bevel=5)
+    for y in (20, -20):
+        cyl(2.4, 2, 2.4, CHROME(), verts=32, y=y)
+    box(18, 14, 5, 3, BLACK(), bevel=3)
+    cyl(5.5, 4, 5, CHROME(), verts=48)
+    red = mat("lever", srgb(192, 46, 36), 0.3)
+    tilt = math.radians(70)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=3.4 * U, depth=20 * U, location=(0, 0, 0))
+    lever = put(bpy.context.object, red)
+    lever.rotation_euler = (-tilt if on else tilt, 0, 0)
+    lever.location = (0, (9 if on else -9) * U, 9 * U)
+    sphere(5.2, 9 + 9 * math.cos(tilt), red, y=(9 + 9 * math.sin(tilt)) * (1 if on else -1))
 
 
 def lamp(kind):
