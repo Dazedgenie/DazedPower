@@ -1,4 +1,4 @@
-# Dazed Utilities: Power  (v0.4.0, Build 42)
+# Dazed Utilities: Power  (v0.5.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Utilities: Core** (`DazedCore`), loaded first. Works with
@@ -78,7 +78,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
-- **0.5.0 (ui-redesign branch).**
+- **0.5.0.**
   - **Analog charge board** replaces the OG-1200 face. One board shows everything at once, with no pages:
     - two dials, SOURCES IN (every source) and LOAD OUT, whose ranges grow to fit what they read
     - NET on number wheels
