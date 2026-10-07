@@ -85,6 +85,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   - The system monitor opens again. Opening it threw "tried to call nil in open": the board rewrite had dropped a small scaling helper the window still used to place itself.
   - The dial needles turn inside their dials again. They were drawn at the top left of the screen instead of on the board, wherever the window was.
   - The main isolator's ON/OFF no longer overlaps the breaker line under it.
+  - SOURCES IN scrolls with the mouse wheel when there are more sources than fit, instead of ending in "+3 more". A thin bar on the right shows where you are; click above or below its middle to step a row.
 
 - **0.5.0.**
   - **Analog charge board** replaces the OG-1200 face. One board shows everything at once, with no pages:

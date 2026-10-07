@@ -176,5 +176,16 @@ do
     check(seen and seen[1] == 310 and seen[2] == 220, "dial needles move with the window")
 end
 
+-- The mouse wheel over the sources card scrolls it, within the rows the layout allows.
+do
+    local w = setmetatable({ model = { scrolls = { { id = "src", x = 0, y = 0, w = 100, h = 50, max = 3, off = 2 } } },
+        getMouseX = function() return 10 end, getMouseY = function() return 10 end }, { __index = DP_Window })
+    w:onMouseWheel(1)
+    local a = w.scroll and w.scroll.src
+    w.model.scrolls[1].off = 3
+    w:onMouseWheel(1)
+    check(a == 3 and w.scroll.src == 3, "the wheel scrolls the sources list and stops at its end")
+end
+
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)

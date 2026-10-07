@@ -233,6 +233,7 @@ end
 function DP_Window:onHit(id)
     if id == "close" then return self:onClose() end
     if id == "isolator" then return self:onPowerToggle() end
+    if id == "src:up" or id == "src:down" then return self:scrollBy("src", id == "src:up" and -1 or 1) end
     if id == "genPrev" or id == "genNext" then
         local rows = self.snap and self.snap.bkRows
         local n = 0
@@ -255,6 +256,28 @@ function DP_Window:hitAt(x, y)
         if x >= h.x and x < h.x + h.w and y >= h.y and y < h.y + h.h then return h end
     end
     return nil
+end
+
+--- Scroll one of the board's lists by `step` rows, within what the last layout said it can.
+function DP_Window:scrollBy(id, step)
+    for _, a in ipairs(self.model and self.model.scrolls or {}) do
+        if a.id == id then
+            self.scroll = self.scroll or {}
+            self.scroll[id] = math.max(0, math.min(a.max, a.off + step))
+            return true
+        end
+    end
+    return false
+end
+
+function DP_Window:onMouseWheel(del)
+    local x, y = self:getMouseX(), self:getMouseY()
+    for _, a in ipairs(self.model and self.model.scrolls or {}) do
+        if a.max > 0 and x >= a.x and x < a.x + a.w and y >= a.y and y < a.y + a.h then
+            return self:scrollBy(a.id, del > 0 and 1 or -1)
+        end
+    end
+    return false
 end
 
 -- The board drags by its body, so a press counts as a click only when the mouse hardly moved.
@@ -412,7 +435,7 @@ function DP_Window:prerender()
     self.model = Board.build(s, {
         S = S, fontH = fontH, measure = measure, getText = getText, txt = P.txt,
         needles = self.needles, scales = scales, genIndex = self.genIndex, blink = self.blink,
-        tier = self.tier, readOnly = self.readOnly,
+        tier = self.tier, readOnly = self.readOnly, srcScroll = self.scroll and self.scroll.src,
     })
     self:drawOps(self.model.ops)
 end
