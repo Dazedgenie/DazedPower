@@ -29,7 +29,7 @@ local SRC_KIND = { pedal = "IGUI_DazedPower_SrcPedal", windmill = "IGUI_DazedPow
     car = "IGUI_DazedPower_SrcCar", solar = "IGUI_DazedPower_SrcSolar" }
 local GEN_STATE = { running = "IGUI_DazedPower_GenRun", standby = "IGUI_DazedPower_GenStandby", off = "IGUI_DazedPower_GenOff",
     nofuel = "IGUI_DazedPower_GenNoFuel", fault = "IGUI_DazedPower_GenFault", indoors = "IGUI_DazedPower_GenIndoors",
-    server = "IGUI_DazedPower_GenServer" }
+    server = "IGUI_DazedPower_GenServer", cold = "IGUI_DazedPower_GenCold" }
 local GEN_BRAND = { propane_makeshift = "IGUI_DazedPower_BrandPropaneMakeshift", propane_salvaged = "IGUI_DazedPower_BrandPropaneSalvaged",
     propane_workshop = "IGUI_DazedPower_BrandPropaneWorkshop", petrol_makeshift = "IGUI_DazedPower_BrandPetrolMakeshift",
     petrol_salvaged = "IGUI_DazedPower_BrandPetrolSalvaged", petrol_workshop = "IGUI_DazedPower_BrandPetrolWorkshop" }
@@ -197,7 +197,7 @@ function Board.build(s, o)
     gauge(206, 46, 170, online and needles.load or 0, scales.load or 2000, T("IGUI_DazedPower_BoardLoadOut"), 0.85)
 
     -- NET on number wheels under the dials.
-    do
+    local function section1()
         local net = s.net or 0
         local str, unit
         if math.abs(net) >= 10000 then str, unit = string.format("%4.1f", math.min(99.9, math.abs(net) / 1000)), "kW"
@@ -216,9 +216,10 @@ function Board.build(s, o)
         end
         text(unit, nx + total + 10, 262 - fh("Medium") / 2, C.ink, "Medium")
     end
+    section1()
 
     -- The battery column: ten segments, amber below the floor, with the floor marked in red.
-    do
+    local function section2()
         local bx, by = 396, 52
         tex("battery_case.png", bx, by, 60, 170)
         local soc, floor = clamp(s.soc or 0, 0, 1), clamp(s.dod or 0.25, 0, 1)
@@ -239,9 +240,10 @@ function Board.build(s, o)
         text(wh, bx + 30, by + 176 + fh("Medium"), C.muted, "Small", "center")
         text(TX("IGUI_DazedPower_BoardFloor", math.floor(floor * 100 + 0.5) .. "%"), bx + 30, by + 176 + fh("Medium") + fh("Small"), C.red, "Small", "center")
     end
+    section2()
 
     -- The bank: one tile per cell with its charge and a lamp, amber for a worn cell.
-    do
+    local function section3()
         local bx, by, bw = 470, 50, 276
         local cells = type(s.bankCells) == "table" and s.bankCells or {}
         local total = math.max(tonumber(s.cells) or 0, #cells)
@@ -282,9 +284,10 @@ function Board.build(s, o)
             text(fit(L.lab, "NewSmall", pitch - 2), cx, ly + 17, L.lit and C.ink or C.muted, "NewSmall", "center")
         end
     end
+    section3()
 
     -- Received today: the hourly history on chart paper, midnight to now.
-    do
+    local function section4()
         local x, y, w, h = 14, 284, 368, 136
         card(x, y, w, h, C.dark, C.dark)
         text(T("IGUI_DazedPower_ReceivedToday"), x + 12, y + 8, C.cream, "Medium")
@@ -315,9 +318,10 @@ function Board.build(s, o)
             text(string.format("%02d", i * 3), px + pw * i / 8, py + ph + 4, C.cream, "NewSmall", i == 0 and "left" or (i == 8 and "right" or "center"), 0.85)
         end
     end
+    section4()
 
     -- Sources in: each fixture with its state and watts.
-    do
+    local function section5()
         local x, y, w, h = 14, 428, 368, 120
         card(x, y, w, h, C.card, C.line)
         text(T("IGUI_DazedPower_BoardSources"), x + 12, y + 8, C.ink, "Medium")
@@ -350,9 +354,10 @@ function Board.build(s, o)
             text(TX("IGUI_DazedPower_SrcMore", #rows - shown, Board.fmtW(rest)), x + 30, ry + pitch / 2 - fh("Small") / 2, C.muted, "Small")
         end
     end
+    section5()
 
     -- Circuits: every load the controller feeds, and the total.
-    do
+    local function section6()
         local x, y, w = 394, 284, 182
         text(T("IGUI_DazedPower_BoardCircuits"), x, y + 2, C.ink, "Medium")
         local list = type(s.loadList) == "table" and s.loadList or {}
@@ -391,9 +396,10 @@ function Board.build(s, o)
         if why then text(T(why), x, ny, C.red, "NewSmall"); ny = ny + fh("NewSmall") end
         if starred then text(T("IGUI_DazedPower_BoardCompressor"), x, ny, C.muted, "NewSmall") end
     end
+    section6()
 
     -- The main isolator: a big flip switch, up for on; click to throw it.
-    do
+    local function section7()
         local x, y, w, h = 394, 490, 182, 58
         local inert = s.rigLock ~= nil and s.rigLock ~= false
         local a = inert and 0.4 or 1
@@ -406,9 +412,10 @@ function Board.build(s, o)
         text(trip, x + 64, y + h - 6 - fh("NewSmall"), s.trip and C.red or C.cream, "NewSmall", "left", (s.trip and not o.blink) and 0.4 or 0.75)
         hit(x, y, w, h, "isolator")
     end
+    section7()
 
     -- The generator: one at a time, its own AUTO and ON switches, the shared Auto and its two levels.
-    do
+    local function section8()
         local x, y, w, h = 588, 284, 158, 264
         card(x, y, w, h, C.card, C.line)
         local rows = type(s.bkRows) == "table" and s.bkRows or {}
@@ -510,6 +517,7 @@ function Board.build(s, o)
             end
         end
     end
+    section8()
 
     -- Scale to the loaded font set.
     if S ~= 1 then

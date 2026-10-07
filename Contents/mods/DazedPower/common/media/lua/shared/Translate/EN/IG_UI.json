@@ -460,5 +460,10 @@
     "IGUI_DazedPower_BoardStartBelow": "START BELOW",
     "IGUI_DazedPower_BoardStopAbove": "STOP ABOVE",
     "IGUI_DazedPower_BoardCond": "Cond {1}",
-    "IGUI_DazedPower_BoardToday": "Today {1}"
+    "IGUI_DazedPower_BoardToday": "Today {1}",
+    "IGUI_DazedPower_Load_heater": "HEATER",
+    "IGUI_DazedPower_HeaterSwitchedOff": "switched off",
+    "IGUI_DazedPower_GenCold": "COLD",
+    "IGUI_DazedPower_GenColdFail": "too cold, it would not start",
+    "IGUI_DazedPower_GenColdNote": "Too cold. The engine would not start."
 }

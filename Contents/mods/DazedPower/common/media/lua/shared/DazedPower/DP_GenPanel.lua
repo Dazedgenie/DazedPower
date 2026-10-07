@@ -41,6 +41,7 @@ function GP.state(g)
     if (g.condition or 100) <= GP.FAULT_AT then return "fault" end
     if g.running then return "running" end
     if MM.propaneFuel(g) <= 0 then return "nofuel" end
+    if g.coldFail then return "cold" end
     if g.mode == "auto" and spec.auto and not g.hold then return "standby" end
     return "off"
 end
@@ -155,9 +156,25 @@ local function genOf(ctrl, args)
     return obj
 end
 
-local function setMode(obj, mode)
+--- Start one engine from the page through the model's switch, so a cold start can fail. True when it runs.
+function GP.start(obj, info, gd)
+    local E = DazedPower.Env
+    local g = { tier = info and info.tier, kind = info and info.kind, mode = "on", running = gd.running == true }
+    for _, f in ipairs({ "condition", "lpg", "feedTank", "lineTx", "lineTy", "lineTz", "t1Type", "t1Fill", "t2Type", "t2Fill" }) do
+        g[f] = gd[f]
+    end
+    if not g.running and E and E.engineAir then g.ambient = E.engineAir(obj) end
+    g.now = E and E.worldHours and E.worldHours() or nil
+    local run = MM.propaneSwitch(g, nil)
+    gd.running, gd.noFuel, gd.coldFail, gd.coldFailAt = run, g.noFuel, g.coldFail, g.coldFailAt
+    return run
+end
+
+-- A press on the page clears a cold failure (AUTO tries afresh, OFF shows OFF); `keepCold` keeps one just made.
+local function setMode(obj, mode, keepCold)
     local d = P.data(obj)
     d.mode = mode
+    if not keepCold then d.coldFail, d.coldFailAt = nil, nil end
     if mode == "off" then d.running = false end
     if DazedPower.More.Parts and DazedPower.More.Parts.setVariant then
         local broken = (d.condition or 100) <= GP.FAULT_AT
@@ -202,7 +219,13 @@ function GP.command(playerObj, ctrl, cmd, args)
                     return false
                 end
                 if (gd.condition or 100) <= GP.FAULT_AT or MM.propaneFuel(gd) <= 0 then return false end
-                gd.running = true
+                if not GP.start(obj, info, gd) then
+                    if DazedCore.Note then DazedCore.Note.say(playerObj, "IGUI_DazedPower_GenColdNote", nil, true) end
+                    setMode(obj, "off", true)
+                    d.bkSig = nil
+                    ctrl:transmitModData()
+                    return true
+                end
                 setMode(obj, "on")
             else
                 setMode(obj, "off")

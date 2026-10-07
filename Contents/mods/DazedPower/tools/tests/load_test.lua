@@ -113,7 +113,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 161, "161 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 167, "167 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -122,7 +122,7 @@ local xl2 = P.spriteInfo(P.sprite("array", "xl", "workshop", "snow", "N", 3))
 check(xl2 and xl2.piece == 3 and not xl2.master and xl2.tier == "workshop" and xl2.state == "snow", "XL piece 3 decoded")
 check(P.spriteInfo("dazedpower_02_95").kind == "petrol", "last sprite is a petrol generator")
 check(P.spriteInfo("dazedpower_02_96").kind == "gauge" and P.spriteInfo("dazedpower_02_111").state == "full", "the wall gauge rows follow")
-check(P.spriteInfo("dazedpower_02_132") == nil, "nothing past the sheet")
+check(P.spriteInfo("dazedpower_02_156") == nil and P.spriteInfo("dazedpower_02_155") ~= nil, "nothing past the sheet")
 check(P.spriteName(511) == "dazedpower_01_511" and P.spriteName(512) == "dazedpower_02_0", "the sheet spills onto a second tileset at 512")
 check(P.indexOf("dazedpower_02_0") == 512 and P.indexOf("dazedpower_01_512") == nil, "names map back to sheet indices")
 local over = 0
@@ -131,7 +131,7 @@ for n = 0, #P.ROWS * P.COLS - 1 do
     if P.indexOf(nm) ~= n or tonumber(string.match(nm, "_(%d+)$")) >= 512 then over = over + 1 end
 end
 check(over == 0, "every sprite round-trips and no tileset holds more than 512")
-check(#P.allItems() == 64, "64 items: " .. #P.allItems())
+check(#P.allItems() == 67, "67 items: " .. #P.allItems())
 check(M.wireLegal("windmill", "controller") and M.wireLegal("windmill", "windmill") and not M.wireLegal("windmill", "array"), "source wiring rules")
 check(M.wireLegal("waterpump", "transformer") and not M.wireLegal("array", "waterpump") and not M.wireLegal("vane", "controller"), "load and instrument rules")
 check(M.ctrlSpec("makeshift").nodes == 8 and M.ctrlSpec("workshop").nodes == 24, "controller node caps")
@@ -149,6 +149,7 @@ check(t.sourceWatts == 500 and t.generated >= 500, "source watts counted in gene
 
 dofile("features_test.lua")(check, E)
 dofile("systems_test.lua")(check, E)
+dofile("climate_power_test.lua")(check, E)
 dofile("board_test.lua")(check, E)
 
 print(string.format("load_test: %d checks, %d failed", checks, fails))
