@@ -239,7 +239,7 @@ function DP_Window:onHit(id)
         local rows = self.snap and self.snap.bkRows
         local n = 0
         if type(rows) == "table" then for i = 1, GEN_ROWS do if rows[i] ~= nil then n = i else break end end end
-        if n > 0 then self.genIndex = ((self.genIndex or 1) - 1 + (id == "genNext" and 1 or -1)) % n + 1 end
+        if n > 0 then self.genIndex = ((self.genIndex or 1) - 1 + (id == "genNext" and 1 or -1) + n) % n + 1 end   -- +n: the game's % keeps a negative sign
         return
     end
     local cmd, arg = id:match("^gen:(%w+):?(%-?%d*)$")

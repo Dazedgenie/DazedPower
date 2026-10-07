@@ -187,5 +187,19 @@ do
     check(a == 3 and w.scroll.src == 3, "the wheel scrolls the sources list and stops at its end")
 end
 
+-- The game's Lua keeps the sign on % (-1 % 3 is -1), so anything that can step below zero has to lift it first.
+do
+    local ME = DazedPower.More.Env
+    check(ME.wrap360(-10) == 350 and ME.wrap360(370) == 10 and ME.sectorOf(-10) == "N" and ME.sectorOf(-100) == "W",
+        "wind bearings below zero wrap round the compass")
+    local w = setmetatable({ snap = { bkRows = { {}, {}, {} } }, genIndex = 1 }, { __index = DP_Window })
+    w:onHit("genPrev")
+    local back = w.genIndex
+    w:onHit("genNext")
+    check(back == 3 and w.genIndex == 1, "the generator arrows wrap from the first generator to the last and back")
+    local src = io.open("../../common/media/lua/client/DazedPower/DP_Window.lua"):read("*a")
+    check(src:find('%(id == "genNext" and 1 or %-1%) %+ n%) %% n') ~= nil, "generator paging adds n before % so it never goes negative")
+end
+
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)
