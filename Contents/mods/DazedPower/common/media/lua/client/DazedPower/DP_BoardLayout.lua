@@ -405,11 +405,15 @@ function Board.build(s, o)
         local a = inert and 0.4 or 1
         card(x, y, w, h, C.dark, C.dark)
         tex(online and "isolator_on.png" or "isolator_off.png", x + 16, y + 3, 38, 52, a)
-        text(T("IGUI_DazedPower_Isolator"), x + 64, y + 7, C.cream, "NewSmall", "left", a)
-        text(online and T("IGUI_DazedPower_BoardOn") or T("IGUI_DazedPower_BoardOff"), x + 64, y + 7 + fh("NewSmall"),
+        -- Three stacked lines, centred in the card so ON/OFF never runs into the breaker line.
+        local ty = y + math.max(2, (h - 2 * fh("NewSmall") - fh("Medium")) / 2)
+        text(T("IGUI_DazedPower_Isolator"), x + 64, ty, C.cream, "NewSmall", "left", a)
+        ty = ty + fh("NewSmall")
+        text(online and T("IGUI_DazedPower_BoardOn") or T("IGUI_DazedPower_BoardOff"), x + 64, ty,
             online and C.segOn or C.segLow, "Medium", "left", a)
+        ty = ty + fh("Medium")
         local trip = s.trip and T("IGUI_DazedPower_Tripped") or T("IGUI_DazedPower_BoardNoTrip")
-        text(trip, x + 64, y + h - 6 - fh("NewSmall"), s.trip and C.red or C.cream, "NewSmall", "left", (s.trip and not o.blink) and 0.4 or 0.75)
+        text(trip, x + 64, ty, s.trip and C.red or C.cream, "NewSmall", "left", (s.trip and not o.blink) and 0.4 or 0.75)
         hit(x, y, w, h, "isolator")
     end
     section7()

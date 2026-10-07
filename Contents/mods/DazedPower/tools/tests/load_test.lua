@@ -163,5 +163,18 @@ do
     check(not ok and tostring(err):find("placed") ~= nil, "the monitor window places itself: " .. tostring(err))
 end
 
+-- The needle quad is drawn in screen coordinates, so it must carry the window's position with it.
+do
+    local seen
+    local fake = setmetatable({ getAbsoluteX = function() return 300 end, getAbsoluteY = function() return 200 end,
+        isMouseOver = function() return false end,
+        drawTextureAllPoint = function(_, _, x1, y1) seen = { x1, y1 } end }, { __index = DP_Window })
+    local oldTex = getTexture
+    getTexture = function() return {} end
+    pcall(DP_Window.drawOps, fake, { { k = "quad", name = "needle_test.png", pts = { 10, 20, 30, 20, 30, 40, 10, 40 }, a = 1 } })
+    getTexture = oldTex
+    check(seen and seen[1] == 310 and seen[2] == 220, "dial needles move with the window")
+end
+
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)

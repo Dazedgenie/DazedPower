@@ -456,7 +456,9 @@ function DP_Window:drawOps(ops)
         elseif op.k == "quad" then
             local t = tex(op.name)
             local q = op.pts
-            if t then self:drawTextureAllPoint(t, q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], 1, 1, 1, op.a) end
+            -- Unlike the other draw calls, the four-corner one takes screen coordinates, so add where the window is.
+            local ax, ay = self:getAbsoluteX(), self:getAbsoluteY()
+            if t then self:drawTextureAllPoint(t, ax + q[1], ay + q[2], ax + q[3], ay + q[4], ax + q[5], ay + q[6], ax + q[7], ay + q[8], 1, 1, 1, op.a) end
         elseif op.k == "line" then
             self:drawLine(nil, op.x, op.y, op.x2, op.y2, op.th, op.a, c[1], c[2], c[3])
         elseif op.k == "text" then
