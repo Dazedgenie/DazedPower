@@ -233,7 +233,8 @@ end
 function DP_Window:onHit(id)
     if id == "close" then return self:onClose() end
     if id == "isolator" then return self:onPowerToggle() end
-    if id == "src:up" or id == "src:down" then return self:scrollBy("src", id == "src:up" and -1 or 1) end
+    local list, dir = id:match("^(%a+):(%a+)$")
+    if (list == "src" or list == "load") and (dir == "up" or dir == "down") then return self:scrollBy(list, dir == "up" and -1 or 1) end
     if id == "genPrev" or id == "genNext" then
         local rows = self.snap and self.snap.bkRows
         local n = 0
@@ -436,6 +437,7 @@ function DP_Window:prerender()
         S = S, fontH = fontH, measure = measure, getText = getText, txt = P.txt,
         needles = self.needles, scales = scales, genIndex = self.genIndex, blink = self.blink,
         tier = self.tier, readOnly = self.readOnly, srcScroll = self.scroll and self.scroll.src,
+        loadScroll = self.scroll and self.scroll.load,
     })
     self:drawOps(self.model.ops)
 end

@@ -60,4 +60,18 @@ return function(check)
     check(scrollOf(down).off == area.max and #srcNames(down) == seen, "the scroll stops at the last row")
     local short = scrollOf(B.build(snap(), opts({ srcScroll = 5 })))
     check(short and short.max == 0 and short.off == 0 and ids(m)["src:up"] == nil, "a short list doesn't scroll")
+
+    -- Circuits scroll the same way, and TOTAL stays above the isolator however long the list is.
+    local loads = {}
+    for i = 1, 12 do loads[i] = { k = "light", w = 100 - i } end
+    local function loadArea(model) for _, a in ipairs(model.scrolls) do if a.id == "load" then return a end end end
+    local function totalY(model)
+        for _, op in ipairs(model.ops) do if op.k == "text" and op.str == "IGUI_DazedPower_Total" then return op.y end end
+    end
+    local lm = B.build(snap({ loadList = loads }), opts())
+    local la = loadArea(lm)
+    check(la and la.max > 0 and la.off == 0 and ids(lm)["load:down"] ~= nil, "a long circuits list scrolls")
+    check(totalY(lm) + 16 * 3 <= 490, "TOTAL and its notes stay above the isolator")
+    local lEnd = loadArea(B.build(snap({ loadList = loads }), opts({ loadScroll = 50 })))
+    check(lEnd.off == lEnd.max and totalY(B.build(snap({ loadList = {} }), opts())) == totalY(lm), "circuits scroll stops at the end and TOTAL doesn't move")
 end

@@ -98,7 +98,7 @@ end
 --- Build the face for a snapshot `s`.
 --  `o` carries the engine's pieces: S, fontH(name), measure(name, str), getText(key), txt(key, ...), and the window's
 --  own state: needles { src, load } (0..1, eased by the window), scales { src, load } (W), genIndex, blink, tier, readOnly,
---  srcScroll (rows the sources list is scrolled by).
+--  srcScroll and loadScroll (rows the sources and circuits lists are scrolled by).
 --  @return { w, h, ops, hits, scrolls } in screen pixels; scrolls are the wheel areas { id, x, y, w, h, max, off }
 function Board.build(s, o)
     local S = o.S or 1
@@ -372,30 +372,37 @@ function Board.build(s, o)
         local list = type(s.loadList) == "table" and s.loadList or {}
         local ry, pitch = y + 26, 19
         local starred = false
-        local max = 8
-        if #list == 0 then text("--", x, ry, C.muted, "Small") ry = ry + pitch end
-        for i, e in ipairs(list) do
-            if i > max then
-                local rest = 0
-                for j = i, #list do rest = rest + (list[j].w or 0) end
-                text(TX("IGUI_DazedPower_LoadMore", #list - i + 1), x + 18, ry + 2, C.muted, "Small")
-                text(Board.fmtW(rest), x + w, ry + 2, C.muted, "Code", "right")
-                ry = ry + pitch
-                break
-            end
+        -- As many rows as leave room for TOTAL and its two notes above the isolator; the rest scroll like SOURCES IN.
+        local listBottom = 490 - 6 - (4 + 1.5 + 6 + fh("Medium") + 2 + 2 * fh("NewSmall"))
+        local fitN = math.max(2, math.floor((listBottom - ry) / pitch))
+        local maxOff = math.max(0, #list - fitN)
+        local off = math.max(0, math.min(maxOff, math.floor(tonumber(o.loadScroll) or 0)))
+        local bar = maxOff > 0 and 10 or 0
+        for _, e in ipairs(list) do if COMPRESSOR[e.k] then starred = true end end
+        if #list == 0 then text("--", x, ry, C.muted, "Small") end
+        for i = off + 1, math.min(#list, off + fitN) do
+            local e = list[i]
+            local yy = ry + (i - off - 1) * pitch
             if e.more then
-                text(TX("IGUI_DazedPower_LoadMore", e.more), x + 18, ry + 2, C.muted, "Small")
+                text(TX("IGUI_DazedPower_LoadMore", e.more), x + 18, yy + 2, C.muted, "Small")
             else
-                local lab = T("IGUI_DazedPower_Load_" .. tostring(e.k))
-                lab = Board.titleCase(lab)
-                if COMPRESSOR[e.k] then lab = lab .. " *"; starred = true end
-                lamp("green", online and s.powered and not e.idle, x, ry + pitch / 2 - 6, 12)
-                text(fit(lab, "Small", w - 18 - mw("Code", "0000 W") - 6), x + 18, ry + pitch / 2 - fh("Small") / 2, e.idle and C.muted or C.ink, "Small")
+                local lab = Board.titleCase(T("IGUI_DazedPower_Load_" .. tostring(e.k)))
+                if COMPRESSOR[e.k] then lab = lab .. " *" end
+                lamp("green", online and s.powered and not e.idle, x, yy + pitch / 2 - 6, 12)
+                text(fit(lab, "Small", w - bar - 18 - mw("Code", "0000 W") - 6), x + 18, yy + pitch / 2 - fh("Small") / 2, e.idle and C.muted or C.ink, "Small")
             end
-            text(Board.fmtW(e.w or 0), x + w, ry + pitch / 2 - fh("Code") / 2, e.idle and C.muted or C.ink, "Code", "right")
-            ry = ry + pitch
+            text(Board.fmtW(e.w or 0), x + w - bar, yy + pitch / 2 - fh("Code") / 2, e.idle and C.muted or C.ink, "Code", "right")
         end
-        ry = math.max(ry, y + 26 + 4 * pitch) + 4
+        if maxOff > 0 then
+            local tx, th = x + w - 4, fitN * pitch
+            local thumb = math.max(12, th * fitN / #list)
+            rect(tx, ry, 4, th, C.line, 0.6)
+            rect(tx, ry + (th - thumb) * off / maxOff, 4, thumb, C.muted, 0.9)
+            hit(tx - 4, ry, 12, th / 2, "load:up")
+            hit(tx - 4, ry + th / 2, 12, th / 2, "load:down")
+        end
+        scrolls[#scrolls + 1] = { id = "load", x = x, y = y, w = w, h = fitN * pitch + 26, max = maxOff, off = off }
+        ry = ry + fitN * pitch + 4
         rect(x, ry, w, 1.5, C.ink)
         local why = (s.lvd and "IGUI_DazedPower_LowBatt") or (s.starting and "IGUI_DazedPower_StartingUp")
             or (not s.powered and "IGUI_DazedPower_Offline") or nil

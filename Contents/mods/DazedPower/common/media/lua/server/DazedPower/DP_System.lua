@@ -79,7 +79,7 @@ local SLICES = 60           -- in-game minutes a full load scan is spread over
 -- the 41x41x7 cylinder.
 local NEAR = 3
 -- Rows the LOADS page can print before it runs out of LCD.
-local LOAD_ROWS = 9
+local LOAD_ROWS = 40   -- the board scrolls its circuits list, so it can carry more than it shows
 -- Cell blocks the BATT page can draw. The page sizes its blocks from the
 -- measured width of "100" and fits two rows, so this is the most any client
 -- will put on screen; d.cells still carries the true bank size, so the page
@@ -1918,11 +1918,8 @@ local function writePages(rec, d, env, tel, sliceToday, loss)
         end
         table.sort(il, function(a, b) return a.w > b.w end)
         for i = 1, #il do ll[#ll + 1] = il[i] end
-        -- The LCD has room for nine rows. Dropping everything past the ninth
-        -- without a word left the itemisation adding up to less than TOTAL
-        -- with nothing on the page to say why, and the rows are sorted by
-        -- watts, so it was always the small ones that vanished. The last row
-        -- now carries the count and the summed watts of what did not fit.
+        -- Past LOAD_ROWS the last row carries the count and summed watts of
+        -- what did not fit, so the rows still add up to TOTAL.
         if #ll > LOAD_ROWS then
             local n, w = 0, 0
             for i = LOAD_ROWS, #ll do n = n + 1; w = w + ll[i].w end
