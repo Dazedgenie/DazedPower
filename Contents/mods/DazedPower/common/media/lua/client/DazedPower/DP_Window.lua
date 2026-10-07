@@ -22,6 +22,7 @@ DazedPower.Window = DazedPower.Window or {}
 
 -- The game has no UI scale: Options > Font Size loads a bigger font set, so the face grows by the same ratio.
 local S = math.max(1, getTextManager():getFontHeight(UIFont.CodeSmall) / 16)
+local function px(v) return math.floor(v * S + 0.5) end   -- a base-size pixel count at this font scale
 local W, H = math.floor(Board.W * S + 0.5), math.floor(Board.H * S + 0.5)
 local GEN_ROWS = 4
 

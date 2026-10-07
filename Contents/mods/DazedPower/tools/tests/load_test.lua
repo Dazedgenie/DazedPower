@@ -152,5 +152,16 @@ dofile("systems_test.lua")(check, E)
 dofile("climate_power_test.lua")(check, E)
 dofile("board_test.lua")(check, E)
 
+-- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
+do
+    getPlayerScreenLeft = getPlayerScreenLeft or function() return 0 end
+    getPlayerScreenTop = getPlayerScreenTop or function() return 0 end
+    local realNew = DP_Window.new
+    DP_Window.new = function() error("placed") end
+    local ok, err = pcall(DazedPower.Window.open, nil, nil)
+    DP_Window.new = realNew
+    check(not ok and tostring(err):find("placed") ~= nil, "the monitor window places itself: " .. tostring(err))
+end
+
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)
