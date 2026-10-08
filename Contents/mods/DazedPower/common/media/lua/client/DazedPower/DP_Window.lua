@@ -233,11 +233,13 @@ end
 function DP_Window:onHit(id)
     if id == "close" then return self:onClose() end
     if id == "isolator" then return self:onPowerToggle() end
+    local list, dir = id:match("^(%a+):(%a+)$")
+    if (list == "src" or list == "load") and (dir == "up" or dir == "down") then return self:scrollBy(list, dir == "up" and -1 or 1) end
     if id == "genPrev" or id == "genNext" then
         local rows = self.snap and self.snap.bkRows
         local n = 0
         if type(rows) == "table" then for i = 1, GEN_ROWS do if rows[i] ~= nil then n = i else break end end end
-        if n > 0 then self.genIndex = ((self.genIndex or 1) - 1 + (id == "genNext" and 1 or -1)) % n + 1 end
+        if n > 0 then self.genIndex = ((self.genIndex or 1) - 1 + (id == "genNext" and 1 or -1) + n) % n + 1 end   -- +n: the game's % keeps a negative sign
         return
     end
     local cmd, arg = id:match("^gen:(%w+):?(%-?%d*)$")
@@ -255,6 +257,28 @@ function DP_Window:hitAt(x, y)
         if x >= h.x and x < h.x + h.w and y >= h.y and y < h.y + h.h then return h end
     end
     return nil
+end
+
+--- Scroll one of the board's lists by `step` rows, within what the last layout said it can.
+function DP_Window:scrollBy(id, step)
+    for _, a in ipairs(self.model and self.model.scrolls or {}) do
+        if a.id == id then
+            self.scroll = self.scroll or {}
+            self.scroll[id] = math.max(0, math.min(a.max, a.off + step))
+            return true
+        end
+    end
+    return false
+end
+
+function DP_Window:onMouseWheel(del)
+    local x, y = self:getMouseX(), self:getMouseY()
+    for _, a in ipairs(self.model and self.model.scrolls or {}) do
+        if a.max > 0 and x >= a.x and x < a.x + a.w and y >= a.y and y < a.y + a.h then
+            return self:scrollBy(a.id, del > 0 and 1 or -1)
+        end
+    end
+    return false
 end
 
 -- The board drags by its body, so a press counts as a click only when the mouse hardly moved.
@@ -412,7 +436,8 @@ function DP_Window:prerender()
     self.model = Board.build(s, {
         S = S, fontH = fontH, measure = measure, getText = getText, txt = P.txt,
         needles = self.needles, scales = scales, genIndex = self.genIndex, blink = self.blink,
-        tier = self.tier, readOnly = self.readOnly,
+        tier = self.tier, readOnly = self.readOnly, srcScroll = self.scroll and self.scroll.src,
+        loadScroll = self.scroll and self.scroll.load,
     })
     self:drawOps(self.model.ops)
 end

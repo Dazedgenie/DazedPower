@@ -59,8 +59,15 @@ for i, n in ipairs(E.COMPASS) do COMPASS_INDEX[n] = i end
 
 --- Which eighth of the compass a true-compass bearing falls in, and how far
 --  it sits from that eighth's nearest edge, in degrees.
+--- A bearing wrapped into 0..360. The game's Lua keeps the sign on % (-10 % 360 is -10), so negatives are lifted here.
+function E.wrap360(deg)
+    local r = deg % 360
+    if r < 0 then r = r + 360 end
+    return r
+end
+
 function E.sectorOf(deg)
-    deg = deg % 360
+    deg = E.wrap360(deg)
     local i = math.floor((deg + 22.5) / 45) % 8
     local offset = (deg + 22.5) % 45          -- 0..45 across the sector
     return E.COMPASS[i + 1], math.min(offset, 45 - offset)
@@ -149,13 +156,13 @@ function E.readWind(cm)
 
     local bearing
     if c.state == "resolved" then
-        bearing = (c.sign * angle + c.offset) % 360
+        bearing = E.wrap360(c.sign * angle + c.offset)
     elseif name then
         bearing = E.bearingOf(name)
     else
-        bearing = angle % 360      -- "no-name": the plain-compass assumption
+        bearing = E.wrap360(angle)      -- "no-name": the plain-compass assumption
     end
-    if not E.WIND_NAME_IS_FROM then bearing = (bearing + 180) % 360 end
+    if not E.WIND_NAME_IS_FROM then bearing = E.wrap360(bearing + 180) end
     return kph, bearing, (E.sectorOf(bearing))
 end
 

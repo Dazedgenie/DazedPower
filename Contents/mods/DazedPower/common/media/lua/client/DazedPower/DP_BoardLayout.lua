@@ -97,11 +97,12 @@ end
 
 --- Build the face for a snapshot `s`.
 --  `o` carries the engine's pieces: S, fontH(name), measure(name, str), getText(key), txt(key, ...), and the window's
---  own state: needles { src, load } (0..1, eased by the window), scales { src, load } (W), genIndex, blink, tier, readOnly.
---  @return { w, h, ops, hits } in screen pixels
+--  own state: needles { src, load } (0..1, eased by the window), scales { src, load } (W), genIndex, blink, tier, readOnly,
+--  srcScroll and loadScroll (rows the sources and circuits lists are scrolled by).
+--  @return { w, h, ops, hits, scrolls } in screen pixels; scrolls are the wheel areas { id, x, y, w, h, max, off }
 function Board.build(s, o)
     local S = o.S or 1
-    local ops, hits = {}, {}
+    local ops, hits, scrolls = {}, {}, {}
     local function fh(f) return o.fontH(f) / S end
     local function mw(f, str) return o.measure(f, tostring(str)) / S end
     local T, TX = o.getText, o.txt
@@ -329,30 +330,38 @@ function Board.build(s, o)
         local rows = Board.sources(s)
         local ry, pitch = y + 32, 17
         if #rows == 0 then text(T("IGUI_DazedPower_SrcNone"), x + 12, ry, C.muted, "Small") end
-        local fitN = math.floor((y + h - 6 - ry) / pitch)
-        local shown = #rows > fitN and fitN - 1 or #rows
-        for i = 1, shown do
+        -- Rows that don't fit scroll with the mouse wheel; a thin bar on the right shows where you are.
+        local fitN = math.max(1, math.floor((y + h - 6 - ry) / pitch))
+        local maxOff = math.max(0, #rows - fitN)
+        local off = math.max(0, math.min(maxOff, math.floor(tonumber(o.srcScroll) or 0)))
+        local bar = maxOff > 0 and 10 or 0
+        for i = off + 1, math.min(#rows, off + fitN) do
             local r = rows[i]
             local on = (r.w or 0) > 0
             lamp("green", online and on, x + 12, ry + pitch / 2 - 6, 12)
             local name = T(SRC_KIND[r.k] or "IGUI_DazedPower_SrcSolar")
             if r.t then name = name .. " " .. T("IGUI_DazedPower_SrcTier_" .. r.t) end
             local wStr = Board.fmtW(r.w or 0)
-            local right = x + w - 12 - mw("Code", "00.0 kW") - 8
+            local right = x + w - 12 - bar - mw("Code", "00.0 kW") - 8
             local sx = x + 190
             name = fit(name, "Small", sx - x - 36)
             text(name, x + 30, ry + pitch / 2 - fh("Small") / 2, on and C.ink or C.muted, "Small")
             local st = T("IGUI_DazedPower_SrcState_" .. tostring(r.s))
             if string.find(st, "IGUI_", 1, true) then st = tostring(r.s or "") end
             text(fit(st, "Small", right - sx), sx, ry + pitch / 2 - fh("Small") / 2, C.muted, "Small")
-            text(wStr, x + w - 12, ry + pitch / 2 - fh("Code") / 2, on and C.ink or C.muted, "Code", "right")
+            text(wStr, x + w - 12 - bar, ry + pitch / 2 - fh("Code") / 2, on and C.ink or C.muted, "Code", "right")
             ry = ry + pitch
         end
-        if shown < #rows then
-            local rest = 0
-            for i = shown + 1, #rows do rest = rest + (rows[i].w or 0) end
-            text(TX("IGUI_DazedPower_SrcMore", #rows - shown, Board.fmtW(rest)), x + 30, ry + pitch / 2 - fh("Small") / 2, C.muted, "Small")
+        if maxOff > 0 then
+            local tx, ty, th = x + w - 12, y + 32, fitN * pitch
+            local thumb = math.max(12, th * fitN / #rows)
+            rect(tx, ty, 4, th, C.line, 0.6)
+            rect(tx, ty + (th - thumb) * off / maxOff, 4, thumb, C.muted, 0.9)
+            -- Clicking above or below the middle of the bar steps a row too.
+            hit(tx - 4, ty, 12, th / 2, "src:up")
+            hit(tx - 4, ty + th / 2, 12, th / 2, "src:down")
         end
+        scrolls[#scrolls + 1] = { id = "src", x = x, y = y, w = w, h = h, max = maxOff, off = off }
     end
     section5()
 
@@ -363,30 +372,37 @@ function Board.build(s, o)
         local list = type(s.loadList) == "table" and s.loadList or {}
         local ry, pitch = y + 26, 19
         local starred = false
-        local max = 8
-        if #list == 0 then text("--", x, ry, C.muted, "Small") ry = ry + pitch end
-        for i, e in ipairs(list) do
-            if i > max then
-                local rest = 0
-                for j = i, #list do rest = rest + (list[j].w or 0) end
-                text(TX("IGUI_DazedPower_LoadMore", #list - i + 1), x + 18, ry + 2, C.muted, "Small")
-                text(Board.fmtW(rest), x + w, ry + 2, C.muted, "Code", "right")
-                ry = ry + pitch
-                break
-            end
+        -- As many rows as leave room for TOTAL and its two notes above the isolator; the rest scroll like SOURCES IN.
+        local listBottom = 490 - 6 - (4 + 1.5 + 6 + fh("Medium") + 2 + 2 * fh("NewSmall"))
+        local fitN = math.max(2, math.floor((listBottom - ry) / pitch))
+        local maxOff = math.max(0, #list - fitN)
+        local off = math.max(0, math.min(maxOff, math.floor(tonumber(o.loadScroll) or 0)))
+        local bar = maxOff > 0 and 10 or 0
+        for _, e in ipairs(list) do if COMPRESSOR[e.k] then starred = true end end
+        if #list == 0 then text("--", x, ry, C.muted, "Small") end
+        for i = off + 1, math.min(#list, off + fitN) do
+            local e = list[i]
+            local yy = ry + (i - off - 1) * pitch
             if e.more then
-                text(TX("IGUI_DazedPower_LoadMore", e.more), x + 18, ry + 2, C.muted, "Small")
+                text(TX("IGUI_DazedPower_LoadMore", e.more), x + 18, yy + 2, C.muted, "Small")
             else
-                local lab = T("IGUI_DazedPower_Load_" .. tostring(e.k))
-                lab = Board.titleCase(lab)
-                if COMPRESSOR[e.k] then lab = lab .. " *"; starred = true end
-                lamp("green", online and s.powered and not e.idle, x, ry + pitch / 2 - 6, 12)
-                text(fit(lab, "Small", w - 18 - mw("Code", "0000 W") - 6), x + 18, ry + pitch / 2 - fh("Small") / 2, e.idle and C.muted or C.ink, "Small")
+                local lab = Board.titleCase(T("IGUI_DazedPower_Load_" .. tostring(e.k)))
+                if COMPRESSOR[e.k] then lab = lab .. " *" end
+                lamp("green", online and s.powered and not e.idle, x, yy + pitch / 2 - 6, 12)
+                text(fit(lab, "Small", w - bar - 18 - mw("Code", "0000 W") - 6), x + 18, yy + pitch / 2 - fh("Small") / 2, e.idle and C.muted or C.ink, "Small")
             end
-            text(Board.fmtW(e.w or 0), x + w, ry + pitch / 2 - fh("Code") / 2, e.idle and C.muted or C.ink, "Code", "right")
-            ry = ry + pitch
+            text(Board.fmtW(e.w or 0), x + w - bar, yy + pitch / 2 - fh("Code") / 2, e.idle and C.muted or C.ink, "Code", "right")
         end
-        ry = math.max(ry, y + 26 + 4 * pitch) + 4
+        if maxOff > 0 then
+            local tx, th = x + w - 4, fitN * pitch
+            local thumb = math.max(12, th * fitN / #list)
+            rect(tx, ry, 4, th, C.line, 0.6)
+            rect(tx, ry + (th - thumb) * off / maxOff, 4, thumb, C.muted, 0.9)
+            hit(tx - 4, ry, 12, th / 2, "load:up")
+            hit(tx - 4, ry + th / 2, 12, th / 2, "load:down")
+        end
+        scrolls[#scrolls + 1] = { id = "load", x = x, y = y, w = w, h = fitN * pitch + 26, max = maxOff, off = off }
+        ry = ry + fitN * pitch + 4
         rect(x, ry, w, 1.5, C.ink)
         local why = (s.lvd and "IGUI_DazedPower_LowBatt") or (s.starting and "IGUI_DazedPower_StartingUp")
             or (not s.powered and "IGUI_DazedPower_Offline") or nil
@@ -530,8 +546,9 @@ function Board.build(s, o)
             if op.pts then for i = 1, #op.pts do op.pts[i] = op.pts[i] * S end end
         end
         for _, h0 in ipairs(hits) do h0.x, h0.y, h0.w, h0.h = h0.x * S, h0.y * S, h0.w * S, h0.h * S end
+        for _, h0 in ipairs(scrolls) do h0.x, h0.y, h0.w, h0.h = h0.x * S, h0.y * S, h0.w * S, h0.h * S end
     end
-    return { w = W * S, h = H * S, ops = ops, hits = hits }
+    return { w = W * S, h = H * S, ops = ops, hits = hits, scrolls = scrolls }
 end
 
 return Board
