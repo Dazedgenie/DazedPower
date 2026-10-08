@@ -136,11 +136,17 @@ function DPM_Pedal:update()
     end
 end
 
+--- Sets the cadence variable the pedal animation reads. SetVariable only takes text, so numbers go through setVariable (float) with text as the fallback.
+function DPM_Pedal.setPace(character, pace)
+    if character.setVariable and pcall(character.setVariable, character, "DazedPedalSpeed", pace) then return end
+    character:SetVariable("DazedPedalSpeed", tostring(pace))
+end
+
 function DPM_Pedal:start()
     if DPM_Pedal.rides(self.character) then
         -- Seated pedalling (anims_X/Bob/Bob_DazedPedalGenerator); the gear sets the cadence.
         local d = self.object and P.data(self.object)
-        self.character:SetVariable("DazedPedalSpeed", DPM_PEDAL_PACE[(d and d.gear) or "stock"] or 1.0)
+        DPM_Pedal.setPace(self.character, DPM_PEDAL_PACE[(d and d.gear) or "stock"] or 1.0)
         self:setActionAnim("DazedPedal")
         self:mount()
     else

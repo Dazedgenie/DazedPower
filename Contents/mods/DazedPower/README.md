@@ -85,6 +85,8 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.6.1 (fix).** Getting on a pedal generator threw a Lua error and skipped the seated animation. The cadence was
+  sent to the game as a number where it only accepts text; it now goes through the number setter.
 - **0.6.0 (animation).**
   - **Windmills spin.** A turning windmill walks through four blade positions on your screen, faster in stronger
     wind; past 15 m/s at the rotor the blades blur. A broken rotor rocks on its bearing in a breeze. Cosmetic and

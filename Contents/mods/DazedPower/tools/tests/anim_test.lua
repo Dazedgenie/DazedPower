@@ -73,7 +73,11 @@ return function(check, E)
         function c:setX(v) self.x = v end
         function c:setY(v) self.y = v end
         function c:setDir(d) self.dir = d end
-        function c:SetVariable(k, v) self.vars[k] = v end
+        function c:SetVariable(k, v)
+            assert(type(v) ~= "number", "SetVariable only takes text in game")
+            self.vars[k] = v
+        end
+        function c:setVariable(k, v) self.vars[k] = v end
         function c:isTimedActionInstant() return false end
         local sq = { getX = function() return 100 end, getY = function() return 200 end }
         local bike = { md = { dazedpower = { gear = "racing" } } }
