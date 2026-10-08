@@ -85,6 +85,8 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.6.3 (fix).** A pedal generator stays fully drawn while you ride it; the game had been fading it out like
+  anything that hides the player.
 - **0.6.2 (pedalling fit).** Each bike tier has its own pedalling animation, so the rider sits on that bike's
   saddle with feet on its pedals and hands on its grips. The rider used to sit low and in front of the saddle. Rebuild
   with `python tools/blender/dp_pedal.py`; GAME_SCALE and RENDER_DROP at its top were fitted from in-game screenshots.

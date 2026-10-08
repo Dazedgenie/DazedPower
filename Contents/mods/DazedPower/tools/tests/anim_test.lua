@@ -85,6 +85,7 @@ return function(check, E)
         function bike:getModData() return self.md end
         function bike:hasModData() return true end
         function bike:transmitModData() end
+        function bike:setAlphaAndTarget(pn, a) self.alpha = a end
         local a = DPM_Pedal:new(c, bike)
         a.setActionAnim = function(self, n) self.anim = n end
         IsoDirections = IsoDirections or { N = "N", E = "E", S = "S", W = "W" }
@@ -92,7 +93,11 @@ return function(check, E)
         check(a.anim == "DazedPedal" and c.vars.DazedPedalSpeed == DPM_PEDAL_PACE.racing, "riding plays the pedal animation at the gear's pace")
         check(c.vars.DazedPedalTier == "salvaged", "the animation is picked for the bike's tier")
         check(c.y == 200.5 and c.x == 100.5 and c.dir == IsoDirections.S, "the rider is on the bike, facing south")
+        bike.alpha = 0.3; DPM_Pedal.keepSolid()
+        check(bike.alpha == 1.0, "the bike is kept fully drawn while ridden")
         a.dismount(a)
         check(c.x == 99.2 and c.y == 200.5, "getting off puts the rider back where they stood")
+        bike.alpha = 0.3; DPM_Pedal.keepSolid()
+        check(bike.alpha == 0.3, "after getting off the game fades it as usual")
     end
 end

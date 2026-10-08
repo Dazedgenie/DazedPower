@@ -77,6 +77,7 @@ function DPM_Pedal:mount()
     self.mountDir = IsoDirections and IsoDirections[facing] or nil
     self.mountAt = { x = x, y = y }
     self:place(x, y)
+    DPM_Pedal.solid[self.object] = c.getPlayerNum and c:getPlayerNum() or 0
 end
 
 -- Move the rider without the walk-in interpolation (setLx/Ly are the last-frame position the engine eases from).
@@ -88,9 +89,29 @@ function DPM_Pedal:place(x, y)
 end
 
 function DPM_Pedal:dismount()
+    DPM_Pedal.solid[self.object or false] = nil
     if not self.mountedFrom then return end
     self:place(self.mountedFrom.x, self.mountedFrom.y)
     self.mountedFrom, self.mountAt = nil, nil
+end
+
+-- Bikes being ridden on this machine, kept fully drawn: the game fades any object that would hide the player, rider included.
+DPM_Pedal.solid = DPM_Pedal.solid or {}
+
+--- Hold every ridden bike at full opacity for its rider's view; run each tick and each render frame.
+function DPM_Pedal.keepSolid()
+    for obj, pn in pairs(DPM_Pedal.solid) do
+        if obj and obj.setAlphaAndTarget then
+            if obj:getObjectIndex() == -1 then DPM_Pedal.solid[obj] = nil
+            else pcall(obj.setAlphaAndTarget, obj, pn, 1.0) end
+        end
+    end
+end
+
+if Events and not DPM_Pedal.solidHooked and not (isServer and isServer()) then
+    DPM_Pedal.solidHooked = true
+    if Events.OnTick then Events.OnTick.Add(DPM_Pedal.keepSolid) end
+    if Events.OnRenderTick then Events.OnRenderTick.Add(DPM_Pedal.keepSolid) end
 end
 
 function DPM_Pedal:waitToStart()
