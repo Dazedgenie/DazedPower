@@ -77,6 +77,9 @@ return function(check, E)
         end
         function c:setVariable(k, v) self.vars[k] = v end
         function c:isTimedActionInstant() return false end
+        function c:setSittingOnFurniture(v) self.sitting = v end
+        function c:setSitOnFurnitureObject(o) self.seat = o end
+        function c:setSitOnFurnitureDirection(d) self.seatDir = d end
         local sq = { getX = function() return 100 end, getY = function() return 200 end }
         local bike = { md = { dazedpower = { gear = "racing" } } }
         function bike:getSquare() return sq end
@@ -95,7 +98,9 @@ return function(check, E)
         check(c.y == 200.5 and c.x == 100.5 and c.dir == IsoDirections.S, "the rider is on the bike, facing south")
         bike.alpha = 0.3; DPM_Pedal.keepSolid()
         check(bike.alpha == 1.0, "the bike is kept fully drawn while ridden")
+        check(c.sitting == true and c.seat == bike and c.seatDir == IsoDirections.S, "the rider counts as seated on the bike")
         a.dismount(a)
+        check(c.sitting == false and c.seat == nil, "getting off clears the seat")
         check(c.x == 99.2 and c.y == 200.5, "getting off puts the rider back where they stood")
         bike.alpha = 0.3; DPM_Pedal.keepSolid()
         check(bike.alpha == 0.3, "after getting off the game fades it as usual")

@@ -78,6 +78,23 @@ function DPM_Pedal:mount()
     self.mountAt = { x = x, y = y }
     self:place(x, y)
     DPM_Pedal.solid[self.object] = c.getPlayerNum and c:getPlayerNum() or 0
+    DPM_Pedal.seatOn(c, self.object, self.mountDir)
+end
+
+--- Mark the rider as seated on the bike (or clear it with no object). The renderer then stops treating the bike as
+--- something hiding its rider, so it draws in the normal pass where the depth map puts the rider in front.
+function DPM_Pedal.seatOn(c, object, dir)
+    if not (c and c.setSittingOnFurniture) then return end
+    pcall(function()
+        if object and dir then
+            c:setSitOnFurnitureObject(object)
+            c:setSitOnFurnitureDirection(dir)
+            c:setSittingOnFurniture(true)
+        else
+            c:setSittingOnFurniture(false)
+            c:setSitOnFurnitureObject(nil)
+        end
+    end)
 end
 
 -- Move the rider without the walk-in interpolation (setLx/Ly are the last-frame position the engine eases from).
@@ -90,6 +107,7 @@ end
 
 function DPM_Pedal:dismount()
     DPM_Pedal.solid[self.object or false] = nil
+    if self.mountedFrom then DPM_Pedal.seatOn(self.character, nil) end
     if not self.mountedFrom then return end
     self:place(self.mountedFrom.x, self.mountedFrom.y)
     self.mountedFrom, self.mountAt = nil, nil

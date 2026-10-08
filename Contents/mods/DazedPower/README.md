@@ -85,6 +85,9 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.6.5 (fix).** The rider's legs really no longer go behind a pedal generator. The game treated the bike as
+  something hiding its rider and drew it over them in a later pass, so 0.6.4's depth map never applied. The rider now
+  counts as seated on the bike (the way vanilla chairs work), so the bike draws normally and the rider shows in front.
 - **0.6.4 (fix).** The rider's legs no longer go behind a pedal generator. The bike now draws as a card near
   its square's far corner, so the rider on the saddle is in front while people on the squares behind it stay behind.
 - **0.6.3 (fix).** A pedal generator stays fully drawn while you ride it; the game had been fading it out like
