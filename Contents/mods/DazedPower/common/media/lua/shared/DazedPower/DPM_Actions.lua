@@ -556,9 +556,20 @@ end
 -- engine starts it now; AUTO hands it to the battery (DPM_Bridge, within a
 -- minute); OFF stops it.
 DPM_PropaneSwitch = genAction("DPM_PropaneSwitch", function(self)
-    if self.mode == "on" and self.pullStart then return 110 end
+    if self.mode == "on" and self.pullStart then return 80 end
     return 35
 end)
+
+-- Pull-cord starts get their own crouch-and-yank animation (anims_X/Bob/Bob_DazedPullStartGenerator).
+function DPM_PropaneSwitch:start()
+    if self.mode == "on" and self.pullStart then
+        self:setActionAnim("DazedPullStart")
+        return
+    end
+    self:setActionAnim("Loot")
+    self.character:SetVariable("LootPosition", "Low")
+    self.character:reportEvent("EventLootItem")
+end
 
 function DPM_PropaneSwitch:complete()
     if not genStillApplies(self) then return true end
