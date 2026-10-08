@@ -24,9 +24,9 @@ MEDIA = HERE.parent / "common/media"
 CW, CH = 128, 256
 EDGE = {"S": "N", "E": "W", "N": "S", "W": "E"}     # a wall part facing S hangs on the north edge, and so on
 WALL_STANDOFF = {"bank": 0.30, "gauge": 0.10, "cooler": 0.25}
-# Pedal generators: the bike's pixels sit this far behind the square's centre, toward the far corner, so the
-# rider (standing at the centre) is always drawn over it.
-PEDAL_BACK = 0.18
+# Pedal generators: the bike's pixels sit on an upright card across the square this close to its far corner, so the
+# rider on the saddle is always drawn over it while anyone on the squares behind still goes behind it.
+PEDAL_CARD = -0.9          # the card is the plane x + z = PEDAL_CARD (the far corner is -1)
 
 # Every pixel's camera ray, once: origin and direction arrays over the 128x256 cell.
 _ys, _xs = np.mgrid[0:CH, 0:CW]
@@ -60,6 +60,12 @@ def plane_depth(axis, value):
     return normalized(O + D * t)
 
 
+def diag_depth(k):
+    """Depth where each ray meets the upright plane x + z = k, which faces the camera."""
+    t = (k - (O[0] + O[2])) / np.where(np.abs(D[0] + D[2]) < 1e-12, 1e-12, D[0] + D[2])
+    return normalized(O + D * t)
+
+
 def slab(edge, t):
     lo, hi = [-0.5, 0.0, -0.5], [0.5, Z.LEVEL, 0.5]
     axis = 2 if edge in ("N", "S") else 0
@@ -75,10 +81,7 @@ def tile_depth(frame, kind, mount, facing):
         dep = box_depth(lo, hi)
         dep = np.where(np.isnan(dep), plane_depth(axis, face), dep)
     elif kind == "pedal":
-        # A thin upright card through the square, pushed back toward the far corner (scene -x, -z is away).
-        c = -PEDAL_BACK / np.sqrt(2)
-        dep = box_depth([c - 0.3, 0.0, c - 0.3], [c + 0.3, Z.LEVEL, c + 0.3])
-        dep = np.where(np.isnan(dep), plane_depth(2, c + 0.3), dep)
+        dep = diag_depth(PEDAL_CARD)
     else:
         bb = frame.getbbox()
         h = min(0.5, max(0.15, (bb[3] - 224) / 64)) if bb else 0.5
