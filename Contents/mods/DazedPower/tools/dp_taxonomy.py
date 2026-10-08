@@ -21,13 +21,17 @@ GROUP = "Dazed Power"
 PIECES_XL = 4                       # a 2x2 array: pieces 1..4 = NW, NE, SW, SE of its footprint
 
 KINDS = ["array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-         "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater"]
+         "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin"]
+# Sprite-only rows that show another kind in motion: the client swaps a turning windmill through these frames.
+# They have no item of their own and a saved frame reads back as the kind it animates.
+ALIAS = {"windspin": "windmill"}
+PART_KINDS = [k for k in KINDS if k not in ALIAS]
 MOUNTS = {
     "array": ["ground", "tracker", "xl"], "bank": ["ground", "wall"], "controller": ["ground"],
     "transformer": ["ground"], "lamp": ["garden", "street"], "pedal": ["ground"], "windmill": ["ground"],
     "steam": ["ground"], "windsock": ["ground"], "vane": ["ground"], "propane": ["ground"], "petrol": ["ground"],
     "gauge": ["wall"], "rod": ["ground"], "bench": ["ground"], "hydro": ["ground"],
-    "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"],
+    "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"], "windspin": ["ground"],
 }
 THREE = ["makeshift", "salvaged", "workshop"]
 TIERS = {
@@ -35,7 +39,7 @@ TIERS = {
     "lamp": ["makeshift", "workshop"], "pedal": THREE, "windmill": THREE, "steam": THREE,
     "windsock": ["basic"], "vane": ["basic"], "propane": THREE, "petrol": THREE,
     "gauge": ["standard"], "rod": ["standard"], "bench": ["standard"], "hydro": ["standard"],
-    "fence": ["standard"], "cooler": ["standard"], "heater": ["standard"],
+    "fence": ["standard"], "cooler": ["standard"], "heater": ["standard"], "windspin": THREE,
 }
 STATES = {
     "array": ["clear", "snow", "cracked"], "controller": ["off", "on"], "transformer": ["off", "on"],
@@ -44,6 +48,8 @@ STATES = {
     "propane": ["off", "running", "broken"], "petrol": ["off", "running", "broken"],
     "gauge": ["off", "low", "mid", "full"], "rod": ["set"], "bench": ["off", "on"], "hydro": ["still", "turning"],
     "fence": ["off", "on"], "cooler": ["off", "on"], "heater": ["off", "on"],
+    # four blade positions through one blade's share of the turn, and a broken rotor rocked off its rest
+    "windspin": ["spin1", "spin2", "spin3", "spin4", "wobble"],
 }
 BANK_CELLS = {"ground": {"makeshift": 3, "salvaged": 6, "workshop": 8}, "wall": {"makeshift": 2, "salvaged": 3, "workshop": 4}}
 
@@ -143,18 +149,18 @@ WEIGHT = {
 
 
 def display_name(kind, mount, tier):
-    n = NAME[(kind, mount)]
+    n = NAME[(ALIAS.get(kind, kind), mount)]
     if isinstance(n, dict): return n[tier]
     return n.replace("{T} ", TIER_WORD[tier] + " " if TIER_WORD[tier] else "").strip()
 
 
 def item_of(kind, mount, tier):
-    return ITEM[kind][mount][tier]
+    return ITEM[ALIAS.get(kind, kind)][mount][tier]
 
 
 def all_items():
     out = []
-    for kind in KINDS:
+    for kind in PART_KINDS:
         for mount in MOUNTS[kind]:
             for tier in TIERS[kind]:
                 out.append(item_of(kind, mount, tier))

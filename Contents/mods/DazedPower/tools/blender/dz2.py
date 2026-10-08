@@ -516,10 +516,18 @@ for _k in DP_KINDS:
             for _s in dp_states(_k, _m, _t):
                 for _p in range(1, (4 if (_k == "array" and _m == "xl") else 1) + 1):
                     DP_ROWS.append((_k, _m, _t, _s, _p))
+# The sheet has grown past the lists above (fence, cooler, heater, windspin); the taxonomy is the one true order, so
+# use it when it is beside this folder. Rows with no builder here are skipped by dp_render.
+try:
+    sys.path.insert(0, os.path.normpath(os.path.join(_here, "..")))
+    import dp_taxonomy as _T
+    DP_ROWS = list(_T.ROWS)
+except Exception as _e:
+    print("dz2: dp_taxonomy not found, using the built-in rows:", _e)
 DP_FAMILY = {("array", "ground"): "arrays", ("array", "tracker"): "trackers", ("array", "xl"): "xl", ("bank", "ground"): "banks",
              ("bank", "wall"): "walls", ("controller", "ground"): "controllers", ("transformer", "ground"): "transformer",
              ("lamp", "garden"): "lamps", ("lamp", "street"): "lamps", ("gauge", "wall"): "gauges", ("rod", "ground"): "rod",
-             ("bench", "ground"): "bench", ("hydro", "ground"): "hydro"}
+             ("bench", "ground"): "bench", ("hydro", "ground"): "hydro", ("windspin", "ground"): "windspin"}
 MP_TIER = {"makeshift": "makeshift", "salvaged": "salvaged", "workshop": "manufactured", "basic": "basic"}
 PIECE_OFFSET = {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
 
@@ -534,8 +542,12 @@ def set_wear(state, kind):
     WEAR["scorch"] = 0.7 if state == "broken" and kind in ("steam", "propane", "petrol") else 0.0
 
 
+DP_BUILT_KINDS = {"array", "bank", "controller", "transformer", "lamp", "gauge", "rod", "bench", "hydro", "windspin"}
+
+
 def dp_build(kind, mount, tier, state):
-    set_wear(state, kind)
+    set_wear("broken" if state == "wobble" else state, kind)
+    if kind == "windspin": return build_windmill(MP_TIER[tier], state)
     if kind in BUILDERS: return BUILDERS[kind](MP_TIER[tier], state)
     if kind == "array": return {"ground": array_static, "tracker": array_tracker, "xl": array_xl}[mount](tier, state)
     if kind == "bank": return (bank_ground if mount == "ground" else bank_wall)(tier, int(state[1:]))
@@ -602,6 +614,7 @@ def dp_render(families=None, only_rows=None):
         if families and fam not in families and "all" not in families: continue
         if only_rows is not None and ri not in only_rows: continue
         if (k, mo, t, s) in done: continue
+        if k not in BUILDERS and k not in DP_BUILT_KINDS: continue        # no model here (fence, cooler, heater)
         done.add((k, mo, t, s))
         clear(); start = len(BUILT); dp_build(k, mo, t, s); root, fixed = make_root(start)
         out = os.path.join(OUT, "dp", fam); os.makedirs(out, exist_ok=True)

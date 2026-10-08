@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode>
+	<m_Name>DazedPedal</m_Name>
+	<m_AnimName>Bob_DazedPedalGenerator</m_AnimName>
+	<m_BlendTime>0.3</m_BlendTime>
+	<m_SpeedScale>DazedPedalSpeed</m_SpeedScale>
+	<m_SyncTrackingEnabled>false</m_SyncTrackingEnabled>
+	<m_Conditions x_name="7c3f2e91-4a58-4d0b-b6e2-9d1f5a83c204">
+		<m_Name>PerformingAction</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_Value>DazedPedal</m_Value>
+	</m_Conditions>
+	<m_SubStateBoneWeights>
+		<boneName>Dummy01</boneName>
+	</m_SubStateBoneWeights>
+	<m_SubStateBoneWeights>
+		<boneName>Translation_Data</boneName>
+	</m_SubStateBoneWeights>
+</animNode>

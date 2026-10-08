@@ -52,13 +52,63 @@ function DPM_Pedal:isValid()
     return info ~= nil and info.kind == "pedal"
 end
 
+-- Riding: the rider sits on the saddle (Bob_DazedPedalGenerator), facing the way the bike faces. Position is the
+-- client's own (it syncs like walking), so mounting is done where the player is driven, never on a dedicated server.
+DPM_PEDAL_SEAT_BACK = { makeshift = 0.05, salvaged = 0.10, workshop = 0.12 }   -- squares behind the bike's centre
+DPM_PEDAL_PACE = { low = 0.8, stock = 1.0, racing = 1.3 }                      -- crank turns a second x 1.25
+local DIR_STEP = { N = { 0, -1 }, E = { 1, 0 }, S = { 0, 1 }, W = { -1, 0 } }
+
+--- Does this rider sit on the bike: the player's option, on unless unticked (a server has no option page, so yes).
+function DPM_Pedal.rides(character)
+    return not (DazedCore and DazedCore.Options) or DazedCore.Options.on("DazedPower", "PedalRide")
+end
+
+--- Where the rider's feet go on the bike's square, and which way they face. Pure, for tests.
+function DPM_Pedal.seat(info, sx, sy)
+    local step = DIR_STEP[info.facing] or DIR_STEP.S
+    local back = DPM_PEDAL_SEAT_BACK[info.tier] or 0.08
+    return sx + 0.5 - step[1] * back, sy + 0.5 - step[2] * back, info.facing
+end
+
+function DPM_Pedal:mount()
+    local sq = self.object and self.object:getSquare()
+    local info = self.object and P.describe(self.object)
+    if not (sq and info) or not DPM_Pedal.rides(self.character) then return end
+    if isServer and isServer() then return end                                   -- the client moves its own player
+    local x, y, facing = DPM_Pedal.seat(info, sq:getX(), sq:getY())
+    local c = self.character
+    self.mountedFrom = { x = c:getX(), y = c:getY() }
+    self.mountDir = IsoDirections and IsoDirections[facing] or nil
+    self.mountAt = { x = x, y = y }
+    self:place(x, y)
+end
+
+-- Move the rider without the walk-in interpolation (setLx/Ly are the last-frame position the engine eases from).
+function DPM_Pedal:place(x, y)
+    local c = self.character
+    c:setX(x); c:setY(y)
+    if c.setLx then c:setLx(x); c:setLy(y) end
+    if self.mountDir and c.setDir then c:setDir(self.mountDir) end
+end
+
+function DPM_Pedal:dismount()
+    if not self.mountedFrom then return end
+    self:place(self.mountedFrom.x, self.mountedFrom.y)
+    self.mountedFrom, self.mountAt = nil, nil
+end
+
 function DPM_Pedal:waitToStart()
     self.character:faceThisObject(self.object)
     return self.character:shouldBeTurning()
 end
 
 function DPM_Pedal:update()
-    self.character:faceThisObject(self.object)
+    if self.mountAt then
+        -- Held on the saddle, facing forward, whatever nudges the character this frame.
+        self:place(self.mountAt.x, self.mountAt.y)
+    else
+        self.character:faceThisObject(self.object)
+    end
     if not self:isValid() then return end
     local d = P.data(self.object)
 
@@ -87,21 +137,27 @@ function DPM_Pedal:update()
 end
 
 function DPM_Pedal:start()
-    -- No dedicated pedaling animation exists yet; Loot is the same
-    -- repetitive hands-busy anim DP_ClearArray and DP_BankCell already use
-    -- for "working at this object", and it reads better than standing still.
-    -- A proper cycling animation is a cosmetic follow-up, not a simulation
-    -- change, and can replace this line alone whenever one ships.
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Low")
-    self.character:reportEvent("EventLootItem")
+    if DPM_Pedal.rides(self.character) then
+        -- Seated pedalling (anims_X/Bob/Bob_DazedPedalGenerator); the gear sets the cadence.
+        local d = self.object and P.data(self.object)
+        self.character:SetVariable("DazedPedalSpeed", DPM_PEDAL_PACE[(d and d.gear) or "stock"] or 1.0)
+        self:setActionAnim("DazedPedal")
+        self:mount()
+    else
+        -- The player turned riding off: work the pedals by hand like any other machine.
+        self:setActionAnim("Loot")
+        self.character:SetVariable("LootPosition", "Low")
+        self.character:reportEvent("EventLootItem")
+    end
 end
 
 function DPM_Pedal:stop()
+    self:dismount()
     ISBaseTimedAction.stop(self)
 end
 
 function DPM_Pedal:perform()
+    self:dismount()
     ISBaseTimedAction.perform(self)
 end
 

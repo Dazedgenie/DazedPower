@@ -499,6 +499,11 @@ def rotor(hub, n, length, w0, w1, m, state, twist=18, pitch=12, curve=0.0, hubm=
     hub = Vector(hub); turning = state == "turning"
     bm_alpha = mat("#b9b8b0", 0.7, alpha=0.45, dirt=0, wear=False) if turning else m
     start = 17.0 if turning else 0.0
+    # Spin frames (windspin rows): solid blades stepped a quarter of one blade's share of the turn per frame.
+    if state.startswith("spin"):
+        start = (360.0 / n / 4) * (int(state[4:]) - 1)
+    if state == "wobble":
+        start, state = 10.0, "broken"                                 # the broken rotor rocked off its rest
     for i in range(n):
         a = start + 360.0 * i / n
         if state == "broken":
@@ -518,7 +523,7 @@ def rotor(hub, n, length, w0, w1, m, state, twist=18, pitch=12, curve=0.0, hubm=
 def build_windmill(tier, state):
     p = P()
     yaw = 78.0 if state == "furled" else 0.0
-    brk = state == "broken"
+    brk = state in ("broken", "wobble")
     if tier == "makeshift":
         H = 2.02; post = p["wood_grey"]
         for rot in (0, 90): box((0.82, 0.09, 0.06), (0, 0, 0.03), p["wood"], rot=(0, 0, rot))

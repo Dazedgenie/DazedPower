@@ -169,7 +169,7 @@ return function(check, E)
     DazedCore.Note.say, getOnlinePlayers = say0, op0
 
     ------------------------------------------------------------ the space heater
-    check(P.KINDS[#P.KINDS] == "heater" and #P.ROWS == 167, "the heater is appended at the end of the sheet")
+    check(P.KINDS[#P.KINDS - 1] == "heater" and P.ROWS[167].kind == "heater", "the heater is appended after the earlier rows")
     check(P.sprite("heater", "ground", "standard", "off", "S") == "dazedpower_02_149"
           and P.sprite("heater", "ground", "standard", "on", "N") == "dazedpower_02_155", "heater sprites follow the cooler's")
     check(P.sprite("cooler", "wall", "standard", "on", "N") == "dazedpower_02_147", "the cooler's sprites did not move")

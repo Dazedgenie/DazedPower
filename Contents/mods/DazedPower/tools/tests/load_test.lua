@@ -113,7 +113,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 167, "167 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 182, "182 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -122,7 +122,17 @@ local xl2 = P.spriteInfo(P.sprite("array", "xl", "workshop", "snow", "N", 3))
 check(xl2 and xl2.piece == 3 and not xl2.master and xl2.tier == "workshop" and xl2.state == "snow", "XL piece 3 decoded")
 check(P.spriteInfo("dazedpower_02_95").kind == "petrol", "last sprite is a petrol generator")
 check(P.spriteInfo("dazedpower_02_96").kind == "gauge" and P.spriteInfo("dazedpower_02_111").state == "full", "the wall gauge rows follow")
-check(P.spriteInfo("dazedpower_02_156") == nil and P.spriteInfo("dazedpower_02_155") ~= nil, "nothing past the sheet")
+check(P.spriteInfo("dazedpower_02_216") == nil and P.spriteInfo("dazedpower_02_215") ~= nil, "nothing past the sheet")
+-- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
+local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
+check(f2 and f2.kind == "windmill" and f2.state == "turning" and f2.frame == "spin2" and f2.tier == "salvaged" and f2.facing == "W",
+    "a spin frame decodes as a turning windmill")
+local wb = P.spriteInfo(P.sprite("windmill", "ground", "workshop", "wobble", "S"))
+check(wb and wb.state == "broken" and wb.frame == "wobble", "the wobble frame decodes as a broken windmill")
+check(P.sprite("windmill", "ground", "makeshift", "turning", "S") == "dazedpower_01_429", "frames don't shadow the real turning sprite")
+check(P.spriteInfo("dazedpower_02_156").frame == "spin1" and P.spriteInfo("dazedpower_02_156").tier == "makeshift", "frames start right after the heater")
+local nItems = #P.allItems()
+check(nItems > 0, "allItems skips the frame rows: " .. nItems)
 check(P.spriteName(511) == "dazedpower_01_511" and P.spriteName(512) == "dazedpower_02_0", "the sheet spills onto a second tileset at 512")
 check(P.indexOf("dazedpower_02_0") == 512 and P.indexOf("dazedpower_01_512") == nil, "names map back to sheet indices")
 local over = 0
@@ -151,6 +161,7 @@ dofile("features_test.lua")(check, E)
 dofile("systems_test.lua")(check, E)
 dofile("climate_power_test.lua")(check, E)
 dofile("board_test.lua")(check, E)
+dofile("anim_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do

@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,39
+    size = 4,54
     id = 2
     // dazedpower_02_0
     tile
@@ -15589,5 +15589,1325 @@ tileset
         Noffset = 0
         solidtrans = 
         ItemHeight = 40
+    }
+    // dazedpower_02_156
+    tile
+    {
+        xy = 0,39
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_157
+    tile
+    {
+        xy = 1,39
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_158
+    tile
+    {
+        xy = 2,39
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_159
+    tile
+    {
+        xy = 3,39
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_160
+    tile
+    {
+        xy = 0,40
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_161
+    tile
+    {
+        xy = 1,40
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_162
+    tile
+    {
+        xy = 2,40
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_163
+    tile
+    {
+        xy = 3,40
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_164
+    tile
+    {
+        xy = 0,41
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_165
+    tile
+    {
+        xy = 1,41
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_166
+    tile
+    {
+        xy = 2,41
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_167
+    tile
+    {
+        xy = 3,41
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_168
+    tile
+    {
+        xy = 0,42
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_169
+    tile
+    {
+        xy = 1,42
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_170
+    tile
+    {
+        xy = 2,42
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_171
+    tile
+    {
+        xy = 3,42
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_172
+    tile
+    {
+        xy = 0,43
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_173
+    tile
+    {
+        xy = 1,43
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_174
+    tile
+    {
+        xy = 2,43
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_175
+    tile
+    {
+        xy = 3,43
+        CustomName = Makeshift Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedWindMakeshift
+        PickUpWeight = 240
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_176
+    tile
+    {
+        xy = 0,44
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_177
+    tile
+    {
+        xy = 1,44
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_178
+    tile
+    {
+        xy = 2,44
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_179
+    tile
+    {
+        xy = 3,44
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_180
+    tile
+    {
+        xy = 0,45
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_181
+    tile
+    {
+        xy = 1,45
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_182
+    tile
+    {
+        xy = 2,45
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_183
+    tile
+    {
+        xy = 3,45
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_184
+    tile
+    {
+        xy = 0,46
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_185
+    tile
+    {
+        xy = 1,46
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_186
+    tile
+    {
+        xy = 2,46
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_187
+    tile
+    {
+        xy = 3,46
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_188
+    tile
+    {
+        xy = 0,47
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_189
+    tile
+    {
+        xy = 1,47
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_190
+    tile
+    {
+        xy = 2,47
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_191
+    tile
+    {
+        xy = 3,47
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_192
+    tile
+    {
+        xy = 0,48
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_193
+    tile
+    {
+        xy = 1,48
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_194
+    tile
+    {
+        xy = 2,48
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_195
+    tile
+    {
+        xy = 3,48
+        CustomName = Salvaged Windmill
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindSalvaged
+        PickUpWeight = 320
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_196
+    tile
+    {
+        xy = 0,49
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_197
+    tile
+    {
+        xy = 1,49
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_198
+    tile
+    {
+        xy = 2,49
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_199
+    tile
+    {
+        xy = 3,49
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_200
+    tile
+    {
+        xy = 0,50
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_201
+    tile
+    {
+        xy = 1,50
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_202
+    tile
+    {
+        xy = 2,50
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_203
+    tile
+    {
+        xy = 3,50
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_204
+    tile
+    {
+        xy = 0,51
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_205
+    tile
+    {
+        xy = 1,51
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_206
+    tile
+    {
+        xy = 2,51
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_207
+    tile
+    {
+        xy = 3,51
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_208
+    tile
+    {
+        xy = 0,52
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_209
+    tile
+    {
+        xy = 1,52
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_210
+    tile
+    {
+        xy = 2,52
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_211
+    tile
+    {
+        xy = 3,52
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_212
+    tile
+    {
+        xy = 0,53
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_213
+    tile
+    {
+        xy = 1,53
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_214
+    tile
+    {
+        xy = 2,53
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_215
+    tile
+    {
+        xy = 3,53
+        CustomName = Workshop Wind Turbine
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindWorkshop
+        PickUpWeight = 400
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
     }
 }

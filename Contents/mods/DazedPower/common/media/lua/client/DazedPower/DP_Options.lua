@@ -30,6 +30,8 @@ local function register()
     -- On the shared "Dazed Utilities" page. Applied the moment the player presses Apply.
     DazedCore.Options.tick(O.MOD, O.SIDEBAR, "IGUI_DazedPower_OptSidebar", true, "IGUI_DazedPower_OptSidebarTip",
         function() if DazedPower.Sidebar and DazedPower.Sidebar.refresh then DazedPower.Sidebar.refresh() end end)
+    -- Sit on a pedal generator and ride it (the seated animation), or pedal it by hand from beside it.
+    DazedCore.Options.tick(O.MOD, "PedalRide", "IGUI_DazedPower_OptPedalRide", true, "IGUI_DazedPower_OptPedalRideTip")
 end
 
 --- Does this player want the almanac button on the sidebar? True unless the option exists and is unticked.

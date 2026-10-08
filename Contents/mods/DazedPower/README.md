@@ -73,10 +73,30 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 - `tools/import_art.py <dp_out folder>` cuts the 2x2 pieces by their masks, shrinks the renders to 128x256 (icons
   to 32x32) into `tools/art`, then runs `build_sheet.py`.
 - `tools/build_recipes.py` writes the recipes, the handbooks and the misc items.
+- `tools/make_depth.py` writes the depth maps (`common/media/depthmaps`) from the packed sheet; run it after
+  `build_sheet.py` whenever the art changes.
+- `tools/wind_frames.py` draws stand-in windmill spin frames from the still renders; the real ones come from Blender:
+  `blender -b --factory-startup -P tools/blender/dz2.py -- <out> dp:windspin`, then
+  `python tools/import_art.py <out>/dp` and `python tools/make_depth.py`.
+- `tools/blender/dp_pedal.py` builds the seated pedalling animation (plain Python with numpy, or in Blender for a
+  preview); `tools/blender/dp_pullstart.py` the pull-start one.
 - `tools/tests/load_test.lua` loads every file on a stand-in engine and runs smoke checks:
   `cd tools/tests && lua load_test.lua` (expects `DazedCore` checked out beside this folder).
 
 ## Changes
+
+- **0.6.0 (animation).**
+  - **Windmills spin.** A turning windmill walks through four blade positions on your screen, faster in stronger
+    wind; past 15 m/s at the rotor the blades blur. A broken rotor rocks on its bearing in a breeze. Cosmetic and
+    local only: the server still sends the plain sprite. Untick **Animate windmills** on the Dazed Utilities options
+    page to turn it off. The frames are stand-ins drawn from the still renders until the Blender pass.
+  - **Riding the pedal generators.** The rider sits on the saddle facing forward, hands on the bars, and pedals; the
+    gear sets the cadence (Low slower, Racing faster). Getting off puts you back where you stood. Untick **Ride pedal
+    generators** to pedal from beside the machine as before.
+  - **Depth maps** for every Dazed Power tile, so players show correctly in front of and behind the machines
+    (Build 42 treated a modded tile without one as a solid block filling its square).
+  - The sprite pack is rebuilt from the new-style art in `tools/art`; later commits had put the old sheet back.
+  - Generator pull-cord starts have their own crouch-and-yank animation (added before this release).
 
 - **0.5.1 (fixes).**
   - The charge board loads again: its drawing is split into sections, because the game's Lua stops compiling a function that declares more than 200 local variables (the board had 258).

@@ -180,7 +180,7 @@ P.FACING_INDEX = { E = 0, S = 1, W = 2, N = 3 }
 -- APPEND ONLY, and in the same order as tools/dp_taxonomy.py: a sprite index is row * COLS + facing, so a
 -- kind inserted anywhere but the end repoints every object already standing in a save.
 P.KINDS = { "array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater" }
+            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin" }
 P.KIND_SET = {}
 for _, k in ipairs(P.KINDS) do P.KIND_SET[k] = true end
 -- The mount is the form factor: a static, tracking or 2x2 array; a floor or wall bank; a garden or street lamp.
@@ -194,7 +194,7 @@ P.MOUNTS = {
     windsock = { "ground" }, vane = { "ground" },
     propane = { "ground" }, petrol = { "ground" },
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
-    fence = { "ground" }, cooler = { "wall" }, heater = { "ground" },
+    fence = { "ground" }, cooler = { "wall" }, heater = { "ground" }, windspin = { "ground" },
 }
 local THREE = { "makeshift", "salvaged", "workshop" }
 P.TIERS = {
@@ -206,7 +206,7 @@ P.TIERS = {
     windsock = { "basic" }, vane = { "basic" },
     propane = THREE, petrol = THREE,
     gauge = { "standard" }, rod = { "standard" }, bench = { "standard" }, hydro = { "standard" },
-    fence = { "standard" }, cooler = { "standard" }, heater = { "standard" },
+    fence = { "standard" }, cooler = { "standard" }, heater = { "standard" }, windspin = THREE,
 }
 P.STATES = {
     array = { "clear", "snow", "cracked" },
@@ -227,6 +227,7 @@ P.STATES = {
     fence = { "off", "on" },                                   -- live wire
     cooler = { "off", "on" },                                  -- cooling its room
     heater = { "off", "on" },                                  -- switched on and powered
+    windspin = { "spin1", "spin2", "spin3", "spin4", "wobble" }, -- blade positions of a turning windmill, and a broken one rocking
     -- bank has no flat list: see P.statesFor.
 }
 -- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
@@ -262,6 +263,13 @@ function P.statesFor(kind, mount, tier)
     return out
 end
 
+-- Sprite-only kinds that draw another kind in motion. Their rows read back as that kind, so a frame left on an object
+-- (a single-player save mid-spin) is still a windmill everywhere; `frame` names the row's own state.
+P.ALIAS = {
+    windspin = { kind = "windmill", state = { spin1 = "turning", spin2 = "turning", spin3 = "turning",
+                                              spin4 = "turning", wobble = "broken" } },
+}
+
 --- Build the row table in exactly the order dp_taxonomy.py emits it.
 local function buildRows()
     local rows = {}
@@ -269,8 +277,14 @@ local function buildRows()
         for _, mount in ipairs(P.MOUNTS[kind]) do
             for _, tier in ipairs(P.TIERS[kind]) do
                 for _, state in ipairs(P.statesFor(kind, mount, tier)) do
-                    for piece = 1, P.piecesOf(kind, mount) do
-                        rows[#rows + 1] = { kind = kind, mount = mount, tier = tier, state = state, piece = piece }
+                    local alias = P.ALIAS[kind]
+                    if alias then
+                        rows[#rows + 1] = { kind = alias.kind, mount = mount, tier = tier, state = alias.state[state],
+                                            frame = state, piece = 1 }
+                    else
+                        for piece = 1, P.piecesOf(kind, mount) do
+                            rows[#rows + 1] = { kind = kind, mount = mount, tier = tier, state = state, piece = piece }
+                        end
                     end
                 end
             end
@@ -283,8 +297,9 @@ P.ROWS = buildRows()
 
 -- Reverse index: "kind|mount|tier|state|piece" -> row number (1-based).
 P.ROW_OF = {}
+-- A frame row is keyed by its frame name ("windmill|ground|salvaged|spin2|1"), so it never shadows the real state.
 for i, r in ipairs(P.ROWS) do
-    P.ROW_OF[r.kind .. "|" .. r.mount .. "|" .. r.tier .. "|" .. r.state .. "|" .. r.piece] = i
+    P.ROW_OF[r.kind .. "|" .. r.mount .. "|" .. r.tier .. "|" .. (r.frame or r.state) .. "|" .. r.piece] = i
 end
 
 --- The item handed to IsoGenerator.new for each controller tier and facing. One record per combination,
@@ -354,12 +369,15 @@ end
 function P.allItems()
     local out = {}
     for _, kind in ipairs(P.KINDS) do
-        for _, mount in ipairs(P.MOUNTS[kind]) do
-            for _, tier in ipairs(P.TIERS[kind]) do
-                out[#out + 1] = P.ITEM[kind][mount][tier]
-                if kind == "controller" then
-                    for _, f in ipairs({ "E", "W", "N" }) do out[#out + 1] = P.CONTROLLER_ITEM[tier][f] end
-                    for _, f in ipairs(P.FACINGS) do out[#out + 1] = P.CONTROLLER_ITEM_ON[tier][f] end
+        -- Animation-frame kinds have no item of their own.
+        if not P.ALIAS[kind] then
+            for _, mount in ipairs(P.MOUNTS[kind]) do
+                for _, tier in ipairs(P.TIERS[kind]) do
+                    out[#out + 1] = P.ITEM[kind][mount][tier]
+                    if kind == "controller" then
+                        for _, f in ipairs({ "E", "W", "N" }) do out[#out + 1] = P.CONTROLLER_ITEM[tier][f] end
+                        for _, f in ipairs(P.FACINGS) do out[#out + 1] = P.CONTROLLER_ITEM_ON[tier][f] end
+                    end
                 end
             end
         end
@@ -397,7 +415,7 @@ function P.spriteInfo(name)
     local pieces = P.piecesOf(r.kind, r.mount)
     return { kind = r.kind, mount = r.mount, tier = r.tier, state = r.state,
              facing = P.FACINGS[(idx % P.COLS) + 1], index = idx,
-             piece = r.piece, pieces = pieces, master = (r.piece == 1) }
+             piece = r.piece, pieces = pieces, master = (r.piece == 1), frame = r.frame }
 end
 
 --- Everything the mod knows about an object, or nil if it is not one of ours.

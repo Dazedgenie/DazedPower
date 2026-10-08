@@ -465,5 +465,9 @@
     "IGUI_DazedPower_HeaterSwitchedOff": "switched off",
     "IGUI_DazedPower_GenCold": "COLD",
     "IGUI_DazedPower_GenColdFail": "too cold, it would not start",
-    "IGUI_DazedPower_GenColdNote": "Too cold. The engine would not start."
+    "IGUI_DazedPower_GenColdNote": "Too cold. The engine would not start.",
+    "IGUI_DazedPower_OptWindSpin": "Animate windmills",
+    "IGUI_DazedPower_OptWindSpinTip": "Turning windmills spin and broken ones rock in the wind. Only on your screen; untick it to save a little work on slow machines.",
+    "IGUI_DazedPower_OptPedalRide": "Ride pedal generators",
+    "IGUI_DazedPower_OptPedalRideTip": "Sit on the saddle and pedal. Untick to work the pedals from beside the machine instead."
 }
