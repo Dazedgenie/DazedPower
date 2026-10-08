@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animNode>
-	<m_Name>DazedPedalMakeshift</m_Name>
-	<m_AnimName>Bob_DazedPedalMakeshift</m_AnimName>
+	<m_Name>DazedPedalSalvaged</m_Name>
+	<m_AnimName>Bob_DazedPedalSalvaged</m_AnimName>
 	<m_BlendTime>0.3</m_BlendTime>
 	<m_SpeedScale>DazedPedalSpeed</m_SpeedScale>
 	<m_SyncTrackingEnabled>false</m_SyncTrackingEnabled>
-	<m_Conditions x_name="7c3f2e91-4a58-4d0b-b6e2-9d1f5a83c204">
+	<m_Conditions x_name="4b8e1d20-6c3a-4f97-9e52-7a1c0d3b8e42">
 		<m_Name>PerformingAction</m_Name>
 		<m_Type>STRING</m_Type>
 		<m_Value>DazedPedal</m_Value>
 	</m_Conditions>
-	<m_Conditions x_name="1e6b0c47-93d2-4f1a-a8b5-0c2d7e9f3a11">
+	<m_Conditions x_name="9d2f7a63-1b4e-4c08-b6a1-5e3c8f0d2b73">
 		<m_Name>DazedPedalTier</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>makeshift</m_Value>
+		<m_Value>salvaged</m_Value>
 	</m_Conditions>
 	<m_SubStateBoneWeights>
 		<boneName>Dummy01</boneName>

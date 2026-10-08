@@ -62,9 +62,7 @@ return function(check, E)
     -- Pedalling: the animation node and the action that plays it.
     check(DPM_Pedal ~= nil and DPM_Pedal.start ~= nil, "the pedal action exists")
     local x, y, f = DPM_Pedal.seat({ facing = "E", tier = "workshop" }, 100, 200)
-    check(math.abs(x - (100.5 - DPM_PEDAL_SEAT_BACK.workshop)) < 1e-9 and y == 200.5 and f == "E", "an east-facing rider sits back toward the west")
-    x, y = DPM_Pedal.seat({ facing = "N", tier = "makeshift" }, 0, 0)
-    check(x == 0.5 and math.abs(y - (0.5 + DPM_PEDAL_SEAT_BACK.makeshift)) < 1e-9, "a north-facing rider sits back toward the south")
+    check(x == 100.5 and y == 200.5 and f == "E", "the rider stands on the bike's centre, facing the bike's way")
     -- Start, then stop: the rider is put on the saddle and back where they stood.
     do
         local c = { x = 99.2, y = 200.5, vars = {} }
@@ -92,7 +90,8 @@ return function(check, E)
         IsoDirections = IsoDirections or { N = "N", E = "E", S = "S", W = "W" }
         a:start()
         check(a.anim == "DazedPedal" and c.vars.DazedPedalSpeed == DPM_PEDAL_PACE.racing, "riding plays the pedal animation at the gear's pace")
-        check(math.abs(c.y - (200.5 - DPM_PEDAL_SEAT_BACK.salvaged)) < 1e-9 and c.x == 100.5 and c.dir == IsoDirections.S, "the rider is on the saddle, facing south")
+        check(c.vars.DazedPedalTier == "salvaged", "the animation is picked for the bike's tier")
+        check(c.y == 200.5 and c.x == 100.5 and c.dir == IsoDirections.S, "the rider is on the bike, facing south")
         a.dismount(a)
         check(c.x == 99.2 and c.y == 200.5, "getting off puts the rider back where they stood")
     end

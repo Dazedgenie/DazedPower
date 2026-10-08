@@ -52,22 +52,18 @@ function DPM_Pedal:isValid()
     return info ~= nil and info.kind == "pedal"
 end
 
--- Riding: the rider sits on the saddle (Bob_DazedPedalGenerator), facing the way the bike faces. Position is the
--- client's own (it syncs like walking), so mounting is done where the player is driven, never on a dedicated server.
-DPM_PEDAL_SEAT_BACK = { makeshift = 0.05, salvaged = 0.10, workshop = 0.12 }   -- squares behind the bike's centre
+-- Riding: the rider stands on the bike's centre facing its front, and the tier's animation (Bob_DazedPedal<Tier>) puts
+-- them on that bike's saddle. Position is the client's own (it syncs like walking), so mounting never runs on a dedicated server.
 DPM_PEDAL_PACE = { low = 0.8, stock = 1.0, racing = 1.3 }                      -- crank turns a second x 1.25
-local DIR_STEP = { N = { 0, -1 }, E = { 1, 0 }, S = { 0, 1 }, W = { -1, 0 } }
 
 --- Does this rider sit on the bike: the player's option, on unless unticked (a server has no option page, so yes).
 function DPM_Pedal.rides(character)
     return not (DazedCore and DazedCore.Options) or DazedCore.Options.on("DazedPower", "PedalRide")
 end
 
---- Where the rider's feet go on the bike's square, and which way they face. Pure, for tests.
+--- Where the rider stands on the bike's square, and which way they face. Pure, for tests.
 function DPM_Pedal.seat(info, sx, sy)
-    local step = DIR_STEP[info.facing] or DIR_STEP.S
-    local back = DPM_PEDAL_SEAT_BACK[info.tier] or 0.08
-    return sx + 0.5 - step[1] * back, sy + 0.5 - step[2] * back, info.facing
+    return sx + 0.5, sy + 0.5, info.facing
 end
 
 function DPM_Pedal:mount()
@@ -144,8 +140,10 @@ end
 
 function DPM_Pedal:start()
     if DPM_Pedal.rides(self.character) then
-        -- Seated pedalling (anims_X/Bob/Bob_DazedPedalGenerator); the gear sets the cadence.
+        -- Seated pedalling, one animation per tier (anims_X/Bob/Bob_DazedPedal<Tier>); the gear sets the cadence.
         local d = self.object and P.data(self.object)
+        local info = self.object and P.describe(self.object)
+        self.character:SetVariable("DazedPedalTier", (info and info.tier) or "salvaged")
         DPM_Pedal.setPace(self.character, DPM_PEDAL_PACE[(d and d.gear) or "stock"] or 1.0)
         self:setActionAnim("DazedPedal")
         self:mount()

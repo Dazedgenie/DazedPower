@@ -78,13 +78,16 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 - `tools/wind_frames.py` draws stand-in windmill spin frames from the still renders; the real ones come from Blender:
   `blender -b --factory-startup -P tools/blender/dz2.py -- <out> dp:windspin`, then
   `python tools/import_art.py <out>/dp` and `python tools/make_depth.py`.
-- `tools/blender/dp_pedal.py` builds the seated pedalling animation (plain Python with numpy, or in Blender for a
+- `tools/blender/dp_pedal.py` builds the seated pedalling animations (one per tier) (plain Python with numpy, or in Blender for a
   preview); `tools/blender/dp_pullstart.py` the pull-start one.
 - `tools/tests/load_test.lua` loads every file on a stand-in engine and runs smoke checks:
   `cd tools/tests && lua load_test.lua` (expects `DazedCore` checked out beside this folder).
 
 ## Changes
 
+- **0.6.2 (pedalling fit).** Each bike tier has its own pedalling animation, so the rider sits on that bike's
+  saddle with feet on its pedals and hands on its grips. The rider used to sit low and in front of the saddle. Rebuild
+  with `python tools/blender/dp_pedal.py`; GAME_SCALE and RENDER_DROP at its top were fitted from in-game screenshots.
 - **0.6.1 (fix).** Getting on a pedal generator threw a Lua error and skipped the seated animation. The cadence was
   sent to the game as a number where it only accepts text; it now goes through the number setter.
 - **0.6.0 (animation).**
