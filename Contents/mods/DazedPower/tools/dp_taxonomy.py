@@ -1,6 +1,6 @@
 """The parts taxonomy of Dazed Utilities: Power -- the one description of every kind, mount, tier and state,
 which lays out the sprite sheet (dazedpower_01), names the items and stamps the tiledef. DP_Parts.lua mirrors
-it; tools/tests/parts_test.lua fails if the two drift.
+it; tools/tests/load_test.lua checks the decoded rows against it.
 
 Sheet: one row per (kind, mount, tier, state[, piece]), one column per facing (E, S, W, N). APPEND ONLY once
 released: inserting a row repoints every object standing in a save.

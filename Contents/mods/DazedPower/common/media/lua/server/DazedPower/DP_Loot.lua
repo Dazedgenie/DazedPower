@@ -71,7 +71,7 @@ L.PLACES = {
     -- is defined in ProceduralDistributions.lua and referenced by no room in
     -- Distributions.lua, so nothing it holds has ever spawned. Nothing warns
     -- about this, because the list genuinely exists; only a room reference
-    -- makes it reachable. tests/test_content.py now checks for that.
+    -- makes it reachable, so check for one before adding a list here.
     --
     -- The advanced volume unlocks monocrystalline panels, sealed cabinets and
     -- MPPT, so it is deliberately much rarer and sits where an engineer would
@@ -248,8 +248,7 @@ L.SALVAGE = {
     },
     -- FarmerTools was here, and never spawned anything: only the Farmer
     -- PROFESSION table names it, and that table is filled only from the debug
-    -- menu. tests/test_content.py now leaves profession tables out of its
-    -- reachability check, which is how it passed.
+    -- menu, so a profession table alone never makes a list reachable.
     --
     -- Already flagged isWorn, so the engine wears these down itself and the
     -- handler below deliberately leaves them alone.

@@ -151,7 +151,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   - **Room cooler** (Workshop Power Systems, Electricity 4). Every container in its room keeps food like a fridge
     while the system is powered; 100 W + 10 W per container, billed like Plumbing's wired machines and cut by Load
     Priority. Outside a room it does nothing and its menu says so.
-  - Stand-in art for both. Tests: `tools/tests/fence_cooler_test.lua`.
+  - Stand-in art for both.
   - Performance: the per-frame fumes check keeps each controller's object instead of walking its square every frame.
   - Performance: one climate read and one vehicle index serve every controller in a minute's tick; a charger reads the
     weather once, not once per rack.
@@ -159,7 +159,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
     5 in-game minutes; its counters are kept per controller, so pruning no longer walks every rack in the world.
   - Performance: sprite names decode once (`P.indexOf` remembers), describing an object no longer creates empty
     ModData on it, the fence check makes no tables while no zombie is near, and the client sound scan makes no
-    substrings. Tests: new `tools/tests/perf_test.lua`.
+    substrings.
 
 - **0.3.2.** Fix: the Large Solar Array (all grades) placed as a single tile. The engine builds a 2x2 grid only when
   each GroupName + CustomName has one tile per grid square per facing, and the clear, snow and cracked states shared

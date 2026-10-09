@@ -282,8 +282,8 @@ M.NO_DAWN         = 999
 
 --- Hours wrapped into [0, 24). Floor-based on purpose: Kahlua's % truncates
 --  toward zero (KahluaThread.java:1061-1067), so -1 % 24 is -1 in the game
---  and 23 under the Lua 5.1 the headless suites run. tests/test_kahlua.py
---  runs the sun clock in the game's own VM because lupa cannot see that.
+--  and 23 under the stock Lua the headless suites run, so they cannot catch
+--  a % here; keep it floor-based.
 function M.wrapHours(h)
     return h - floor(h / 24) * 24
 end

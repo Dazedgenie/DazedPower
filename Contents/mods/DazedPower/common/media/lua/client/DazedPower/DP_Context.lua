@@ -41,7 +41,7 @@ end
 
 --- The Dazed Power menu's row icons (2026-09-26: line pictures coloured by
 --  group). Tabler Icons (MIT, v3.48.0; the licence ships beside them), drawn
---  white by tools/build_menu_icons.py at these sizes. Each row tints its icon
+--  white at these sizes. Each row tints its icon
 --  with its group's colour: ISContextMenu.renderOptionTextureOrColor draws
 --  the texture multiplied by option.color and uses the colour for nothing
 --  else. A row the player cannot use yet shows its icon grey.
@@ -644,7 +644,7 @@ end
 --
 --  The sealed cabinet is the ONE thing this mod places that carries `solid`
 --  rather than `solidtrans` -- deliberately, as the price of the best storage
---  in the game (tools/build_tiles.py). A solid object blocks line of sight to
+--  in the game (its tile properties). A solid object blocks line of sight to
 --  its own square, and both vanilla ways of removing a placed object are
 --  gated on seeing the square, independently and for different reasons:
 --

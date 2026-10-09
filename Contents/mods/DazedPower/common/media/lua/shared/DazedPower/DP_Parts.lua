@@ -7,7 +7,7 @@
      (kind, mount, tier, state) and one column per facing, so `dazedpower_01_101`
      is exactly "a premium ground battery bank, LEDs green, facing S" and
      nothing else needs storing to know that. This table MUST stay in step with
-     tools/og_taxonomy.py -- tests/test_pack.py fails if they drift.
+     tools/dp_taxonomy.py, which lays out the sheet; load_test.lua checks the decoded rows.
 ]]
 
 require "DazedCore/DC_Boot"
@@ -30,8 +30,8 @@ function P.try(obj, method, ...)
 end
 
 --- Every sandbox option the mod declares, at the default
---  media/sandbox-options.txt gives it. tests/test_content.py fails if the two
---  drift, or if anything reads an option not listed here.
+--  media/sandbox-options.txt gives it. Keep the two in step by hand, and list
+--  every option the code reads here.
 P.SANDBOX_DEFAULTS = {
     LinkRadius = 12,
     OutputScale = 100,

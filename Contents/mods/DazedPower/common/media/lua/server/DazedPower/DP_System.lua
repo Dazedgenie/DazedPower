@@ -2722,7 +2722,7 @@ Events.OnClientCommand.Add(onClientCommand)
 --  and bill a square exactly as this file does, so they use the same
 --  functions rather than copies of them. Handed out by a function rather than
 --  kept as a table on S: every table on S is state that S.resetState makes
---  anew (tests/test_system.py holds it to that), and this is not state.
+--  anew, and this is not state.
 local INTERNAL = {
     key = key, objectOn = objectOn, chunkLoaded = chunkLoaded, sync = sync,
     readSquare = readSquare, cacheTotals = cacheTotals, foldKinds = foldKinds,
