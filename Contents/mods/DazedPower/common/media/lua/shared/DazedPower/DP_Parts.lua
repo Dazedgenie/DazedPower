@@ -899,6 +899,14 @@ function P.setState(obj, state, facing)
     if not want then return false end
     local cur = obj:getSprite() and obj:getSprite():getName()
     if cur == want then return false end
+    -- Off a server a spin frame (DP_WindSpin) already shows its logical state, so leave it: re-spriting it every
+    -- minute dirtied each windmill's chunk in single player. A server keeps the plain sprite clients sync from.
+    if info.frame and info.state == state and info.facing == facing and not isServer() then
+        local md = obj.getModData and obj:getModData()
+        local dd = md and md.dazedpower
+        if dd and dd.state ~= state then dd.state = state end
+        return false
+    end
     -- BOTH calls, in this order, and neither is redundant.
     --
     -- setSprite(String) builds an ANONYMOUS sprite: IsoSprite.CreateSprite +

@@ -144,4 +144,28 @@ return function(check, E)
         check(not B.pedalBeat(rider, { x = "a" }) and not B.pedalBeat(nil, sent[1][3]), "a bad request is refused")
         getTimestampMs, sendClientCommand = t0, s0
     end
+
+    ------------------------------------------------------------ the spin frame and setState
+    do
+        local function sp(tier, st, f) return P.sprite("windmill", "ground", tier or "salvaged", st, f or "S") end
+        local mill = E.object(sp(nil, "spin3"), E.square(940, 940, 0))
+        mill.md.dazedpower = { state = "turning", facing = "S" }
+        check(P.setState(mill, "turning") == false and mill.sprite == sp(nil, "spin3"),
+            "single player: a spin frame already counts as turning, so the sprite is left alone")
+        mill.sprite = sp(nil, "wobble")
+        check(P.setState(mill, "broken") == false and mill.sprite == sp(nil, "wobble"), "and a rocking frame already counts as broken")
+        mill.sprite = sp(nil, "spin1")
+        mill.md.dazedpower.state = "still"
+        check(P.setState(mill, "turning") == false and mill.md.dazedpower.state == "turning",
+            "the logical state is still recorded when the frame is kept")
+        check(P.setState(mill, "turning", "E") == true and mill.sprite == sp(nil, "turning", "E"), "a new facing still swaps the sprite")
+        mill.sprite = sp(nil, "spin2")
+        check(P.setState(mill, "still") == true and mill.sprite == sp(nil, "still"), "a real change of state still swaps the sprite")
+        local s0 = isServer
+        isServer = function() return true end
+        mill.sprite = sp(nil, "spin2")
+        local ok = P.setState(mill, "turning")
+        isServer = s0
+        check(ok == true and mill.sprite == sp(nil, "turning"), "a server puts the plain turning sprite back for clients to sync")
+    end
 end
