@@ -892,7 +892,7 @@ function S.connect(playerObj, args)
     local dx, dy = e.ax - e.bx, e.ay - e.by
     -- A power line to or from a transformer runs further than a panel or
     -- battery lead (M.cableReach); the client's menu asks the same question.
-    local reach = M.cableReach(e.ak, e.bk, sandbox("LinkRadius"), sandbox("GridLinkRadius"))
+    local reach = M.cableReach(e.ak, e.bk, sandbox("LinkRadius"), P.gridRadius())
     if (dx * dx + dy * dy) > reach * reach then
         return false, "too far"
     end
@@ -1412,7 +1412,7 @@ function S.weatherArray(d, info, env, dt, sunlit)
     end
 
     local spec = M.arraySpec(info.tier)
-    local soilRate = (sandbox("SoilRate") / 100) * spec.soil
+    local soilRate = (sandbox("SnowRate") / 100) * spec.soil
     if (env.precipitation or 0) > 0.25 and not env.snowing and not env.noWash
             and sunlit then
         d.soiling = M.clamp((d.soiling or 0) - 0.35 * dt, 0, 1)   -- rain washes
@@ -2158,7 +2158,7 @@ function S.updateController(rec, dt, hoursAgo, wet)
     local simLoad = sandbox("SimulateLoad") ~= false
 
     env.outputScale = sandbox("OutputScale") / 100
-    env.degrade = sandbox("DegradeBank") ~= false
+    env.degrade = P.bankWears()
 
     if rec.relinkAt >= 0 and S.staleLinks(rec) then rec.relinkAt = -1 end
     if DazedPower.Distrib and DazedPower.Distrib.farBack and DazedPower.Distrib.farBack(rec) then

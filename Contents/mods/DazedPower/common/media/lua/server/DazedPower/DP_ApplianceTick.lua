@@ -214,7 +214,7 @@ local function checkFence(fence, systems, dirty, now, ctx)
         systems[d.sys] = sys
     end
     if not sys then return end
-    local damage = P.sandbox("FenceDamage") ~= false
+    local damage = true
     local ids, n, day = {}, 0, today()
     for _, z in ipairs(zs) do
         if n >= A.ZAP_MAX_PER_CHECK then break end

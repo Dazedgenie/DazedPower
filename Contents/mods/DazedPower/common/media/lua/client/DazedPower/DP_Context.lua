@@ -956,7 +956,7 @@ function C.wireMenu(menu, worldobjects, target, playerObj, info)
             -- The same rule the server applies (S.connect): a power line to
             -- or from a transformer runs further than a panel or battery lead.
             local reach = M.cableReach(pending.kind, info.kind, P.sandbox("LinkRadius"),
-                                       P.sandbox("GridLinkRadius"))
+                                       P.gridRadius())
             far = (dx * dx + dy * dy) > reach * reach
         end
         local opt = C.icon(menu:addOption(

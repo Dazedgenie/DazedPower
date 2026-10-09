@@ -48,16 +48,6 @@ option DazedPower.SnowRate
     translation = DazedPower_SnowRate,
 }
 
-option DazedPower.SoilRate
-{
-    type = integer,
-    min = 0,
-    max = 300,
-    default = 100,
-    page = DazedPower,
-    translation = DazedPower_SoilRate,
-}
-
 option DazedPower.SimulateLoad
 {
     type = boolean,
@@ -94,14 +84,6 @@ option DazedPower.HydrogenRisk
     translation = DazedPower_HydrogenRisk,
 }
 
-option DazedPower.DegradeBank
-{
-    type = boolean,
-    default = true,
-    page = DazedPower,
-    translation = DazedPower_DegradeBank,
-}
-
 /* Who may pick a placed part back up. 1 anyone, 2 anyone with a screwdriver,
    3 the person who placed it plus their safehouse plus admins.
 
@@ -120,25 +102,9 @@ option DazedPower.PickupLock
     valueTranslation = DazedPower_PickupLock,
 }
 
-/* Building wiring and transformers (2026-09-24).
-
-   GridLinkRadius is how far one transformer's power line may run, to the
-   controller or to another transformer. It is longer than LinkRadius, which is
-   for panels and batteries, so that transformers can be spaced to keep a
-   street lit end to end: each lights its own GeneratorTileRange circle.
-
-   TransformerLoss is what each powered transformer draws doing nothing, in
-   watts, so a sprawling grid costs something to keep running. */
-
-option DazedPower.GridLinkRadius
-{
-    type = integer,
-    min = 8,
-    max = 60,
-    default = 30,
-    page = DazedPower,
-    translation = DazedPower_GridLinkRadius,
-}
+/* TransformerLoss is what each powered transformer draws doing nothing, in
+   watts, so a sprawling grid costs something to keep running. A transformer's
+   own line runs 2.5 times LinkRadius. */
 
 option DazedPower.TransformerLoss
 {
@@ -150,21 +116,9 @@ option DazedPower.TransformerLoss
     translation = DazedPower_TransformerLoss,
 }
 
-/* Realistic Mode: panels produce what 1993 panels did (Alwar's figures on the
-   suggestions board, 2026-09-25). DP_Model.ARRAY_SPEC_1993. Backup generators
-   burn like real petrol generators (2026-09-29): DP_Model
-   BACKUP_REAL_IDLE_L and BACKUP_REAL_KWH_L, M.realFuelUse. */
-option DazedPower.RealisticMode
-{
-    type = boolean,
-    default = false,
-    page = DazedPower,
-    translation = DazedPower_RealisticMode,
-}
-
-/* One residential house in this many gets a yard rig, and one storage barn in
-   this many holds spare panels and racks, on newly generated ground only. 0
-   turns it off. */
+/* One residential house in this many gets a yard rig, and (about an eighth as
+   often) a storage barn holds spare panels and racks, on newly generated ground
+   only. 0 turns both off. */
 option DazedPower.RigChance
 {
     type = integer,
@@ -173,16 +127,6 @@ option DazedPower.RigChance
     default = 15,
     page = DazedPower,
     translation = DazedPower_RigChance,
-}
-
-option DazedPower.BarnStockChance
-{
-    type = integer,
-    min = 0,
-    max = 100,
-    default = 2,
-    page = DazedPower,
-    translation = DazedPower_BarnStockChance,
 }
 
 /* Wiring (0.2.0). CableTilesPerWire is how many tiles one Electric Wire covers when a cable is run
@@ -205,29 +149,11 @@ option DazedPower.LiveShock
     translation = DazedPower_LiveShock,
 }
 
-/* FenceDamage: a zap from a live electric fence also takes a little health off the zombie (off: knockdown only). */
-option DazedPower.FenceDamage
-{
-    type = boolean,
-    default = true,
-    page = DazedPower,
-    translation = DazedPower_FenceDamage,
-}
-
-/* Climate (0.5.0). ColdStarts: a gas engine below -5 C at its own square may fail to start (60% at -25 C).
-   RoomHeat: with Dazed Climate, a running space heater warms its room and a running room cooler chills it. */
+/* Climate (0.5.0). ColdStarts: a gas engine below -5 C at its own square may fail to start (60% at -25 C). */
 option DazedPower.ColdStarts
 {
     type = boolean,
     default = true,
     page = DazedPower,
     translation = DazedPower_ColdStarts,
-}
-
-option DazedPower.RoomHeat
-{
-    type = boolean,
-    default = true,
-    page = DazedPower,
-    translation = DazedPower_RoomHeat,
 }

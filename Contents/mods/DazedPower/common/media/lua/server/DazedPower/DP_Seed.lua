@@ -96,7 +96,7 @@ S.LEDGER = "DazedPowerSeeded"
 --  banks in it." So a storage barn in this many holds a few of them as tiles,
 --  placed like the yard rigs: once, the first time its ground is generated.
 --  One in two by default, Can's choice: there are only about 50 storage
---  barns on the map. The sandbox's BarnStockChance decides (S.barnChance).
+--  barns on the map. The sandbox's RigChance decides (S.barnChance).
 --  Farm-storage rooms get items in their containers instead (DP_Loot).
 --
 --  A storage barn is a building with a barn or hay-storage room, no feeding
@@ -148,7 +148,7 @@ end
 
 --- How rare the finds are, from the sandbox (a suggestion-board request,
 --  2026-09-26): one house in RigChance gets a yard rig, one storage barn in
---  BarnStockChance holds spare gear, and 0 turns either off. Read at every
+--  about an eighth of that holds spare gear, and 0 turns both off. Read at every
 --  decision, so a changed setting applies to the next ground generated.
 local function chance(name, default)
     local n = tonumber(P.sandbox(name)) or default
@@ -157,7 +157,12 @@ local function chance(name, default)
 end
 
 function S.rigChance() return chance("RigChance", S.CHANCE) end
-function S.barnChance() return chance("BarnStockChance", S.BARN_CHANCE) end
+-- One barn in about every eighth-of-RigChance holds spare gear (15 gives 2, the old default).
+function S.barnChance()
+    local rig = S.rigChance()
+    if rig <= 0 then return 0 end
+    return math.max(1, math.floor(rig / 8 + 0.5))
+end
 
 --- Vanilla's own definition of a residential building: somewhere to sleep,
 --  somewhere to wash, and somewhere to cook or sit.

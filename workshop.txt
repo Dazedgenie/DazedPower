@@ -67,7 +67,7 @@ description=[*][b]Dazed Dank[/b] – grow lamps, pumps and fans in a building yo
 description=[/list]
 description=
 description=[h2]Sandbox options[/h2]
-description=Array output, bank size, battery ageing, snow and dust build-up, lightning, hydrogen risk, cable cost, shock when wiring, link and transformer reach, found-rig chance, who may pick parts up, and a Realistic Mode with 1993 panels. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
+description=Array output, bank size, battery wear, panel weathering, lightning, hydrogen risk, cable cost, shock when wiring, link reach, found solar gear and who may pick parts up. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
 description=
 description=[h2]Compatibility[/h2]
 description=[list]
@@ -88,6 +88,6 @@ description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.7.1[/i]
+description=[i]Mod ID: DazedPower · Version 0.7.2[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=public

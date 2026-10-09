@@ -1,4 +1,4 @@
-# Dazed Power  (v0.7.1, Build 42)
+# Dazed Power  (v0.7.2, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core** (`DazedCore`), loaded first. Works with
@@ -26,9 +26,9 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Pedal generator, windmill, steam engine, propane and petrol generators | Parts of the one registry; their watts enter the controller directly and the monitor's SOURCE page splits them. Gear kits and the amplifier as before. |
 | Windsock, weather vane | Read the wind; never wired. |
 | Wall power gauge | Hangs on a wall; cable it to any part of a system. Its lamp shows the charge band, and Read Gauge (or a click) opens that system's monitor, read only. Takes no controller slot. |
-| Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. Sandbox *Electric fence hurts zombies*. |
+| Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. |
 | Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. |
-| Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate (and sandbox *Heaters and coolers change room temperature*) it warms its room. Dazed Power Handbook, Electricity 3. |
+| Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate it warms its room. Dazed Power Handbook, Electricity 3. |
 
 **Wiring.** A cable costs Electric Wire by length: one per 4 tiles by default (sandbox *Tiles per Electric Wire*,
 0 = free), and cutting it gives half of what it cost back (cables from found rigs, or run while cables were free, give nothing). Running or cutting a cable while the controller is switched on can burn
@@ -88,6 +88,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.7.2 (fewer sandbox options, 21 down to 14).** Merged or removed the options that were rarely touched. *Panel weathering* now covers snow and dust together, *Battery wear* also covers deep-discharge damage (0 = no wear at all), *Found solar gear* sets both yard rigs and barn stock, and a transformer's line is always 2.5 times the link radius. The electric fence always hurts zombies, heaters and coolers always warm rooms with Dazed Climate, and Realistic Mode (1993 panels) is now set only by the Realistic and Hardcore presets. Existing saves keep working; any value you had set for a merged or removed option falls back to its default.
 - **0.7.1 (rename).** Now called **Dazed Power** in the mod list and Workshop; needs **Dazed Core** (was "Dazed Utilities: Core"). Mod ID, saves and settings unchanged. README: the monitor is described as the charge board it now is, and the electric space heater is listed.
   - **Fix:** the Micro-Hydro Wheel can be repaired (*Dazed Power -> Repair it*: electronics scrap, screws, a screwdriver; +30 condition), like the other machines. It wore down and stopped at 35 with no way back.
   - **Fix:** the Dazed Core preset for found solar rigs was backwards. Easy now puts a rig on one house in 5, Standard 15, Realistic 20, Hardcore 25.
@@ -170,7 +171,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
     found nothing to place. They are healed on their own within a minute of joining.
   - **Dazed Dank:** default load priorities for its hydro pumps (Essential), grow lights (Normal) and drying fans (Low).
   - **Electric fence** (Workshop Power Systems, Electricity 3, Welding 2). A zombie on or beside a live
-    section is knocked down and stunned, with a little damage (sandbox `FenceDamage`), 5 Wh from the racks a zap.
+    section is knocked down and stunned, with a little damage, 5 Wh from the racks a zap.
     5 W standing draw on the LOADS page; its menu shows On/Off with the reason and today's zaps.
   - **Room cooler** (Workshop Power Systems, Electricity 4). Every container in its room keeps food like a fridge
     while the system is powered; 100 W + 10 W per container, billed like Plumbing's wired machines and cut by Load

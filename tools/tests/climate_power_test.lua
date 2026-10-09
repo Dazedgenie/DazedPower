@@ -203,9 +203,6 @@ return function(check, E)
     check(A.roomHeat("heater", { live = true }) == 18 and A.roomHeat("heater", {}) == 0, "a running heater gives 18, an idle one 0")
     check(A.roomHeat("cooler", { live = true }) == -12 and A.roomHeat("cooler", { live = true, noRoom = true }) == 0,
           "a running cooler takes 12 from its room")
-    SandboxVars = { DazedPower = { RoomHeat = false } }
-    check(A.roomHeat("heater", { live = true }) == 0, "RoomHeat off: no heat")
-    SandboxVars = sv0
 
     local objSrc, roomSrc = {}, {}
     DazedClimate = { Rooms = { addObjectSource = function(s) objSrc[#objSrc + 1] = s end,
@@ -232,9 +229,6 @@ return function(check, E)
     A.status = function() return true end
     check(objSrc[2].cools(cooler) and A.outsideCoolerCools({ key = "1,2,0" }) and not A.outsideCoolerCools({ key = "9,9,0" }),
           "a running cooler in a room keeps the food cold")
-    SandboxVars = { DazedPower = { RoomHeat = false } }
-    check(objSrc[2].cools(cooler), "whatever the RoomHeat option says")
-    SandboxVars = sv0
     A.status = function() return false, "IGUI_DazedPower_ApplOffline" end
     check(not objSrc[2].cools(cooler) and not A.outsideCoolerCools({ key = "1,2,0" }), "an unpowered cooler keeps nothing cold")
     A.status, A.roomOf = status0, roomOf0

@@ -582,7 +582,7 @@ function D.remote()
             if not env then
                 env = DazedPower.Env.read()
                 env.outputScale = sandbox("OutputScale") / 100
-                env.degrade = sandbox("DegradeBank") ~= false
+                env.degrade = P.bankWears()
             end
             local on = stepRemote(snap, env, now)
             if e.on ~= on then G.put(key, { on = on }) end

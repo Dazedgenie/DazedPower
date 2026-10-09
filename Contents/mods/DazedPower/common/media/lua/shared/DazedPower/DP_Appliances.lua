@@ -157,10 +157,9 @@ function A.switchedOn(d)
 end
 
 --- The heat a part gives its room in C-squares per hour from its ModData `d`, as the server last wrote it.
---  Zero when it is not running or the RoomHeat sandbox option is off.
+--  Zero when it is not running.
 function A.roomHeat(kind, d)
     if type(d) ~= "table" or d.live ~= true then return 0 end
-    if P.sandbox("RoomHeat") == false then return 0 end
     if kind == "heater" then return A.HEATER_HEAT end
     if kind == "cooler" and not d.noRoom then return A.COOLER_HEAT end
     return 0
@@ -206,7 +205,7 @@ function A.outsideCoolerHeat(info)
     return total
 end
 
---- Is this cooler keeping its room's food cold now? The same test its food pass uses, whatever RoomHeat says.
+--- Is this cooler keeping its room's food cold now? The same test its food pass uses.
 function A.coolerKeepsCold(o)
     return (A.status(o, "cooler")) == true and A.roomOf(o) ~= nil
 end

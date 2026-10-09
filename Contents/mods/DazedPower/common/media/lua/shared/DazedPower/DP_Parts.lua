@@ -32,44 +32,51 @@ end
 --- Every sandbox option the mod declares, at the default
 --  media/sandbox-options.txt gives it. Keep the two in step by hand, and list
 --  every option the code reads here.
+--  RealisticMode is no longer a sandbox option: only the Realistic and Hardcore
+--  presets switch it on.
 P.SANDBOX_DEFAULTS = {
     LinkRadius = 12,
     OutputScale = 100,
     BankScale = 100,
     SnowRate = 100,
-    SoilRate = 100,
     SimulateLoad = true,
-    DegradeBank = true,
     AgeRate = 100,
     StormRate = 100,
     HydrogenRisk = true,
     PickupLock = 3,
-    GridLinkRadius = 30,
     TransformerLoss = 25,
     RealisticMode = false,
     RigChance = 15,
-    BarnStockChance = 2,
     CableTilesPerWire = 4,
     LiveShock = true,
-    FenceDamage = true,
     ColdStarts = true,
-    RoomHeat = true,
 }
 
 -- The Dazed Core preset values for this page: { easy, standard, realistic, hardcore } per option.
 P.PRESETS = {
     OutputScale = { 150, 100, 80, 60 }, BankScale = { 150, 100, 100, 75 },
-    SnowRate = { 50, 100, 100, 150 }, SoilRate = { 50, 100, 100, 150 },
-    SimulateLoad = { false, true, true, true }, DegradeBank = { false, true, true, true },
+    SnowRate = { 50, 100, 100, 150 },
+    SimulateLoad = { false, true, true, true },
     AgeRate = { 0, 100, 150, 250 }, RealisticMode = { false, false, true, true },
-    LinkRadius = { 16, 12, 10, 8 }, GridLinkRadius = { 40, 30, 25, 20 },
+    LinkRadius = { 16, 12, 10, 8 },
     TransformerLoss = { 10, 25, 25, 35 }, CableTilesPerWire = { 0, 4, 3, 2 },
     LiveShock = { false, true, true, true }, RigChance = { 5, 15, 20, 25 },
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
-    FenceDamage = { true, true, true, true },
-    ColdStarts = { false, true, true, true }, RoomHeat = { true, true, true, true },
+    ColdStarts = { false, true, true, true },
 }
 if DazedCore and DazedCore.Preset then DazedCore.Preset.register("DazedPower", P.PRESETS) end
+
+--- How far a transformer's power line may run: two and a half times the
+--  panel and battery link radius (12 gives 30, the old separate default).
+function P.gridRadius()
+    return math.floor((tonumber(P.sandbox("LinkRadius")) or 12) * 2.5)
+end
+
+--- Whether battery banks wear and suffer deep-discharge damage at all: the
+--  Battery wear option at 0 turns both off.
+function P.bankWears()
+    return (tonumber(P.sandbox("AgeRate")) or 100) > 0
+end
 
 --- A sandbox option's value, or its declared default while SandboxVars does
 --  not carry it yet (the main menu, a world from before the option existed).
