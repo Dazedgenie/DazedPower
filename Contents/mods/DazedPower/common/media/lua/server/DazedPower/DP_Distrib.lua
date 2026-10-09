@@ -342,6 +342,8 @@ local function reshaped(rec)
             end
             if not keep then rec.drawn[k] = nil end
         end
+        -- Edited directly, so DP_System rebuilds the cache's totals and index from the table.
+        rec.drawnTot = nil
         -- the backup's units with the watts: the tick holds them from
         -- falling until the new sweep is round (DP_System.updateController)
         local total, cold, units = I().cacheTotals(rec)

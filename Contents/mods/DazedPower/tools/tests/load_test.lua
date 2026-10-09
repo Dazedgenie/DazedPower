@@ -166,6 +166,19 @@ do
         "S.controllerOf reads the controller the tick resolved")
 end
 
+-- The load cache keeps running totals, rebuilt from the table whenever someone edits it directly.
+do
+    local I = DazedPower.System.internals()
+    local rec = { drawn = { ["1,1,0"] = { w = 5, cold = 1, u = 0.5, kinds = { a = 5 } }, ["2,1,0"] = { w = 3, cold = 0, u = 0.25, kinds = { a = 3 } } } }
+    local w, c, u = I.cacheTotals(rec)
+    I.foldKinds(rec)
+    rec.drawn["2,1,0"] = nil
+    rec.drawnTot = nil
+    local w2 = I.cacheTotals(rec)
+    I.foldKinds(rec)
+    check(w == 8 and c == 1 and u == 0.75 and w2 == 5 and rec.kinds.a == 5, "the load cache's running totals follow the table")
+end
+
 -- A registry change only marks the indexes; the first reader rebuilds them once.
 do
     local G, R = DazedPower.Grid, DazedPower.Reach

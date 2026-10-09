@@ -1065,23 +1065,56 @@ function S.giveWire(playerObj, n)
     end
 end
 
---- Fold the per-square kind splits into one table for the LOADS page, over a
---  cache that only holds squares that actually draw something or hold an
---  idle appliance, so this is a handful of entries.
+--- Re-read one square into `rec.drawn`, and answer what it draws.
+--
+--  The one place an appliance becomes a number. Both callers want the same
+--  work done and the same cache entry written; they differ only in what they
+--  do with the answer, so the accumulation stays with them.
+-- One number per square for the cache's presence index; exact in a double for any map coordinate.
+local function numKey(x, y, z) return (z + 64) * 1e10 + x * 1e5 + y end
+
+--- Make sure the record's cache bookkeeping matches `rec.drawn`: a presence
+--  index by number (so an empty square never builds a string key), the entry
+--  count, and running totals. Anything that edits `rec.drawn` directly sets
+--  `rec.drawnTot = nil`, and the bookkeeping is rebuilt here from the table.
+local function drawnState(rec)
+    if rec.drawnTot and rec.drawnOf == rec.drawn then return end
+    local ix, n, w, cold, u = {}, 0, 0, 0, 0
+    for k, e in pairs(rec.drawn) do
+        local x, y, z = string.match(k, "^(-?%d+),(-?%d+),(-?%d+)$")
+        if x then ix[numKey(tonumber(x), tonumber(y), tonumber(z))] = true end
+        n = n + 1
+        w, cold, u = w + (e.w or 0), cold + (e.cold or 0), u + (e.u or 0)
+    end
+    rec.drawnIx, rec.drawnN, rec.drawnOf = ix, n, rec.drawn
+    rec.drawnTot = { w = w, cold = cold, u = u }
+    rec.kindsDirty = true
+end
+
+-- Do two kind -> watts tables (either may be nil) hold the same figures?
+local function sameKinds(a, b)
+    if a == nil or b == nil then return a == b end
+    for k, v in pairs(a) do if b[k] ~= v then return false end end
+    for k in pairs(b) do if a[k] == nil then return false end end
+    return true
+end
+
 --- Re-read one square into `rec.drawn`, and answer what it draws.
 --
 --  The one place an appliance becomes a number. Both callers want the same
 --  work done and the same cache entry written; they differ only in what they
 --  do with the answer, so the accumulation stays with them.
 local function readSquare(rec, x, y, z)
+    drawnState(rec)
     local s = getSquare(x, y, z)
-    local k = key(x, y, z)
+    local nk = numKey(x, y, z)
     if not s then
         -- Not streamed in. Use what this square drew the last time it was, so
         -- the total does not depend on where the player happens to be
         -- standing. No invalidation is needed: nothing can be added to a
         -- square whose chunk is not in memory.
-        local c = rec.drawn[k]
+        if not rec.drawnIx[nk] then return 0, 0 end
+        local c = rec.drawn[key(x, y, z)]
         if c then return c.w, c.cold end
         return 0, 0
     end
@@ -1114,15 +1147,40 @@ local function readSquare(rec, x, y, z)
     -- overwhelming majority of a 41x41x7 cylinder and holding a zero for each
     -- of them would be a table of 11,767 entries per controller. A square with
     -- an idle appliance earns its entry the same way a drawing one does; both
-    -- are rare.
+    -- are rare. The totals and the entry count follow every change here.
+    local tot = rec.drawnTot
     if w > 0 or idle then
         -- The kind split rides in the same cache, so squares in unloaded
         -- chunks keep their itemised entry on the LOADS page, exactly as they
         -- keep their watts in the total.
-        rec.drawn[k] = { w = w, cold = cold, u = units, kinds = kinds, idle = idle }
-    else
-        rec.drawn[k] = nil
+        local k = key(x, y, z)
+        local e = rec.drawn[k]
+        if e then
+            tot.w, tot.cold, tot.u = tot.w + w - (e.w or 0), tot.cold + cold - (e.cold or 0), tot.u + units - (e.u or 0)
+            e.w, e.cold, e.u = w, cold, units
+            -- The entry is kept; its kind tables are only replaced when their figures moved.
+            if not sameKinds(e.kinds, kinds) then e.kinds = kinds rec.kindsDirty = true end
+            if not sameKinds(e.idle, idle) then e.idle = idle rec.kindsDirty = true end
+        else
+            rec.drawn[k] = { w = w, cold = cold, u = units, kinds = kinds, idle = idle }
+            rec.drawnIx[nk] = true
+            rec.drawnN = rec.drawnN + 1
+            tot.w, tot.cold, tot.u = tot.w + w, tot.cold + cold, tot.u + units
+            rec.kindsDirty = true
+        end
+    elseif rec.drawnIx[nk] then
+        local k = key(x, y, z)
+        local e = rec.drawn[k]
+        if e then
+            rec.drawn[k] = nil
+            rec.drawnN = rec.drawnN - 1
+            tot.w, tot.cold, tot.u = tot.w - (e.w or 0), tot.cold - (e.cold or 0), tot.u - (e.u or 0)
+            rec.kindsDirty = true
+        end
+        rec.drawnIx[nk] = nil
     end
+    -- An empty cache sums to exactly nothing, whatever rounding the running totals picked up.
+    if rec.drawnN == 0 then tot.w, tot.cold, tot.u = 0, 0, 0 end
     return w, cold
 end
 
@@ -1133,21 +1191,25 @@ end
 --  correct total without waiting for the sweep to come round again. The third
 --  value is the engine units of all of it, a backup generator's bill; the
 --  callers that take two values are unaffected.
---- What the cache adds up to, without publishing anything.
+--- What the cache adds up to, without publishing anything. Kept as running totals by readSquare.
 local function cacheTotals(rec)
-    local total, coldTotal, unitsTotal = 0, 0, 0
-    for _, e in pairs(rec.drawn) do
-        total = total + (e.w or 0)
-        coldTotal = coldTotal + (e.cold or 0)
-        unitsTotal = unitsTotal + (e.u or 0)
-    end
-    return total, coldTotal, unitsTotal
+    if not rec.drawn then return 0, 0, 0 end
+    drawnState(rec)
+    local tot = rec.drawnTot
+    return tot.w, tot.cold, tot.u
 end
 
+--- Fold the per-square kind splits into one table for the LOADS page, over a
+--  cache that only holds squares that actually draw something or hold an
+--  idle appliance, so this is a handful of entries. Skipped while no entry's
+--  kinds changed since the last fold; a full fold also re-sums the totals exactly.
 local function foldKinds(rec)
+    drawnState(rec)
+    if not rec.kindsDirty and rec.kinds and rec.idleKinds then return cacheTotals(rec) end
     local kindsum, idlesum = {}, {}
-    local total, coldTotal = cacheTotals(rec)
+    local total, coldTotal, units = 0, 0, 0
     for _, e in pairs(rec.drawn) do
+        total, coldTotal, units = total + (e.w or 0), coldTotal + (e.cold or 0), units + (e.u or 0)
         if e.kinds then
             for kk, kw in pairs(e.kinds) do
                 kindsum[kk] = (kindsum[kk] or 0) + kw
@@ -1159,8 +1221,10 @@ local function foldKinds(rec)
             end
         end
     end
+    rec.drawnTot = { w = total, cold = coldTotal, u = units }
     rec.kinds = kindsum
     rec.idleKinds = idlesum
+    rec.kindsDirty = false
     return total, coldTotal
 end
 
@@ -2103,10 +2167,13 @@ function S.updateController(rec, dt, hoursAgo, wet)
     -- where it is, and the first whole tick settles the gap with the usual
     -- catch-up; meanwhile DP_Distrib's estimate switches the wired grid.
     if DazedPower.Distrib and DazedPower.Distrib.partial and DazedPower.Distrib.partial(rec) then return end
-    S.scanSlice(rec)
-    -- After the slice, so a square this tick's slice just walked is not
-    -- read twice, and so the republish sees the slice's own work.
-    S.scanNear(rec)
+    -- A catch-up hour more than one hour back bills the demand the record already holds; only the last hour scans.
+    if not (hoursAgo and hoursAgo > 1) then
+        S.scanSlice(rec)
+        -- After the slice, so a square this tick's slice just walked is not
+        -- read twice, and so the republish sees the slice's own work.
+        S.scanNear(rec)
+    end
 
     local arrays, panels, bank, byTier, shaded = gather(rec, env)
     local lvdBefore = d.lvd == true
