@@ -89,6 +89,8 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 ## Changes
 
 - **0.7.1 (rename).** Now called **Dazed Power** in the mod list and Workshop; needs **Dazed Core** (was "Dazed Utilities: Core"). Mod ID, saves and settings unchanged. README: the monitor is described as the charge board it now is, and the electric space heater is listed.
+  - **Fix:** the Micro-Hydro Wheel can be repaired (*Dazed Power -> Repair it*: electronics scrap, screws, a screwdriver; +30 condition), like the other machines. It wore down and stopped at 35 with no way back.
+  - **Fix:** the Dazed Core preset for found solar rigs was backwards. Easy now puts a rig on one house in 5, Standard 15, Realistic 20, Hardcore 25.
 
 - **0.7.0 (performance).** The same simulation, cheaper to run and to sync. Each controller is looked up once per
   minute instead of six times; the load scan keeps running totals; wiring graphs, sprite decodes, the generator range

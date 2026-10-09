@@ -64,7 +64,7 @@ P.PRESETS = {
     AgeRate = { 0, 100, 150, 250 }, RealisticMode = { false, false, true, true },
     LinkRadius = { 16, 12, 10, 8 }, GridLinkRadius = { 40, 30, 25, 20 },
     TransformerLoss = { 10, 25, 25, 35 }, CableTilesPerWire = { 0, 4, 3, 2 },
-    LiveShock = { false, true, true, true }, RigChance = { 25, 15, 10, 5 },
+    LiveShock = { false, true, true, true }, RigChance = { 5, 15, 20, 25 },
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
     FenceDamage = { true, true, true, true },
     ColdStarts = { false, true, true, true }, RoomHeat = { true, true, true, true },

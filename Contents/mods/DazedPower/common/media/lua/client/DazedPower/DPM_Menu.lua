@@ -551,6 +551,12 @@ local function addRows(menu, wo, target, playerObj)
         -- Dazed Power's own solar array takes an amplifier too; nothing else of its.
         local theirs = P.describe(target)
         if R.canAmplify(theirs) then ampRows(menu, wo, target, playerObj, P.data(target)) end
+        -- A water wheel gets its condition line and the repair row.
+        if theirs and R.REPAIR_ONLY[theirs.kind] then
+            local line = menu:addOption(status(target, theirs), nil, nil)
+            line.notAvailable = true
+            addRepair(menu, wo, target, playerObj, P.data(target))
+        end
         return
     end
     local d = P.data(target)
@@ -659,7 +665,7 @@ if not H.menuWrapped then
         if row == "info" and type(option) == "table" and menu and menu.addOption then
             local target, playerObj = option.param1, option.param2
             if target and target.getSprite and playerObj and playerObj.getInventory
-                    and (R.describe(target) or R.canAmplify(P.describe(target))) then
+                    and (R.repairable(target) or R.canAmplify(P.describe(target))) then
                 local ok, err = pcall(addRows, menu, option.target, target, playerObj)
                 if not ok then print("DazedPower: menu rows failed: " .. tostring(err)) end
             end

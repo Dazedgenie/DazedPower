@@ -55,6 +55,16 @@ function R.describe(obj)
     return nil
 end
 
+-- Dazed Power parts that wear but have no rows of their own, repaired with the same scrap and screws.
+R.REPAIR_ONLY = { hydro = true }
+
+--- A part the machine repair works on: one of these kinds, or a REPAIR_ONLY part. Returns its description.
+function R.repairable(obj)
+    local info = P.describe(obj)
+    if info and (R.KIND_SET[info.kind] or R.REPAIR_ONLY[info.kind]) then return info end
+    return nil
+end
+
 --- Change state and/or facing in one sprite swap.
 function R.setVariant(obj, state, facing)
     if not R.describe(obj) then return false end

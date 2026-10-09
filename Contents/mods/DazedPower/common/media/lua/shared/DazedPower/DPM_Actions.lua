@@ -825,7 +825,7 @@ DPM_Repair = ISBaseTimedAction:derive("DPM_Repair")
 
 function DPM_Repair:isValid()
     if not self.object or self.object:getObjectIndex() == -1 then return false end
-    if not R.describe(self.object) then return false end
+    if not R.repairable(self.object) then return false end
     return (P.data(self.object).condition or 100) < 100
         and self.scrap ~= nil and self.screws ~= nil
 end
@@ -848,7 +848,7 @@ function DPM_Repair:perform() ISBaseTimedAction.perform(self) end
 
 function DPM_Repair:complete()
     if not self.object or self.object:getObjectIndex() == -1 then return true end
-    local info = R.describe(self.object)
+    local info = R.repairable(self.object)
     if not info then return true end
     local d = P.data(self.object)
     if (d.condition or 100) >= 100 then return true end
