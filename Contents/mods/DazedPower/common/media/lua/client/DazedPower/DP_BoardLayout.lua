@@ -95,14 +95,34 @@ function Board.lamps(s)
     }
 end
 
+--- The needle of a dial at x, y (diameter d) pointing at fraction f of its range, as a turned quad's
+--  eight corner coordinates, multiplied by S. The window moves a needle with this alone between builds.
+function Board.needleQuad(x, y, d, f, S)
+    S = S or 1
+    local cx, cy = x + d / 2, y + d / 2
+    local ro = d / 2 - 11
+    -- The needle texture points right with its pivot 14 px in, at mid height.
+    local a = math.rad(225 - 270 * clamp(f or 0, -0.02, 1.02))
+    local k = (ro - 4) / 80
+    local dx, dy = math.cos(a), -math.sin(a)
+    local px, py = -dy, dx
+    local q = {}
+    for _, uv in ipairs({ { -14, -8 }, { 82, -8 }, { 82, 8 }, { -14, 8 } }) do
+        q[#q + 1] = (cx + (uv[1] * dx + uv[2] * px) * k) * S
+        q[#q + 1] = (cy + (uv[1] * dy + uv[2] * py) * k) * S
+    end
+    return q
+end
+
 --- Build the face for a snapshot `s`.
 --  `o` carries the engine's pieces: S, fontH(name), measure(name, str), getText(key), txt(key, ...), and the window's
 --  own state: needles { src, load } (0..1, eased by the window), scales { src, load } (W), genIndex, blink, tier, readOnly,
 --  srcScroll and loadScroll (rows the sources and circuits lists are scrolled by).
---  @return { w, h, ops, hits, scrolls } in screen pixels; scrolls are the wheel areas { id, x, y, w, h, max, off }
+--  @return { w, h, ops, hits, scrolls, needleOps } in screen pixels; scrolls are the wheel areas { id, x, y, w, h, max, off },
+--  needleOps { src, load } each { op, x, y, d } in base pixels, for Board.needleQuad
 function Board.build(s, o)
     local S = o.S or 1
-    local ops, hits, scrolls = {}, {}, {}
+    local ops, hits, scrolls, needleOps = {}, {}, {}, {}
     local function fh(f) return o.fontH(f) / S end
     local function mw(f, str) return o.measure(f, tostring(str)) / S end
     local T, TX = o.getText, o.txt
@@ -150,7 +170,7 @@ function Board.build(s, o)
     hit(W - 36, 6, 30, 34, "close")
 
     -- The two dials: every source in and the load out, on ranges that grow to fit what they have seen.
-    local function gauge(x, y, d, f, full, title, red)
+    local function gauge(id, x, y, d, f, full, title, red)
         tex("gauge_face.png", x, y, d, d)
         local cx, cy = x + d / 2, y + d / 2
         local ro = d / 2 - 11
@@ -179,23 +199,14 @@ function Board.build(s, o)
         end
         text(T("IGUI_DazedPower_BoardKw"), cx, cy + d * 0.2, C.muted, "Small", "center")
         text(title, cx, y + d + 2, C.ink, "Medium", "center")
-        -- The needle texture points right with its pivot 14 px in, at mid height; it is drawn as a turned quad.
-        local _, _, a = at(clamp(f or 0, -0.02, 1.02), 0)
-        local k = (ro - 4) / 80
-        local dx, dy = math.cos(a), -math.sin(a)
-        local px, py = -dy, dx
-        local function pt(u, v) return cx + (u * dx + v * px) * k, cy + (u * dy + v * py) * k end
-        local q = {}
-        for _, uv in ipairs({ { -14, -8 }, { 82, -8 }, { 82, 8 }, { -14, 8 } }) do
-            local qx, qy = pt(uv[1], uv[2])
-            q[#q + 1] = qx; q[#q + 1] = qy
-        end
-        ops[#ops + 1] = { k = "quad", name = Board.TEX .. "needle.png", pts = q, a = 1 }
+        -- The needle is drawn as a turned quad (Board.needleQuad), and remembered so the window can move it alone.
+        ops[#ops + 1] = { k = "quad", name = Board.TEX .. "needle.png", pts = Board.needleQuad(x, y, d, f, 1), a = 1 }
+        needleOps[id] = { op = ops[#ops], x = x, y = y, d = d }
         tex("hub.png", cx - 10, cy - 10, 20, 20)
     end
     local needles, scales = o.needles or {}, o.scales or {}
-    gauge(20, 46, 170, online and needles.src or 0, scales.src or 2000, T("IGUI_DazedPower_BoardSourcesIn"))
-    gauge(206, 46, 170, online and needles.load or 0, scales.load or 2000, T("IGUI_DazedPower_BoardLoadOut"), 0.85)
+    gauge("src", 20, 46, 170, online and needles.src or 0, scales.src or 2000, T("IGUI_DazedPower_BoardSourcesIn"))
+    gauge("load", 206, 46, 170, online and needles.load or 0, scales.load or 2000, T("IGUI_DazedPower_BoardLoadOut"), 0.85)
 
     -- NET on number wheels under the dials.
     local function section1()
@@ -548,7 +559,7 @@ function Board.build(s, o)
         for _, h0 in ipairs(hits) do h0.x, h0.y, h0.w, h0.h = h0.x * S, h0.y * S, h0.w * S, h0.h * S end
         for _, h0 in ipairs(scrolls) do h0.x, h0.y, h0.w, h0.h = h0.x * S, h0.y * S, h0.w * S, h0.h * S end
     end
-    return { w = W * S, h = H * S, ops = ops, hits = hits, scrolls = scrolls }
+    return { w = W * S, h = H * S, ops = ops, hits = hits, scrolls = scrolls, needleOps = needleOps }
 end
 
 return Board

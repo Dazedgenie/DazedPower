@@ -39,6 +39,9 @@ return function(check)
     local quad
     for _, op in ipairs(m.ops) do if op.k == "quad" then quad = op end end
     check(quad and #quad.pts == 8, "the needles are turned quads")
+    local nq, same = B.needleQuad(206, 46, 170, 0.2, 1), true
+    for i = 1, 8 do if nq[i] ~= quad.pts[i] then same = false end end
+    check(same and m.needleOps.load.op == quad, "a needle moved on its own lands where a fresh build puts it")
 
     -- Eight sources don't fit: the list scrolls instead of ending in "+N more".
     local many = {}

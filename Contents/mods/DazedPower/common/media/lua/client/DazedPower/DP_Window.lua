@@ -33,11 +33,23 @@ local FONTS = { Small = UIFont.Small, Medium = UIFont.Medium, Large = UIFont.Lar
     CodeSmall = UIFont.CodeSmall, CodeMedium = UIFont.CodeMedium, CodeLarge = UIFont.CodeLarge, NewSmall = UIFont.NewSmall }
 local function font(name) return FONTS[name] or UIFont.Small end
 local function fontH(name) return getTextManager():getFontHeight(font(name)) end
+-- Font -> string -> measured width; the board measures the same labels on every build. Bounded.
+local measureMemo, measureN = {}, 0
+local MEASURE_MAX = 4000
 local function measure(name, str)
+    str = tostring(str)
+    local byFont = measureMemo[name or ""]
+    local w = byFont and byFont[str]
+    if w then return w end
     local tm = getTextManager()
-    local ok, w = pcall(tm.MeasureStringX, tm, font(name), tostring(str))
-    if ok and type(w) == "number" then return w end
-    return #tostring(str) * math.floor(fontH(name) * 0.6)
+    local ok, mw = pcall(tm.MeasureStringX, tm, font(name), str)
+    if ok and type(mw) == "number" then w = mw else w = #str * math.floor(fontH(name) * 0.6) end
+    if measureN >= MEASURE_MAX then measureMemo, measureN = {}, 0 end
+    byFont = measureMemo[name or ""]
+    if not byFont then byFont = {} measureMemo[name or ""] = byFont end
+    byFont[str] = w
+    measureN = measureN + 1
+    return w
 end
 
 local TEXCACHE = {}
@@ -420,25 +432,53 @@ function DP_Window:dials(s)
     self.peak = self.peak or { src = 0, load = 0 }
     self.peak.src = math.max(self.peak.src, s.gen or 0)
     self.peak.load = math.max(self.peak.load, s.load or 0)
-    local scales = { src = Board.fullScale(self.peak.src), load = Board.fullScale(self.peak.load) }
-    self.needles = self.needles or { src = 0, load = 0 }
-    for k, v in pairs({ src = (s.gen or 0) / scales.src, load = (s.load or 0) / scales.load }) do
-        self.needles[k] = self.needles[k] + (v - self.needles[k]) * 0.15
-    end
+    local scales = self.scales or {}
+    self.scales = scales
+    scales.src, scales.load = Board.fullScale(self.peak.src), Board.fullScale(self.peak.load)
+    local n = self.needles or { src = 0, load = 0 }
+    self.needles = n
+    n.src = n.src + ((s.gen or 0) / scales.src - n.src) * 0.15
+    n.load = n.load + ((s.load or 0) / scales.load - n.load) * 0.15
     return scales
 end
+
+local NEEDLES = { "src", "load" }
+local NEEDLE_EPS = 0.001          -- of a dial's range, about a third of a pixel at the base size
 
 function DP_Window:prerender()
     local s = self.snap
     if not s then return end
     self.blink = math.floor((self.tick or 0) / 18) % 2 == 0
     local scales = self:dials(s)
-    self.model = Board.build(s, {
-        S = S, fontH = fontH, measure = measure, getText = getText, txt = P.txt,
-        needles = self.needles, scales = scales, genIndex = self.genIndex, blink = self.blink,
-        tier = self.tier, readOnly = self.readOnly, srcScroll = self.scroll and self.scroll.src,
-        loadScroll = self.scroll and self.scroll.load,
-    })
+    local srcScroll, loadScroll = self.scroll and self.scroll.src, self.scroll and self.scroll.load
+    -- The face is only rebuilt when something it shows changed: a new snapshot, the blink, a page or a scroll, a
+    -- range. Between builds only the needles move, and only once one has moved more than NEEDLE_EPS.
+    local b = self.built
+    if not (self.model and b and b.s == s and b.blink == self.blink and b.genIndex == self.genIndex
+            and b.srcScroll == srcScroll and b.loadScroll == loadScroll
+            and b.scaleSrc == scales.src and b.scaleLoad == scales.load) then
+        self.model = Board.build(s, {
+            S = S, fontH = fontH, measure = measure, getText = getText, txt = P.txt,
+            needles = self.needles, scales = scales, genIndex = self.genIndex, blink = self.blink,
+            tier = self.tier, readOnly = self.readOnly, srcScroll = srcScroll, loadScroll = loadScroll,
+        })
+        b = b or {}
+        b.s, b.blink, b.genIndex, b.srcScroll, b.loadScroll = s, self.blink, self.genIndex, srcScroll, loadScroll
+        b.scaleSrc, b.scaleLoad = scales.src, scales.load
+        b.src, b.load = self.needles.src, self.needles.load
+        self.built = b
+    else
+        local online = s.online == true
+        for _, k in ipairs(NEEDLES) do
+            local no = self.model.needleOps and self.model.needleOps[k]
+            local f = online and self.needles[k] or 0
+            local was = online and b[k] or 0
+            if no and math.abs(f - was) > NEEDLE_EPS then
+                no.op.pts = Board.needleQuad(no.x, no.y, no.d, f, S)
+                b[k] = self.needles[k]
+            end
+        end
+    end
     self:drawOps(self.model.ops)
 end
 
