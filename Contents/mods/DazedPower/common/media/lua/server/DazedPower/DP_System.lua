@@ -1826,15 +1826,14 @@ end
 --  square pointer (IsoObject.removeFromSquare only unlinks it), so the tick
 --  went on billing, charging and re-spriting the object that had left for up
 --  to half an hour: a rack turned every few minutes at night drained the ghost
---  while the real one sat full. getObjectIndex is -1 for anything no longer in
---  its square's list (IsoObject.java:4839).
+--  while the real one sat full. P.alive also catches a part whose chunk streamed
+--  out while the controller stayed loaded: its old object keeps its index but the cell holds new squares.
 function S.staleLinks(rec)
     local lists = { rec.arrays or {}, rec.banks or {}, rec.xfmrs or {} }
     for l = 1, #lists do
         local list = lists[l]
         for i = 1, #list do
-            local ix = try(list[i], "getObjectIndex")
-            if type(ix) ~= "number" or ix < 0 then return true end
+            if not P.alive(list[i]) then return true end
         end
     end
     return false

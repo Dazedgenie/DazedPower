@@ -85,4 +85,16 @@ return function(check, E)
         getSprite = gs0
         check(live.sprite == windmill and ghost.sprite == frame, "turning the spin off restores live windmills and leaves ghosts alone")
     end
+
+    ------------------------------------------------------------ stale part links
+    do
+        local S = DazedPower.System
+        local bankSq = E.square(920, 920, 0)
+        local bank = E.object(P.sprite("bank", "ground", "salvaged", "c0", "S") or windmill, bankSq)
+        local arr = E.object(windmill, E.square(921, 920, 0))
+        local rec = { arrays = { arr }, banks = { bank }, xfmrs = {} }
+        check(S.staleLinks(rec) == false, "parts on loaded squares are not stale")
+        streamOut(bankSq)
+        check(S.staleLinks(rec) == true, "a bank whose chunk streamed out under a loaded controller triggers a relink")
+    end
 end
