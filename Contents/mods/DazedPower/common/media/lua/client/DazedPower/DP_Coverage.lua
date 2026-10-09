@@ -38,8 +38,8 @@ V.LOAD_OFF = { r = 1.0, g = 1.0, b = 1.0, a = 0.35 }
 local PLAIN = { r = 0.9, g = 1.0, b = 0.0, a = 1.0 }
 -- Squares read per frame, and the least time between the starts of two
 -- passes. The default reach is about 9,000 squares over seven floors, so a
--- pass takes a few frames and a light switched on glows within a second.
-V.GLOW_BUDGET = 1500
+-- pass takes under half a second and a light switched on glows within a second.
+V.GLOW_BUDGET = 400
 V.GLOW_EVERY_MS = 500
 
 local function paint(obj, index, c)

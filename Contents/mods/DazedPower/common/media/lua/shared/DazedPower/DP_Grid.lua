@@ -43,6 +43,7 @@
 ]]
 
 require "DazedPower/DP_Reach"
+require "DazedPower/DP_Interop"
 
 DazedPower = DazedPower or {}
 DazedPower.Grid = DazedPower.Grid or {}
@@ -104,21 +105,13 @@ function G.authority()
     return not isClient()
 end
 
-local function sandboxInt(name, fallback)
-    local ok, v = pcall(function()
-        local so = getSandboxOptions()
-        local opt = so and so:getOptionByName(name)
-        return opt and opt:getValue()
-    end)
-    v = ok and tonumber(v) or nil
-    return v or fallback
-end
-
 --- The engine's range, as the sandbox states it. The engine reads the same
 --  two options whenever an IsoGenerator is built (IsoGenerator.setGeneratorRange).
+--  Read through DP_Interop's cache, which G.everyMinute refreshes.
 function G.range()
-    local r = floor(sandboxInt("GeneratorTileRange", 20))
-    local v = floor(sandboxInt("GeneratorVerticalPowerRange", 3))
+    local rr, rv = DazedPower.Interop.rawGeneratorRange()
+    local r = floor(tonumber(rr) or 20)
+    local v = floor(tonumber(rv) or 3)
     if r < 1 then r = 1 end
     if v < 0 then v = 0 end
     return r, v
@@ -730,6 +723,7 @@ function G.onTick()
 end
 
 function G.everyMinute()
+    DazedPower.Interop.refreshRange()
     if not G.reg then return end
     G.checkRange()
     if G.authority() then

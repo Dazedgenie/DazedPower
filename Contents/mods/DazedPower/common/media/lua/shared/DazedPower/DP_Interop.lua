@@ -110,28 +110,38 @@ Events.OnGameBoot.Add(I.run)
 
 ------------------------------------------------------------ the power reach
 
+--- Read the two generator range options now. DP_Grid calls this once per in-game minute,
+--  so every reader below sees a sandbox change within a minute without asking the engine each frame.
+function I.refreshRange()
+    -- Wrapped: the monitor and the Info card ask for the range while they draw, and an error there repeats every frame.
+    local ok, r, v = pcall(function()
+        local so = getSandboxOptions()
+        local a = so and so:getOptionByName("GeneratorTileRange")
+        local b = so and so:getOptionByName("GeneratorVerticalPowerRange")
+        return a and a:getValue(), b and b:getValue()
+    end)
+    I.rawRange = ok and r or nil
+    I.rawVertical = ok and v or nil
+    I.rangeRead = true
+end
+
+--- The sandbox's raw GeneratorTileRange and GeneratorVerticalPowerRange (nil when unset), as last read.
+function I.rawGeneratorRange()
+    if not I.rangeRead then I.refreshRange() end
+    return I.rawRange, I.rawVertical
+end
+
 --- The generator reach the engine lights, in tiles: vanilla's
 --  GeneratorTileRange, the same figure DP_System scans the LOADS page over.
 function I.generatorRange()
-    -- Wrapped: the monitor and the Info card ask this while they draw, and an
-    -- error there repeats every frame.
-    local ok, v = pcall(function()
-        local so = getSandboxOptions()
-        local opt = so and so:getOptionByName("GeneratorTileRange")
-        return opt and opt:getValue()
-    end)
-    v = ok and tonumber(v) or nil
+    local v = tonumber((I.rawGeneratorRange()))
     if not v or v < 1 then return 20 end
     return math.floor(v)
 end
 
 function I.generatorVerticalRange()
-    local ok, v = pcall(function()
-        local so = getSandboxOptions()
-        local opt = so and so:getOptionByName("GeneratorVerticalPowerRange")
-        return opt and opt:getValue()
-    end)
-    v = ok and tonumber(v) or nil
+    local _, v = I.rawGeneratorRange()
+    v = tonumber(v)
     if not v or v < 0 then return 3 end
     return math.floor(v)
 end

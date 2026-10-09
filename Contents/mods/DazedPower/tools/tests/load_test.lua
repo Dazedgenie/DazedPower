@@ -166,6 +166,22 @@ do
         "S.controllerOf reads the controller the tick resolved")
 end
 
+-- The generator range is read once and refreshed each minute, not asked of the engine by every caller.
+do
+    local Ip, gso = DazedPower.Interop, getSandboxOptions
+    Ip.refreshRange()
+    getSandboxOptions = function() return { getOptionByName = function(_, n)
+        return { getValue = function() return n == "GeneratorTileRange" and 30 or 2 end } end } end
+    local before = Ip.generatorRange()
+    Ip.refreshRange()
+    -- the cache held 20 until the refresh
+    local r1, v1 = Ip.generatorRange(), Ip.generatorVerticalRange()
+    local gr, gv = DazedPower.Grid.range()
+    getSandboxOptions = gso
+    Ip.refreshRange()
+    check(before == 20 and r1 == 30 and v1 == 2 and gr == 30 and gv == 2 and Ip.generatorRange() == 20, "one cached generator range, refreshed on demand")
+end
+
 -- Parsed wires are remembered, but every caller still gets its own list to append to.
 do
     local wstr = M.wireAdd("", "1,1,0,array", "2,1,0,controller")

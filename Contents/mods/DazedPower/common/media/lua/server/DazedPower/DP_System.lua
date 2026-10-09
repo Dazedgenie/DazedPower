@@ -36,6 +36,7 @@ require "DazedPower/DP_Priority"
 require "DazedPower/DP_Electrician"
 require "DazedPower/DP_GenPanel"
 require "DazedPower/DP_Admin"
+require "DazedPower/DP_Interop"
 
 DazedPower = DazedPower or {}
 DazedPower.System = DazedPower.System or {}
@@ -138,10 +139,8 @@ end
 --  is concerned, and the radius is a private static shared by every generator
 --  in the world, so it could not differ even if it wanted to.
 local function powerRadius()
-    local so = getSandboxOptions()
-    local r = so and so:getOptionByName("GeneratorTileRange")
-    r = r and r:getValue() or 20
-    return r
+    local r = DazedPower.Interop.rawGeneratorRange()
+    return r or 20
 end
 
 --- The other half of the powered volume. A generator lights a CYLINDER, not a
@@ -150,10 +149,8 @@ end
 --  walk three of those seven, which silently under-billed a basement, an upper
 --  floor and a roof.
 local function powerLevels()
-    local so = getSandboxOptions()
-    local v = so and so:getOptionByName("GeneratorVerticalPowerRange")
-    v = v and v:getValue() or 3
-    return v
+    local _, v = DazedPower.Interop.rawGeneratorRange()
+    return v or 3
 end
 
 -------------------------------------------------------------- registration
