@@ -93,7 +93,7 @@ return function(check, E)
         a.setActionAnim = function(self, n) self.anim = n end
         IsoDirections = IsoDirections or { N = "N", E = "E", S = "S", W = "W" }
         a:start()
-        check(a.anim == "DazedPedal" and c.vars.DazedPedalSpeed == DPM_PEDAL_PACE.racing, "riding plays the pedal animation at the gear's pace")
+        check(a.anim == "DazedPedal" and c.vars.DazedPedalSpeed == DazedPower.More.Actions.PEDAL_PACE.racing, "riding plays the pedal animation at the gear's pace")
         check(c.vars.DazedPedalTier == "salvaged", "the animation is picked for the bike's tier")
         check(c.y == 200.5 and c.x == 100.5 and c.dir == IsoDirections.S, "the rider is on the bike, facing south")
         bike.alpha = 0.3; DPM_Pedal.keepSolid()

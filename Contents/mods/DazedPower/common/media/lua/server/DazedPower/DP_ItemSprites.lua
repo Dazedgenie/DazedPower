@@ -29,21 +29,22 @@ local function walk(cont)
     return fixed
 end
 
+-- Walk one player's inventory once per session.
+local function healPlayer(pl)
+    local who = tostring(pl:getUsername() or pl:getPlayerNum())
+    if not done[who] then
+        done[who] = true
+        local n = walk(pl:getInventory())
+        if n > 0 then print("DazedPower: healed " .. n .. " item(s) carrying an old tile name for " .. who) end
+    end
+end
+
 local function sweep()
-    local players = {}
     if isServer() and getOnlinePlayers then
         local list = getOnlinePlayers()
-        for i = 0, list:size() - 1 do players[#players + 1] = list:get(i) end
+        for i = 0, list:size() - 1 do healPlayer(list:get(i)) end
     elseif getSpecificPlayer and getSpecificPlayer(0) then
-        players[1] = getSpecificPlayer(0)
-    end
-    for _, pl in ipairs(players) do
-        local who = tostring(pl:getUsername() or pl:getPlayerNum())
-        if not done[who] then
-            done[who] = true
-            local n = walk(pl:getInventory())
-            if n > 0 then print("DazedPower: healed " .. n .. " item(s) carrying an old tile name for " .. who) end
-        end
+        healPlayer(getSpecificPlayer(0))
     end
 end
 

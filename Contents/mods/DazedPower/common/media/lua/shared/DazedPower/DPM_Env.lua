@@ -6,17 +6,14 @@
      described below. It adds nothing to Dazed Power's tables.
 ]]
 
+require "DazedCore/DC_Boot"
+
 DazedPower = DazedPower or {}
 DazedPower.More = DazedPower.More or {}
 DazedPower.More.Env = DazedPower.More.Env or {}
 local E = DazedPower.More.Env
 
-local function try(obj, method, ...)
-    if not obj or not obj[method] then return nil end
-    local ok, v = pcall(obj[method], obj, ...)
-    if ok then return v end
-    return nil
-end
+local try = DazedCore.Util.try
 
 ------------------------------------------------------------------------ wind
 --

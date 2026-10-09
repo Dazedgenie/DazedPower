@@ -897,6 +897,13 @@ local function serve(book, wait, key)
     end
 end
 
+-- The square and its building's rect, as the seed queue stores them; only built for a house that is queued.
+local function seedValue(sq, def)
+    return sq:getX() .. "," .. sq:getY() .. ","
+           .. def:getX() .. "," .. def:getY() .. ","
+           .. def:getW() .. "," .. def:getH()
+end
+
 function S.onLoadChunk(chunk)
     if not chunk or not chunk.isNewChunk or not chunk.getGridSquare then
         return
@@ -915,7 +922,7 @@ function S.onLoadChunk(chunk)
     -- Only a NEW chunk can bring a house to the gate. isNewChunk is what
     -- stops a rig being rebuilt every time the chunk streams back in.
     if chunk:isNewChunk() then
-        local seen, keyOf = {}, {}
+        local seen, keyOf, barnKeyOf = {}, {}, {}
         for dy = 0, 7 do
             for dx = 0, 7 do
                 local sq = chunk:getGridSquare(dx, dy, 0)
@@ -930,9 +937,6 @@ function S.onLoadChunk(chunk)
                         key = S.key(def, S.rooms(def, 0))
                         keyOf[def] = key
                     end
-                    local v = sq:getX() .. "," .. sq:getY() .. ","
-                              .. def:getX() .. "," .. def:getY() .. ","
-                              .. def:getW() .. "," .. def:getH()
                     -- The legacy key is checked as well as the new one, so a
                     -- save written before the key changed does not have every
                     -- house it already served handed a second rig.
@@ -944,6 +948,7 @@ function S.onLoadChunk(chunk)
                                 and S.roll(def, 3, n) == 0 then
                             -- Waiting, not served: its yard probably spans
                             -- chunks that have not arrived.
+                            local v = seedValue(sq, def)
                             wait[key] = v
                             S.DEFS[key] = def
                             indexAdd(key, v)
@@ -953,12 +958,17 @@ function S.onLoadChunk(chunk)
                     end
                     -- A barn is decided separately, under its own key, and
                     -- only a building that has a barn room is written down.
-                    local bkey = S.BARN_KEY .. key
+                    local bkey = barnKeyOf[def]
+                    if not bkey then
+                        bkey = S.BARN_KEY .. key
+                        barnKeyOf[def] = bkey
+                    end
                     if not seen[bkey] and not wait[bkey] and not book[bkey]
                             and S.isStorageBarn(def) then
                         seen[bkey] = true
                         local n = S.barnChance()
                         if n > 0 and S.roll(def, 5, n) == 0 then
+                            local v = seedValue(sq, def)
                             wait[bkey] = v
                             S.DEFS[bkey] = def
                             indexAdd(bkey, v)

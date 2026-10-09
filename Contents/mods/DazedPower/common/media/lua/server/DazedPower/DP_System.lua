@@ -95,14 +95,7 @@ local objectDraw = DazedPower.Loads.objectDraw
 
 local function key(x, y, z) return x .. "," .. y .. "," .. z end
 
---- Is this table empty? PZ's Kahlua has no global `next` (nor xpcall,
---  loadstring, table.getn, math.random...; tests/test_content.py lists them),
---  so the usual `next(t) == nil` idiom throws "tried to call nil" in game while
---  passing every headless suite that runs on stock Lua.
-local function isEmpty(t)
-    for _ in pairs(t) do return false end
-    return true
-end
+local isEmpty = P.isEmpty
 
 --- Is the chunk holding this tile actually in memory?
 --

@@ -20,6 +20,10 @@ local R = DazedPower.More.Parts
 local M = DazedPower.More.Model     -- the add-on's physics (pedal, wind, steam)
 local UM = DazedPower.Model         -- Dazed Power's own (for repairStep)
 local E = DazedPower.Env            -- Dazed Power's own (worldHours, isSunlit)
+-- The add-on's action helpers and tunables; the timed-action classes stay global, as the engine needs.
+DazedPower.More = DazedPower.More or {}
+DazedPower.More.Actions = DazedPower.More.Actions or {}
+local MA = DazedPower.More.Actions
 
 ------------------------------------------------------- pedalling a generator
 
@@ -34,7 +38,7 @@ local E = DazedPower.Env            -- Dazed Power's own (worldHours, isSunlit)
 --  action), and the system must stop billing the instant that happens, not
 --  wait for an action that may never call complete() at all.
 --
---  One queued session is a fixed real-world stretch (DPM_PEDAL_SECONDS), the
+--  One queued session is a fixed real-world stretch (MA.PEDAL_SECONDS), the
 --  same technique DP_ReadSky uses for "stand here for half a minute", not a
 --  fixed IN-GAME duration: like every timed action it still runs faster
 --  under the game's own fast-forward speed keys, so a session queued at x3
@@ -42,7 +46,7 @@ local E = DazedPower.Env            -- Dazed Power's own (worldHours, isSunlit)
 --  for every one real minute spent waiting on it. The player can queue
 --  another session immediately after one completes for a longer ride, or
 --  stop whenever they choose.
-DPM_PEDAL_SECONDS = 600     -- ten real minutes per queued session, at 1x speed
+MA.PEDAL_SECONDS = 600     -- ten real minutes per queued session, at 1x speed
 
 DPM_Pedal = ISBaseTimedAction:derive("DPM_Pedal")
 
@@ -54,7 +58,7 @@ end
 
 -- Riding: the rider stands on the bike's centre facing its front, and the tier's animation (Bob_DazedPedal<Tier>) puts
 -- them on that bike's saddle. Position is the client's own (it syncs like walking), so mounting never runs on a dedicated server.
-DPM_PEDAL_PACE = { low = 0.8, stock = 1.0, racing = 1.3 }                      -- crank turns a second x 1.25
+MA.PEDAL_PACE = { low = 0.8, stock = 1.0, racing = 1.3 }                      -- crank turns a second x 1.25
 
 --- Does this rider sit on the bike: the player's option, on unless unticked (a server has no option page, so yes).
 function DPM_Pedal.rides(character)
@@ -183,7 +187,7 @@ function DPM_Pedal:start()
         local d = self.object and P.data(self.object)
         local info = self.object and P.describe(self.object)
         self.character:SetVariable("DazedPedalTier", (info and info.tier) or "salvaged")
-        DPM_Pedal.setPace(self.character, DPM_PEDAL_PACE[(d and d.gear) or "stock"] or 1.0)
+        DPM_Pedal.setPace(self.character, MA.PEDAL_PACE[(d and d.gear) or "stock"] or 1.0)
         self:setActionAnim("DazedPedal")
         self:mount()
     else
@@ -218,7 +222,7 @@ end
 
 function DPM_Pedal:getDuration()
     if self.character:isTimedActionInstant() then return 1 end
-    return DPM_PEDAL_SECONDS * 48
+    return MA.PEDAL_SECONDS * 48
 end
 
 function DPM_Pedal:new(character, object)
@@ -327,7 +331,7 @@ local function stillCarried(item)
 end
 
 --- Weight of an item as it is now (a half-used bag of charcoal weighs less).
-function DPM_ItemWeight(item)
+function MA.itemWeight(item)
     if not item then return 0 end
     if item.getActualWeight then
         local ok, w = pcall(item.getActualWeight, item)
@@ -371,7 +375,7 @@ function DPM_SteamFuel:complete()
     local d = P.data(self.object)
     local info = P.describe(self.object)
     local spec = M.steamSpec(info.tier)
-    local hours = M.steamFuelHours(DPM_ItemWeight(item), item:getFullType())
+    local hours = M.steamFuelHours(MA.itemWeight(item), item:getFullType())
     if hours <= 0 or (d.fuel or 0) + hours > spec.hopper + 0.001 then return true end
     d.fuel = (d.fuel or 0) + hours
     cont:Remove(item)
@@ -476,7 +480,7 @@ end
 
 --- A drainable's fill, 0..1 -- Dazed Power's own battery reading (its itemFill
 --  explains why it is getCurrentUsesFloat and not the obvious getUsedDelta).
-function DPM_TankFill(item)
+function MA.tankFill(item)
     if not item then return 0 end
     if item.getCurrentUsesFloat then
         return math.max(0, math.min(1, item:getCurrentUsesFloat() or 0))
@@ -530,7 +534,7 @@ function DPM_PropaneHook:complete()
     if not port or port < 1 or port > M.propaneSpec(info.tier).ports then return true end
     if d["t" .. port .. "Type"] then return true end          -- taken meanwhile
     d["t" .. port .. "Type"] = tank:getFullType()
-    d["t" .. port .. "Fill"] = DPM_TankFill(tank)
+    d["t" .. port .. "Fill"] = MA.tankFill(tank)
     d["t" .. port .. "Cond"] = tankCond(tank)
     cont:Remove(tank)
     sendRemoveItemFromContainer(cont, tank)
@@ -584,7 +588,7 @@ function DPM_PropaneFill:complete()
     local info = P.describe(self.object)
     local room = M.propaneSpec(info.tier, info.kind).reservoir - (d.lpg or 0)
     local size = M.tankKg(tank:getFullType())
-    local have = DPM_TankFill(tank) * size
+    local have = MA.tankFill(tank) * size
     local move = math.min(room, have)
     if move <= 0.001 then return true end
     if tank.setCurrentUsesFloat then tank:setCurrentUsesFloat((have - move) / size) end
@@ -618,7 +622,7 @@ local function petrolOf(item)
     if not (string.find(name, "petrol", 1, true) or string.find(name, "gasoline", 1, true)) then return nil end
     return fc, total
 end
-DPM_PetrolOf = petrolOf
+MA.petrolOf = petrolOf
 
 DPM_PetrolFill = genAction("DPM_PetrolFill", function() return 150 end)
 
@@ -803,7 +807,7 @@ end
 --  The same job, parts and tool as Dazed Power's own array repair (scrap,
 --  screws, a screwdriver), for any of the added machines. Dazed Power's
 --  DP_RepairArray only accepts arrays, so this is its own action.
-DPM_REPAIR_STEP = 30
+MA.REPAIR_STEP = 30
 
 DPM_Repair = ISBaseTimedAction:derive("DPM_Repair")
 
@@ -845,8 +849,8 @@ function DPM_Repair:complete()
         cont:Remove(it)
         sendRemoveItemFromContainer(cont, it)
     end
-    local step = UM.repairStep and UM.repairStep(d.condition or 0, DPM_REPAIR_STEP)
-                 or math.min(100, (d.condition or 0) + DPM_REPAIR_STEP)
+    local step = UM.repairStep and UM.repairStep(d.condition or 0, MA.REPAIR_STEP)
+                 or math.min(100, (d.condition or 0) + MA.REPAIR_STEP)
     d.condition = step
     if (d.condition or 0) > 0 then d.blown = nil end
     -- The picture: out of "broken" once it is over 35%. The next tick sets

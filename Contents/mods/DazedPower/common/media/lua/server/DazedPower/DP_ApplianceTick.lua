@@ -16,10 +16,7 @@ local E = DazedPower.Env
 
 A.cooldown = A.cooldown or {}     -- zombie key -> last zap (real ms)
 
-local function alive(o)
-    local ix = P.try(o, "getObjectIndex")
-    return type(ix) == "number" and ix >= 0
-end
+local alive = P.alive
 
 -- Shared and never written: listOf runs for every controller every few ticks, so it hands this out instead of a new table.
 local EMPTY = {}

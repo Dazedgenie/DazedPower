@@ -59,10 +59,7 @@ local PEDAL_FRESH_MS = 2500
 local CTX = nil
 
 -- The world clock in hours (also what a cold failure is stamped with).
-local function hoursNow()
-    local gt = getGameTime and getGameTime()
-    return gt and gt:getWorldAgeHours() or 0
-end
+local hoursNow = DazedCore.Util.worldHours
 
 B.COLD_NOTE_RANGE = 10        -- squares: who hears an engine fail to start in the cold
 
@@ -85,17 +82,7 @@ function B.coldNote(obj)
     end
 end
 
-local function try(obj, method, ...)
-    if not obj or not obj[method] then return nil end
-    local ok, v = pcall(obj[method], obj, ...)
-    if ok then return v end
-    return nil
-end
-
-local function alive(o)
-    local ix = try(o, "getObjectIndex")
-    return type(ix) == "number" and ix >= 0
-end
+local try, alive = P.try, P.alive
 
 ----------------------------------------------------------- finding our parts
 
@@ -1038,10 +1025,6 @@ local function isLoose(d)
     return d.sys == nil or d.sys == ""
 end
 
-local function worldHoursNow()
-    local gt = getGameTime and getGameTime()
-    return gt and gt:getWorldAgeHours() or 0
-end
 
 --- Settle one loose part. Returns false once it is no longer ours to track.
 local function settleLoose(obj, now)
@@ -1107,7 +1090,7 @@ local function settleLoose(obj, now)
 end
 
 function B.sweepLoose()
-    local now = worldHoursNow()
+    local now = hoursNow()
     for obj in pairs(B.loaded) do
         local ok, keep = pcall(settleLoose, obj, now)
         if not ok then
@@ -1129,7 +1112,7 @@ local function registerSprites()
         -- Tracked for the loose sweep, and settled straight away: a save made
         -- before this fix can hold a windmill cut loose mid-spin.
         B.loaded[obj] = true
-        pcall(settleLoose, obj, worldHoursNow())
+        pcall(settleLoose, obj, hoursNow())
     end
     for row = 1, #P.ROWS do
         if P.SOURCE_KINDS[P.ROWS[row].kind] then

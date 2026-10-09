@@ -219,7 +219,7 @@ end
 local WOOD = FUEL_FALLBACK
 
 local function fuelHours(it)
-    return M.steamFuelHours(DPM_ItemWeight(it), it:getFullType())
+    return M.steamFuelHours(DazedPower.More.Actions.itemWeight(it), it:getFullType())
 end
 
 --- The items from `items` (best first) that fit in `room` fire-hours.
@@ -423,7 +423,7 @@ local function isTank(it) return it ~= nil and R.TANK_TYPES[it:getFullType()] ==
 
 local function tanksCarried(playerObj)
     local out = collectRecurse(playerObj:getInventory(), isTank)
-    table.sort(out, function(a, b) return DPM_TankFill(a) > DPM_TankFill(b) end)
+    table.sort(out, function(a, b) return DazedPower.More.Actions.tankFill(a) > DazedPower.More.Actions.tankFill(b) end)
     return out
 end
 
@@ -431,7 +431,7 @@ local function pctOf(f) return math.floor((f or 0) * 100 + 0.5) end
 
 local function petrolCans(playerObj)
     local out = collectRecurse(playerObj:getInventory(), function(it)
-        local fc, amount = DPM_PetrolOf(it)
+        local fc, amount = DazedPower.More.Actions.petrolOf(it)
         return fc ~= nil and amount > 0.001
     end)
     return out
@@ -481,7 +481,7 @@ local function propaneRows(menu, wo, target, playerObj, d, info)
                 local sub = ISContextMenu:getNew(menu)
                 menu:addSubMenu(top, sub)
                 for _, tk in ipairs(tanks) do
-                    sub:addOption(P.txt("ContextMenu_DazedPower_GenTank", tk:getDisplayName() or "?", pctOf(DPM_TankFill(tk))),
+                    sub:addOption(P.txt("ContextMenu_DazedPower_GenTank", tk:getDisplayName() or "?", pctOf(DazedPower.More.Actions.tankFill(tk))),
                                   wo, DazedPower.More.onPropaneHook, target, playerObj, tk, port)
                 end
             end
@@ -501,7 +501,7 @@ local function propaneRows(menu, wo, target, playerObj, d, info)
             local sub = ISContextMenu:getNew(menu)
             menu:addSubMenu(top, sub)
             for _, can in ipairs(cans) do
-                local _, amount = DPM_PetrolOf(can)
+                local _, amount = DazedPower.More.Actions.petrolOf(can)
                 sub:addOption(P.txt("ContextMenu_DazedPower_PetrolCan", can:getName() or can:getDisplayName() or "?",
                                     string.format("%.1f", amount or 0)),
                               wo, DazedPower.More.onPetrolFill, target, playerObj, can)
@@ -518,9 +518,9 @@ local function propaneRows(menu, wo, target, playerObj, d, info)
         local sub = ISContextMenu:getNew(menu)
         menu:addSubMenu(top, sub)
         for _, tk in ipairs(tanks) do
-            local opt = sub:addOption(P.txt("ContextMenu_DazedPower_GenTank", tk:getDisplayName() or "?", pctOf(DPM_TankFill(tk))),
+            local opt = sub:addOption(P.txt("ContextMenu_DazedPower_GenTank", tk:getDisplayName() or "?", pctOf(DazedPower.More.Actions.tankFill(tk))),
                                       wo, DazedPower.More.onPropaneFill, target, playerObj, tk)
-            if DPM_TankFill(tk) <= 0 then grey(opt, "Tooltip_DazedPower_GenTankEmpty") end
+            if DazedPower.More.Actions.tankFill(tk) <= 0 then grey(opt, "Tooltip_DazedPower_GenTankEmpty") end
         end
     end
 end

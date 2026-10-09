@@ -543,6 +543,20 @@ function P.facingOf(obj)
     return info and info.facing or "S"
 end
 
+--- Is this table empty? PZ's Kahlua has no global `next` (nor xpcall,
+--  loadstring, table.getn, math.random...), so the usual `next(t) == nil`
+--  idiom throws "tried to call nil" in game while passing on stock Lua.
+function P.isEmpty(t)
+    for _ in pairs(t) do return false end
+    return true
+end
+
+--- Is this object still standing on a square (listed at an index there)?
+function P.alive(o)
+    local ix = P.try(o, "getObjectIndex")
+    return type(ix) == "number" and ix >= 0
+end
+
 -------------------------------------------------------------------- cells
 
 --- Bring a rack's contents up to the per-cell shape.

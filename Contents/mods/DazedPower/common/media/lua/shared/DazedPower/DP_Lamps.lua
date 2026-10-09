@@ -53,12 +53,7 @@ L.GAP_H = 2 / 60
 -- Clients are sent the charge when it has moved this much since the last send.
 L.SYNC_STEP = 0.01
 
-local function try(obj, method, ...)
-    if not obj or not obj[method] then return nil end
-    local ok, v = pcall(obj[method], obj, ...)
-    if ok then return v end
-    return nil
-end
+local try = P.try
 
 local function key(sq)
     return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ()

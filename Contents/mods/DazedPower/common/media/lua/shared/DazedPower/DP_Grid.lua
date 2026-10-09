@@ -94,10 +94,7 @@ function G.resetState()
 end
 G.resetState()
 
-local function isEmpty(t)
-    for _ in pairs(t) do return false end
-    return true
-end
+local isEmpty = DazedPower.Parts.isEmpty
 
 --- The authority: a dedicated server, or singleplayer. Never a multiplayer
 --  client.

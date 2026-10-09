@@ -16,6 +16,9 @@ require "DazedPower/DP_Almanac"
 local P = DazedPower.Parts
 local M = DazedPower.Model
 local A = DazedPower.Almanac
+-- The actions' tunables; the timed-action classes stay global, as the engine needs.
+DazedPower.Actions = DazedPower.Actions or {}
+local DA = DazedPower.Actions
 
 --------------------------------------------------------------- clear snow
 
@@ -521,7 +524,7 @@ end
 --  How much condition one pass buys. Deliberately not a full restoration: a
 --  badly cracked array is worth several trips or a replacement, which keeps
 --  the scrap recipes worth having.
-DP_REPAIR_STEP = 30
+DA.REPAIR_STEP = 30
 
 DP_RepairArray = ISBaseTimedAction:derive("DP_RepairArray")
 
@@ -577,7 +580,7 @@ function DP_RepairArray:complete()
         end
     end
 
-    d.condition = M.repairStep(d.condition or 0, DP_REPAIR_STEP)
+    d.condition = M.repairStep(d.condition or 0, DA.REPAIR_STEP)
     P.setState(self.object, P.arrayState(d))
     self.object:transmitModData()
     -- The engine global routes by side: GameServer.addXp on a server, which
@@ -617,7 +620,7 @@ end
 --  would mean a server with heavily modded reading speed could turn a
 --  half-minute observation into an instant one, which is the one thing this
 --  action must not become.
-DP_SKY_SECONDS = 30
+DA.SKY_SECONDS = 30
 
 DP_ReadSky = ISBaseTimedAction:derive("DP_ReadSky")
 
@@ -678,7 +681,7 @@ end
 
 function DP_ReadSky:getDuration()
     if self.character:isTimedActionInstant() then return 1 end
-    return DP_SKY_SECONDS * 48
+    return DA.SKY_SECONDS * 48
 end
 
 function DP_ReadSky:new(character)
