@@ -45,22 +45,16 @@ local P = DazedPower.Parts
 I.TICK_HOURS = 1 / 6                 -- EveryTenMinutes
 I.MAX_CREDIT_HOURS = 1               -- a gap longer than this was time unwatched
 
--- The loaded instruments. Weak keys: an object the engine has let go of (its
--- chunk unloaded) drops out of the list by itself.
-I.loaded = I.loaded or setmetatable({}, { __mode = "k" })
+-- The loaded instruments. Kahlua ignores weak tables, so I.tick drops each one that P.alive says has left.
+I.loaded = I.loaded or {}
 
 local function worldHours()
     local gt = getGameTime and getGameTime()
     return gt and gt:getWorldAgeHours() or 0
 end
 
---- Still standing in the world? (An object lifted or destroyed reports
---  index -1, the same test Dazed Power's own actions use.)
-local function standing(obj)
-    if not obj or not obj.getSquare or not obj:getSquare() then return false end
-    local ok, idx = pcall(function() return obj:getObjectIndex() end)
-    return ok and idx ~= nil and idx >= 0
-end
+-- Still standing in the world, on a square the cell still holds (P.alive).
+local standing = P.alive
 
 --- Set one instrument to the given wind. `record` is false on the first
 --  sight of it (load or placement): the sprite is set, and the vane's clock

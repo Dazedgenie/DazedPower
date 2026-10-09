@@ -253,6 +253,7 @@ dofile("systems_test.lua")(check, E)
 dofile("climate_power_test.lua")(check, E)
 dofile("board_test.lua")(check, E)
 dofile("anim_test.lua")(check, E)
+dofile("fixes_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do

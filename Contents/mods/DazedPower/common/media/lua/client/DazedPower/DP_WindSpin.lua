@@ -157,7 +157,7 @@ end
 --- Put every tracked windmill back on the sprite its state names (option turned off).
 function W.restoreAll()
     for obj, t in pairs(W.tracked) do
-        if obj:getObjectIndex() ~= -1 then
+        if P.alive(obj) then
             local info = P.spriteInfo(obj:getSprite() and obj:getSprite():getName())
             local md = obj:hasModData() and obj:getModData()
             local d = md and md.dazedpower
@@ -185,8 +185,8 @@ local function tick()
         for i = 1, np do local p = players[i] sweep(math.floor(p:getX()), math.floor(p:getY()), math.floor(p:getZ())) end
     end
     for obj, t in pairs(W.tracked) do
-        local sq = obj:getSquare()
-        if obj:getObjectIndex() == -1 or not sq then
+        local sq = P.alive(obj) and obj:getSquare()
+        if not sq then
             W.tracked[obj] = nil
             W.count = W.count - 1
         else

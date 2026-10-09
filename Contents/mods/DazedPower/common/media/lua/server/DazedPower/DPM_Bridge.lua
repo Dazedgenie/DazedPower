@@ -1055,7 +1055,8 @@ end
 --  relink": a wired boiler stepped here as well would burn twice.
 
 B.LOOSE_MAX_STEP = 1          -- hours; a longer gap was time unloaded, not watched
-B.loaded = B.loaded or setmetatable({}, { __mode = "k" })
+-- Plain keys: Kahlua ignores weak tables, so the sweep drops an entry once P.alive says it has left.
+B.loaded = B.loaded or {}
 
 local function isLoose(d)
     return d.sys == nil or d.sys == ""

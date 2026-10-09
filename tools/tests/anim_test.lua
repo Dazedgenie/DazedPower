@@ -29,12 +29,13 @@ return function(check, E)
     -- One windmill near a player, ticked for a second of game time: it changes frames and goes back when turned off.
     do
         local function spr(name) return { getName = function() return name end } end
-        local sq = { getX = function() return 10 end, getY = function() return 10 end }
+        local sq = { getX = function() return 10 end, getY = function() return 10 end, getZ = function() return 0 end }
         local obj = { sprite = spr(P.sprite("windmill", "ground", "salvaged", "turning", "S")), md = { dazedpower = { state = "turning", facing = "S", windMs = 7 } } }
         function obj:getSprite() return self.sprite end
         function obj:setSprite(s) self.sprite = s; self.swaps = (self.swaps or 0) + 1 end
-        function obj:getObjectIndex() return 1 end
+        function obj:getObjectIndex() return 0 end
         function obj:getSquare() return sq end
+        function sq:getObjects() return { size = function() return 1 end, get = function() return obj end } end
         function obj:hasModData() return true end
         function obj:getModData() return self.md end
         local pl = { getX = function() return 12 end, getY = function() return 11 end, getZ = function() return 0 end, isDead = function() return false end }
@@ -44,7 +45,7 @@ return function(check, E)
         getNumActivePlayers = function() return 1 end
         getSpecificPlayer = function() return pl end
         getTimestampMs = function() return now end
-        getCell = function() return { getGridSquare = function() return nil end } end
+        getCell = function() return { getGridSquare = function(_, x, y) return (x == 10 and y == 10) and sq or nil end } end
         W.tracked, W.count = {}, 0
         W.consider(obj)
         check(W.count == 1, "a windmill on screen is tracked")
@@ -81,10 +82,13 @@ return function(check, E)
         function c:setSittingOnFurniture(v) self.sitting = v end
         function c:setSitOnFurnitureObject(o) self.seat = o end
         function c:setSitOnFurnitureDirection(d) self.seatDir = d end
-        local sq = { getX = function() return 100 end, getY = function() return 200 end }
+        local sq = { getX = function() return 100 end, getY = function() return 200 end, getZ = function() return 0 end }
         local bike = { md = { dazedpower = { gear = "racing" } } }
         function bike:getSquare() return sq end
-        function bike:getObjectIndex() return 1 end
+        function bike:getObjectIndex() return 0 end
+        function sq:getObjects() return { size = function() return 1 end, get = function() return bike end } end
+        local c1 = getCell
+        getCell = function() return { getGridSquare = function(_, x, y) return (x == 100 and y == 200) and sq or nil end } end
         function bike:getSprite() return { getName = function() return P.sprite("pedal", "ground", "salvaged", "off", "S") end } end
         function bike:getModData() return self.md end
         function bike:hasModData() return true end
@@ -105,5 +109,6 @@ return function(check, E)
         check(c.x == 99.2 and c.y == 200.5, "getting off puts the rider back where they stood")
         bike.alpha = 0.3; DPM_Pedal.keepSolid()
         check(bike.alpha == 0.3, "after getting off the game fades it as usual")
+        getCell = c1
     end
 end

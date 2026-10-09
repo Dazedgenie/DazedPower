@@ -575,10 +575,27 @@ function P.dataSig(t, steps)
     return table.concat(out, ";")
 end
 
---- Is this object still standing on a square (listed at an index there)?
+--- Is this object still standing in the world: listed on its square, and that square the one the cell holds now?
+--  A chunk that streamed out keeps its old squares and objects intact, so the index alone passes a ghost.
 function P.alive(o)
     local ix = P.try(o, "getObjectIndex")
-    return type(ix) == "number" and ix >= 0
+    if type(ix) ~= "number" or ix < 0 then return false end
+    local sq = P.try(o, "getSquare")
+    if not sq then return false end
+    local cell = getCell and getCell()
+    if cell and cell.getGridSquare
+            and cell:getGridSquare(sq:getX(), sq:getY(), sq:getZ()) ~= sq then
+        return false
+    end
+    local objs = P.try(sq, "getObjects")
+    if not objs then return false end
+    local n = objs:size()
+    if ix < n and objs:get(ix) == o then return true end
+    -- The index is a hint; a list that shifted under it is walked once.
+    for i = 0, n - 1 do
+        if objs:get(i) == o then return true end
+    end
+    return false
 end
 
 -------------------------------------------------------------------- cells

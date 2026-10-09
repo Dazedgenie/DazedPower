@@ -371,8 +371,7 @@ function L.tick()
     env.outputScale = (P.sandbox("OutputScale") or 100) / 100
     local now = E.worldHours()
     for k, obj in pairs(L.lamps) do
-        local ix = try(obj, "getObjectIndex")
-        if type(ix) ~= "number" or ix < 0 or not obj:getSquare() then
+        if not P.alive(obj) then
             L.lamps[k] = nil
         else
             local ok, err = pcall(L.update, obj, env, now)

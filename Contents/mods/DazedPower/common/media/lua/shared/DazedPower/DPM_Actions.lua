@@ -124,7 +124,7 @@ DPM_Pedal.solid = DPM_Pedal.solid or {}
 function DPM_Pedal.keepSolid()
     for obj, pn in pairs(DPM_Pedal.solid) do
         if obj and obj.setAlphaAndTarget then
-            if obj:getObjectIndex() == -1 then DPM_Pedal.solid[obj] = nil
+            if not P.alive(obj) then DPM_Pedal.solid[obj] = nil
             else pcall(obj.setAlphaAndTarget, obj, pn, 1.0) end
         end
     end

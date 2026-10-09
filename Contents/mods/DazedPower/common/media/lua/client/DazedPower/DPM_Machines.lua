@@ -42,11 +42,10 @@ end
 --- Call fn(obj, sq) for every tracked machine still standing; the ones that left are dropped.
 function Mc.each(fn)
     for obj in pairs(Mc.objs) do
-        local sq = obj:getSquare()
-        if obj:getObjectIndex() == -1 or not sq then
+        if not P.alive(obj) then
             Mc.objs[obj] = nil
         else
-            fn(obj, sq)
+            fn(obj, obj:getSquare())
         end
     end
 end

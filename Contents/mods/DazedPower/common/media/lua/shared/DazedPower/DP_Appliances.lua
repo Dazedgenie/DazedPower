@@ -197,8 +197,7 @@ function A.outsideCoolerHeat(info)
     if not key then return 0 end
     local total = 0
     for o, k in pairs(A.outsideCoolers) do
-        local ix = P.try(o, "getObjectIndex")
-        if type(ix) ~= "number" or ix < 0 then
+        if not P.alive(o) then
             A.outsideCoolers[o] = nil
         elseif k == key then
             total = total + A.roomHeat("cooler", rawData(o))
@@ -217,8 +216,11 @@ function A.outsideCoolerCools(info)
     local key = type(info) == "table" and info.key
     if not key then return false end
     for o, k in pairs(A.outsideCoolers) do
-        local ix = P.try(o, "getObjectIndex")
-        if k == key and type(ix) == "number" and ix >= 0 and A.coolerKeepsCold(o) then return true end
+        if not P.alive(o) then
+            A.outsideCoolers[o] = nil
+        elseif k == key and A.coolerKeepsCold(o) then
+            return true
+        end
     end
     return false
 end
