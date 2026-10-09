@@ -51,8 +51,8 @@ local P, R = DazedPower.Parts, DazedPower.More.Parts
 local MM, ME = DazedPower.More.Model, DazedPower.More.Env
 local UM = DazedPower.Model                -- Dazed Power's model
 
--- How long a pedal generator's heartbeat is trusted (real ms); see
--- DPM_Actions.DPM_Pedal and PEDAL_GENERATOR.md.
+-- How long a pedal generator's heartbeat is trusted (real ms), see DPM_Pedal:update.
+-- A multiplayer rider beats about once a second, so this rides out a late packet or two.
 local PEDAL_FRESH_MS = 2500
 
 -- The controller Dazed Power is stepping right now, if any.
@@ -173,6 +173,37 @@ if not B.wrapped then
         end
         return false
     end
+end
+
+------------------------------------------------- a multiplayer rider's heartbeat
+
+--- Write the pedal heartbeat for a rider on a multiplayer client (DPM_Pedal:update sends it about once a second).
+--  The rider must be alive and within reach; the Fitness is the server's own copy of the character. True when written.
+function B.pedalBeat(playerObj, args)
+    if not playerObj or type(args) ~= "table" or try(playerObj, "isDead") then return false end
+    local x, y, z = tonumber(args.x), tonumber(args.y), tonumber(args.z)
+    if not (x and y and z) then return false end
+    local reach = S.internals().REACH or 3
+    local px, py = try(playerObj, "getX"), try(playerObj, "getY")
+    if not (px and py) or math.abs(px - x) > reach or math.abs(py - y) > reach then return false end
+    local cell = getCell and getCell()
+    local sq = cell and cell:getGridSquare(x, y, z)
+    local objs = sq and sq:getObjects()
+    for i = 0, (objs and objs:size() or 0) - 1 do
+        local o = objs:get(i)
+        local info = R.describe(o)
+        if info and info.kind == "pedal" then
+            local d = P.data(o)
+            d.pedalFitness = try(playerObj, "getPerkLevel", Perks.Fitness) or 0
+            d.pedalHeartbeat = getTimestampMs and getTimestampMs() or 0
+            return true
+        end
+    end
+    return false
+end
+
+if S.COMMANDS then
+    S.COMMANDS.pedalBeat = function(playerObj, args) B.pedalBeat(playerObj, args) end
 end
 
 ---------------------------------------------------------- what they make

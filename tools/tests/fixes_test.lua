@@ -97,4 +97,51 @@ return function(check, E)
         streamOut(bankSq)
         check(S.staleLinks(rec) == true, "a bank whose chunk streamed out under a loaded controller triggers a relink")
     end
+
+    ------------------------------------------------------------ the pedal heartbeat
+    do
+        local B, S = DazedPower.More.Bridge, DazedPower.System
+        local pedalSq = E.square(930, 930, 0)
+        local bike = E.object(P.sprite("pedal", "ground", "salvaged", "off", "S"), pedalSq)
+        Perks.Fitness = Perks.Fitness or "Fitness"
+        local rider = { x = 930.5, y = 931.2 }
+        function rider:getX() return self.x end
+        function rider:getY() return self.y end
+        function rider:getPerkLevel() return 7 end
+        function rider:isDead() return false end
+        function rider:faceThisObject() end
+        function rider:isTimedActionInstant() return false end
+        local a = DPM_Pedal:new(rider, bike)
+        local t0, c0, s0 = getTimestampMs, isClient, sendClientCommand
+        local now, sent = 5000, {}
+        getTimestampMs = function() return now end
+        sendClientCommand = function(pl, module, command, args) sent[#sent + 1] = { module, command, args } end
+
+        -- Single player: written on the object every frame, as before.
+        a:update()
+        check(bike.md.dazedpower.pedalHeartbeat == 5000 and bike.md.dazedpower.pedalFitness == 7 and #sent == 0,
+            "single player writes the heartbeat locally and sends nothing")
+
+        -- A multiplayer client: no local write, one command a second.
+        isClient = function() return true end
+        bike.md.dazedpower.pedalHeartbeat = 0
+        for _, t in ipairs({ 6000, 6400, 6999, 7000, 7500, 8100 }) do now = t; a:update() end
+        isClient = c0
+        check(#sent == 3 and bike.md.dazedpower.pedalHeartbeat == 0, "a client sends about one heartbeat a second: " .. #sent)
+        check(sent[1][1] == "DazedPower" and sent[1][2] == "pedalBeat" and sent[1][3].x == 930 and sent[1][3].y == 930
+            and sent[1][3].z == 0, "the heartbeat names the bike's square")
+
+        -- The server writes it on its own clock, for a living rider in reach only.
+        now = 9000
+        check(S.onCommand("pedalBeat", rider, sent[1][3]) and bike.md.dazedpower.pedalHeartbeat == 9000
+            and bike.md.dazedpower.pedalFitness == 7, "the server writes the heartbeat it is sent")
+        now = 9500
+        rider.x = 940
+        check(not B.pedalBeat(rider, sent[1][3]) and bike.md.dazedpower.pedalHeartbeat == 9000, "a rider out of reach is refused")
+        rider.x = 930.5
+        rider.isDead = function() return true end
+        check(not B.pedalBeat(rider, sent[1][3]), "a dead rider is refused")
+        check(not B.pedalBeat(rider, { x = "a" }) and not B.pedalBeat(nil, sent[1][3]), "a bad request is refused")
+        getTimestampMs, sendClientCommand = t0, s0
+    end
 end

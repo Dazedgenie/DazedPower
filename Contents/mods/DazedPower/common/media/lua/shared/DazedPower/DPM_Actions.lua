@@ -47,6 +47,7 @@ local MA = DazedPower.More.Actions
 --  another session immediately after one completes for a longer ride, or
 --  stop whenever they choose.
 MA.PEDAL_SECONDS = 600     -- ten real minutes per queued session, at 1x speed
+MA.PEDAL_BEAT_MS = 1000    -- real ms between a multiplayer rider's heartbeats to the server
 
 DPM_Pedal = ISBaseTimedAction:derive("DPM_Pedal")
 
@@ -151,13 +152,24 @@ function DPM_Pedal:update()
     if not self:isValid() then return end
     local d = P.data(self.object)
 
-    -- The live rider's own Fitness, refreshed every frame: this is the ONLY
-    -- place in the mod that ever has a character in hand while a pedal
-    -- generator is active, so it is the only place that can write it.
-    -- DPM_Bridge reads these two fields and nothing else to decide
-    -- what the generator is making right now.
-    d.pedalFitness = self.character:getPerkLevel(Perks.Fitness) or 0
-    d.pedalHeartbeat = getTimestampMs and getTimestampMs() or 0
+    -- The live rider's own Fitness and a heartbeat: DPM_Bridge reads these two
+    -- fields and nothing else to decide what the generator is making right now.
+    -- Off the network they are written here every frame. A multiplayer client's
+    -- ModData never reaches the server, so it asks the server to write them
+    -- (DPM_Bridge.pedalBeat) about once a second instead.
+    local nowMs = getTimestampMs and getTimestampMs() or 0
+    if isClient and isClient() then
+        if not self.beatAt or nowMs < self.beatAt or nowMs - self.beatAt >= MA.PEDAL_BEAT_MS then
+            self.beatAt = nowMs
+            local sq = self.object:getSquare()
+            if sq and sendClientCommand then
+                sendClientCommand(self.character, "DazedPower", "pedalBeat", { x = sq:getX(), y = sq:getY(), z = sq:getZ() })
+            end
+        end
+    else
+        d.pedalFitness = self.character:getPerkLevel(Perks.Fitness) or 0
+        d.pedalHeartbeat = nowMs
+    end
 
     -- Fatigue, charged once per whole in-game minute actually spent
     -- pedaling, so a session queued at a faster game speed costs fatigue at
