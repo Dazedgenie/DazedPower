@@ -166,6 +166,21 @@ do
         "S.controllerOf reads the controller the tick resolved")
 end
 
+-- A registry change only marks the indexes; the first reader rebuilds them once.
+do
+    local G, R = DazedPower.Grid, DazedPower.Reach
+    local gs0 = getSquare
+    getSquare = function() return nil end
+    G.resetState()
+    G.put("10,10,0", { on = true, c = R.encodePositions({ { x = 10, y = 10, z = 0 } }) })
+    local marked = G.indexDirty == true and G.index["1,1"] == nil
+    check(marked and G.litAt(12, 10, 0) and not G.indexDirty and G.index["1,1"] ~= nil, "G.put defers the index rebuild to its first reader")
+    G.drop("10,10,0")
+    check(G.indexDirty and not G.litAt(12, 10, 0), "G.drop takes the circle out of the rebuilt index")
+    G.resetState()
+    getSquare = gs0
+end
+
 dofile("features_test.lua")(check, E)
 dofile("systems_test.lua")(check, E)
 dofile("climate_power_test.lua")(check, E)

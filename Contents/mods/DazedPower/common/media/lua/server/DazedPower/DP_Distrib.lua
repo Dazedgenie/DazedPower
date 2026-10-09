@@ -439,6 +439,7 @@ function D.onLoadChunk(chunk)
     if not kx then return end
     -- Through DP_Grid's index of controller chunks: this runs for every chunk
     -- that streams in anywhere, so it must not walk every system there is.
+    if G.ensureIndex then G.ensureIndex() end
     local list = G.ctrlIndex and G.ctrlIndex[kx .. "," .. ky]
     if not list then return end
     for i = 1, #list do D.check[list[i]] = true end
@@ -599,6 +600,8 @@ function D.afterTick()
     end
     runChecks()
     D.remote()
+    -- The tick's puts and drops only marked the indexes; they are rebuilt here, once.
+    Grid().ensureIndex()
     Grid().flush()
 end
 

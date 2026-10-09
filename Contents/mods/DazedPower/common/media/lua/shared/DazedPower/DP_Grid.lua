@@ -57,9 +57,10 @@ G.FMT = 1
 -- remembered as OFF: long enough for any chunk that saved one of their
 -- entries while they were on to load again and shed it.
 G.DEAD_HOURS = 48
--- Registrations re-asserted per tick by the heal rotation, and chunk levels
--- whose consumers are refreshed per tick.
+-- Registrations re-asserted per pass of the heal rotation, the ticks between
+-- passes, and chunk levels whose consumers are refreshed per tick.
 G.HEAL_PER_TICK = 16
+G.HEAL_EVERY_TICKS = 30
 G.REFRESH_PER_TICK = 2
 -- The least time between two sends of the registry to every client, in real
 -- milliseconds. A burst of changes (a player clicking through the Building
@@ -85,6 +86,8 @@ function G.resetState()
     G.expandCache = {}
     G.ctrlIndex = {}  -- chunk key -> keys of the systems whose controller stands there
     G.dirty = false
+    G.indexDirty = false  -- a put or drop since the indexes were last built
+    G.healTick = 0
     G.lastFlush = nil
     G.lastR, G.lastV = nil, nil
 end
@@ -330,6 +333,7 @@ end
 
 --- Rebuild the chunk indexes and the heal ring from the registry.
 local function rebuild()
+    G.indexDirty = false
     local reg = G.bind()
     G.index, G.offIndex, G.ring, G.ctrlIndex = {}, {}, {}, {}
     for key, e in pairs(reg.sys) do
@@ -381,6 +385,12 @@ local function rebuild()
     if G.ringAt > #G.ring then G.ringAt = 1 end
 end
 G.rebuild = rebuild
+
+--- Bring the indexes up to date if a put or drop changed the registry since they were built.
+--  Every reader of the indexes calls this first, so a burst of changes costs one rebuild.
+function G.ensureIndex()
+    if G.indexDirty then rebuild() end
+end
 
 --- Make what this side has registered for one system match what the
 --  registry wants of it.
@@ -478,7 +488,7 @@ function G.put(key, fields)
     if not changed then return false end
     reg.sys[key] = e
     G.dirty = true
-    rebuild()
+    G.indexDirty = true
     G.reconcile(key)
     return true
 end
@@ -495,7 +505,7 @@ function G.drop(key)
     e.on = false
     e.dead = now()
     G.dirty = true
-    rebuild()
+    G.indexDirty = true
     G.reconcile(key)
 end
 
@@ -627,6 +637,7 @@ function G.onLoadChunk(chunk)
     local kx, ky = coordsOf(chunk)
     if not kx then return end
     if G.lastR == nil then G.lastR, G.lastV = G.range() end
+    G.ensureIndex()
     local ck = kx .. "," .. ky
 
     local owed = G.owed[ck]
@@ -690,7 +701,14 @@ end
 --- The heal rotation and the consumer refresh, a little every tick.
 function G.onTick()
     if not G.reg then return end
-    local n = #G.ring
+    -- The rotation only guards against an engine purge LoadChunk missed, so a pass every half second is plenty.
+    G.healTick = (G.healTick or 0) + 1
+    local n = 0
+    if G.healTick >= G.HEAL_EVERY_TICKS then
+        G.healTick = 0
+        G.ensureIndex()
+        n = #G.ring
+    end
     if n > 0 then
         for _ = 1, math.min(G.HEAL_PER_TICK, n) do
             if G.ringAt > n then G.ringAt = 1 end
@@ -725,6 +743,7 @@ end
 --  and the in-game self-test.
 function G.litAt(x, y, z)
     if not G.reg then return false end
+    G.ensureIndex()
     local r, v = rangeNow()
     local list = G.index[floor(x / 8) .. "," .. floor(y / 8)]
     if not list then return false end
