@@ -166,6 +166,15 @@ do
         "S.controllerOf reads the controller the tick resolved")
 end
 
+-- Parsed wires are remembered, but every caller still gets its own list to append to.
+do
+    local wstr = M.wireAdd("", "1,1,0,array", "2,1,0,controller")
+    local e1 = M.wireParse(wstr)
+    e1[#e1 + 1] = { a = "x", b = "y" }
+    local seen = M.wireWalk(M.wireParse(wstr), "2,1,0,controller")
+    check(#M.wireParse(wstr) == 1 and seen["1,1,0,array"], "a remembered wire parse hands out a fresh list")
+end
+
 -- The load cache keeps running totals, rebuilt from the table whenever someone edits it directly.
 do
     local I = DazedPower.System.internals()

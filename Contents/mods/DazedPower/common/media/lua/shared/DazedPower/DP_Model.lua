@@ -2087,15 +2087,29 @@ M.WIRE_LINK = ">"
 
 --- Read an edge string. Never errors, and silently drops anything malformed:
 --  this is parsing save data, and one corrupt edge must not cost the system.
+-- Wire string -> its parsed edges, bounded; every isPowered check re-reads the same few strings.
+local parseMemo, parseMemoN = {}, 0
+local PARSE_MEMO_MAX = 256
+
+--- The edges a wire string names. The list is the caller's own (a fresh array each call);
+--  the edge tables in it are shared between calls and must never be changed.
 function M.wireParse(str)
     local edges = {}
     if type(str) ~= "string" or str == "" then return edges end
-    for chunk in string.gmatch(str, "[^" .. M.WIRE_SEP .. "]+") do
-        local a, b = string.match(chunk, "^(.-)" .. M.WIRE_LINK .. "(.+)$")
-        if a and b and a ~= b and M.parseNodeKey(a) and M.parseNodeKey(b) then
-            edges[#edges + 1] = { a = a, b = b }
+    local hit = parseMemo[str]
+    if not hit then
+        hit = {}
+        for chunk in string.gmatch(str, "[^" .. M.WIRE_SEP .. "]+") do
+            local a, b = string.match(chunk, "^(.-)" .. M.WIRE_LINK .. "(.+)$")
+            if a and b and a ~= b and M.parseNodeKey(a) and M.parseNodeKey(b) then
+                hit[#hit + 1] = { a = a, b = b }
+            end
         end
+        if parseMemoN >= PARSE_MEMO_MAX then parseMemo, parseMemoN = {}, 0 end
+        parseMemo[str] = hit
+        parseMemoN = parseMemoN + 1
     end
+    for i = 1, #hit do edges[i] = hit[i] end
     return edges
 end
 
@@ -2174,18 +2188,28 @@ end
 --  hang the tick.
 function M.wireWalk(edges, root, alive, limit)
     limit = limit or 256
+    -- Neighbours per node, built once and in edge order, so the walk visits exactly what a scan of every edge per node would.
+    local adj = {}
+    for i = 1, #edges do
+        local e = edges[i]
+        local la, lb = adj[e.a], adj[e.b]
+        if not la then la = {} adj[e.a] = la end
+        la[#la + 1] = e.b
+        if e.b ~= e.a then
+            if not lb then lb = {} adj[e.b] = lb end
+            lb[#lb + 1] = e.a
+        end
+    end
     local seen = { [root] = true }
     local order = { root }
     local head = 1
     while head <= #order and #order < limit do
         local node = order[head]
         head = head + 1
-        for i = 1, #edges do
-            local e = edges[i]
-            local other = nil
-            if e.a == node then other = e.b
-            elseif e.b == node then other = e.a end
-            if other and not seen[other] and (alive == nil or alive(other)) then
+        local nb = adj[node]
+        for i = 1, (nb and #nb or 0) do
+            local other = nb[i]
+            if not seen[other] and (alive == nil or alive(other)) then
                 seen[other] = true
                 order[#order + 1] = other
             end
