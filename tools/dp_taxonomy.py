@@ -1,4 +1,4 @@
-"""The parts taxonomy of Dazed Utilities: Power -- the one description of every kind, mount, tier and state,
+"""The parts taxonomy of Dazed Power -- the one description of every kind, mount, tier and state,
 which lays out the sprite sheet (dazedpower_01), names the items and stamps the tiledef. DP_Parts.lua mirrors
 it; tools/tests/load_test.lua checks the decoded rows against it.
 

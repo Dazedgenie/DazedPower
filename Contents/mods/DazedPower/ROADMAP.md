@@ -1,8 +1,8 @@
-# Dazed Utilities: Power -- roadmap
+# Dazed Power -- roadmap
 
 ## v1 scope (agreed; (done) marks what is already in)
 
-- Build the power mod on Dazed Utilities: Core (done)
+- Build the power mod on Dazed Core (done)
 - Makeshift / Salvaged / Workshop grades; static, tracking and 2x2 arrays; floor and wall banks; Makeshift /
   Workshop controllers differing by how many parts they manage (8 / 24); garden and street lamps in two grades (done)
 - Blender renders for every part in the Dazed Power / Plumbing style (`tools/blender/dp_render.py`) (done, 0.1.1)

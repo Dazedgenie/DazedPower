@@ -752,7 +752,7 @@ end
 function M.propaneDraw(g, kg)
     local want = max(0, kg or 0)
     local got = 0
-    -- A fuel line from a Dazed Utilities tank (g.feedTank, see DPM_Plumbing):
+    -- A fuel line from a Dazed Plumbing tank (g.feedTank, see DPM_Plumbing):
     -- the tank is drawn FIRST, exactly as much as is burned, however long the
     -- step; then the built-in reservoir; then any hooked-up bottle.
     if g.feedTank and M.LineSource then

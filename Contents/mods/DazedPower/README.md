@@ -1,8 +1,8 @@
-# Dazed Utilities: Power  (v0.5.0, Build 42)
+# Dazed Power  (v0.7.1, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
-Needs **Dazed Utilities: Core** (`DazedCore`), loaded first. Works with
-*Dazed Utilities: Plumbing*: generators and boilers burn and drink from its tanks, the pump and purifier wire to a
+Needs **Dazed Core** (`DazedCore`), loaded first. Works with
+*Dazed Plumbing*: generators and boilers burn and drink from its tanks, the pump and purifier wire to a
 controller. Derived from the original *Off-Grid: Solar Power* by cakcan (CC BY-NC-SA 4.0; see `NOTICE.md`).
 
 - **Mod ID:** `DazedPower` · **Load order:** `DazedCore`, then `DazedPower` (and `DazedPlumbing` either side)
@@ -86,6 +86,8 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.7.1 (rename).** Now called **Dazed Power** in the mod list and Workshop; needs **Dazed Core** (was "Dazed Utilities: Core"). Mod ID, saves and settings unchanged.
+
 - **0.7.0 (performance).** The same simulation, cheaper to run and to sync. Each controller is looked up once per
   minute instead of six times; the load scan keeps running totals; wiring graphs, sprite decodes, the generator range
   and text widths are remembered; fences find zombies through one list per check; source machines, panels and gauges
@@ -118,7 +120,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 - **0.6.0 (animation).**
   - **Windmills spin.** A turning windmill walks through four blade positions on your screen, faster in stronger
     wind; past 15 m/s at the rotor the blades blur. A broken rotor rocks on its bearing in a breeze. Cosmetic and
-    local only: the server still sends the plain sprite. Untick **Animate windmills** on the Dazed Utilities options
+    local only: the server still sends the plain sprite. Untick **Animate windmills** on the Dazed Core options
     page to turn it off. The frames are stand-ins drawn from the still renders until the Blender pass.
   - **Riding the pedal generators.** The rider sits on the saddle facing forward, hands on the bars, and pedals; the
     gear sets the cadence (Low slower, Racing faster). Getting off puts you back where you stood. Untick **Ride pedal

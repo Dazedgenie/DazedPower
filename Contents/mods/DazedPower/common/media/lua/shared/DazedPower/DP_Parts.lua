@@ -56,7 +56,7 @@ P.SANDBOX_DEFAULTS = {
     RoomHeat = true,
 }
 
--- The Dazed Utilities preset values for this page: { easy, standard, realistic, hardcore } per option.
+-- The Dazed Core preset values for this page: { easy, standard, realistic, hardcore } per option.
 P.PRESETS = {
     OutputScale = { 150, 100, 80, 60 }, BankScale = { 150, 100, 100, 75 },
     SnowRate = { 50, 100, 100, 150 }, SoilRate = { 50, 100, 100, 150 },

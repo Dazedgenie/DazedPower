@@ -1,4 +1,4 @@
---[[ Dazed Power -- the fuel-line hookup with Dazed Utilities: Plumbing.
+--[[ Dazed Power -- the fuel-line hookup with Dazed Plumbing.
 
      Optional. If the Plumbing mod is also loaded, this teaches it three kinds
      of machine (the petrol generator burns PETROL from a gas tank the same way), so a right-click "Fuel line" menu appears on them:

@@ -1,4 +1,4 @@
-"""Dazed Utilities: Power -- render the solar, battery, controller, transformer and lamp sprites in Blender
+"""Dazed Power -- render the solar, battery, controller, transformer and lamp sprites in Blender
 with the pz-sprite-forge rig, in the style of Dazed Power and Plumbing.
 
 Run inside Blender (4.2+ / 5.x) from the Python console:

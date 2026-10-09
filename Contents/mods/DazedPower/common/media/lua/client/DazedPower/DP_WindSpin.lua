@@ -38,7 +38,7 @@ local lastTick, lastSweep = nil, 0
 local frameNames = {}
 local optAt, optOn = nil, true
 
---- The player's tick box on the shared Dazed Utilities page; on unless unticked.
+--- The player's tick box on the shared Dazed Core page; on unless unticked.
 function W.enabled()
     return DazedCore.Options.on("DazedPower", W.OPTION)
 end

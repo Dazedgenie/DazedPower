@@ -1,4 +1,4 @@
-"""Build the sprite sheet, tiledef, part items and icons of Dazed Utilities: Power from the taxonomy.
+"""Build the sprite sheet, tiledef, part items and icons of Dazed Power from the taxonomy.
 
     python3 tools/build_sheet.py            # writes dazedpower_tiles.tiles(.txt), texturepacks/dazedpower.pack,
                                             # scripts/dazedpower_items.txt, textures/Item_*.png, Moveables/ItemName keys
