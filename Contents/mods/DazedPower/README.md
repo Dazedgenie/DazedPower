@@ -93,6 +93,16 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   instead of searching the squares round the player; the charge board only rebuilds when its numbers change. Catch-up
   after a long absence bills the saved household demand for all but the last hour. The test and art tools moved out of
   the uploaded mod to the repo root, and 22 unused screen images were removed.
+  - **Fixes.**
+    - Pedal generators make power on dedicated and hosted servers. The rider's client sends the server a heartbeat
+      about once a second, and the bike stops making power a couple of seconds after the beats stop.
+    - Parts in an area that unloaded are no longer kept as "ghosts". A battery bank or panel whose area unloaded
+      while its controller stayed loaded makes the system relink at once, instead of charging a dead copy for up to
+      half an hour. Lamps, windsocks, vanes, coolers, machine sounds and windmill blades drop ghosts the same way.
+    - Single-player windmills no longer reset their blade sprite every minute, which marked each windmill's area
+      for a resave.
+    - Generator settings are not sent to a generator that has gone, and a petrol generator that has unloaded is no
+      longer trusted for ten minutes when the mod clears a building's fumes.
 - **0.6.5 (fix).** The rider's legs really no longer go behind a pedal generator. The game treated the bike as
   something hiding its rider and drew it over them in a later pass, so 0.6.4's depth map never applied. The rider now
   counts as seated on the bike (the way vanilla chairs work), so the bike draws normally and the rider shows in front.
