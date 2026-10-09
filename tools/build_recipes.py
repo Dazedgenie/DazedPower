@@ -11,7 +11,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import dp_taxonomy as T  # noqa: E402
 
-MEDIA = HERE.parent / "common/media"
+MEDIA = HERE.parent / "Contents/mods/DazedPower/common/media"
 SCREW = "item 1 tags[base:screwdriver] mode:keep flags[Prop1]"
 PLIERS = "item 1 tags[base:pliers] mode:keep flags[MayDegradeVeryLight]"
 MASK = "item 1 tags[base:weldingmask] mode:keep"

@@ -1,10 +1,12 @@
 -- Loads every Lua file of the mod (shared, then server, then client) on a stand-in engine, the way the game
 -- would, and reports any file that fails to load. Then a few smoke checks on the registry and the model.
--- Run: lua load_test.lua [<lua root>] [<core lua root>]
-local root = arg[1] or "../../common/media/lua"
-local core = arg[2] or "../../../DazedCore/common/media/lua"
+-- Run from tools/tests: lua load_test.lua [<lua root>] [<core lua root>]; DAZEDCORE_LUA also names the core.
+-- The defaults are this repo's mod folder and the sibling dazedcore repo beside it.
+local root = arg[1] or "../../Contents/mods/DazedPower/common/media/lua"
+local core = arg[2] or os.getenv("DAZEDCORE_LUA") or "../../../dazedcore/Contents/mods/DazedCore/common/media/lua"
 package.path = core .. "/shared/?.lua;" .. core .. "/client/?.lua;" .. root .. "/shared/?.lua;" .. root .. "/server/?.lua;" .. root .. "/client/?.lua;" .. package.path
-local E = dofile("../../../DazedCore/tools/tests/engine_stub.lua")
+-- The core's stand-in engine lives in its own tools, three folders up from its lua root.
+local E = dofile(core .. "/../../../tools/tests/engine_stub.lua")
 local print = E.realPrint
 local fails, checks = 0, 0
 local function check(c, m) checks = checks + 1 if not c then fails = fails + 1 print("FAIL " .. m) end end
@@ -297,7 +299,7 @@ do
     local back = w.genIndex
     w:onHit("genNext")
     check(back == 3 and w.genIndex == 1, "the generator arrows wrap from the first generator to the last and back")
-    local src = io.open("../../common/media/lua/client/DazedPower/DP_Window.lua"):read("*a")
+    local src = io.open(root .. "/client/DazedPower/DP_Window.lua"):read("*a")
     check(src:find('%(id == "genNext" and 1 or %-1%) %+ n%) %% n') ~= nil, "generator paging adds n before % so it never goes negative")
 end
 

@@ -80,11 +80,19 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   `python tools/import_art.py <out>/dp` and `python tools/make_depth.py`.
 - `tools/blender/dp_pedal.py` builds the seated pedalling animations (one per tier) (plain Python with numpy, or in Blender for a
   preview); `tools/blender/dp_pullstart.py` the pull-start one.
-- `tools/tests/load_test.lua` loads every file on a stand-in engine and runs smoke checks:
-  `cd tools/tests && lua load_test.lua` (expects `DazedCore` checked out beside this folder).
+- `tools/tests/load_test.lua` (at the repo root, outside the uploaded mod) loads every file on a stand-in engine and
+  runs smoke checks: `sh tools/tests/run_all.sh [<DazedCore lua root>]` from the repo root. The default core is the
+  sibling `dazedcore` repo (`../dazedcore/Contents/mods/DazedCore/common/media/lua`); `DAZEDCORE_LUA` also sets it.
 
 ## Changes
 
+- **0.7.0 (performance).** The same simulation, cheaper to run and to sync. Each controller is looked up once per
+  minute instead of six times; the load scan keeps running totals; wiring graphs, sprite decodes, the generator range
+  and text widths are remembered; fences find zombies through one list per check; source machines, panels and gauges
+  only send their data when something a player can see moved; machine sounds and windmill blades track the machines
+  instead of searching the squares round the player; the charge board only rebuilds when its numbers change. Catch-up
+  after a long absence bills the saved household demand for all but the last hour. The test and art tools moved out of
+  the uploaded mod to the repo root, and 22 unused screen images were removed.
 - **0.6.5 (fix).** The rider's legs really no longer go behind a pedal generator. The game treated the bike as
   something hiding its rider and drew it over them in a later pass, so 0.6.4's depth map never applied. The rider now
   counts as seated on the bike (the way vanilla chairs work), so the bike draws normally and the rider shows in front.

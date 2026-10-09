@@ -11,17 +11,20 @@ puts a static array on each of its four squares, and Workshop lamps borrow the M
 tools/blender/dp_render.py renders the real ones.
 """
 import io, json, re, sys
+import os
 from pathlib import Path
 from PIL import Image
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-sys.path.insert(0, str(HERE.parent.parent / "DazedCore/tools/pzformat"))
+# The core's format helpers: the sibling dazedcore repo (or DAZEDCORE_DIR, the DazedCore mod folder).
+CORE_DIR = Path(os.environ.get("DAZEDCORE_DIR") or HERE.parent.parent / "dazedcore/Contents/mods/DazedCore")
+sys.path.insert(0, str(CORE_DIR / "tools/pzformat"))
 import dp_taxonomy as T  # noqa: E402
 from tiledef import TileDefinitions, Tile, Tileset  # noqa: E402
 from packfile import TexturePack, PackEntry, PackPage  # noqa: E402
 
-MEDIA = HERE.parent / "common/media"
+MEDIA = HERE.parent / "Contents/mods/DazedPower/common/media"
 ART = HERE / "art"
 SRC = ART / "src"
 CW, CH = 128, 256

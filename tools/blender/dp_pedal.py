@@ -9,9 +9,9 @@ Optional globals: PZ_ANIMS (vanilla anims_X/Bob folder), MOD_MEDIA (mod's common
 import os
 import numpy as np
 
-_HERE = os.path.dirname(os.path.abspath(globals().get("__file__") or r"C:\Users\Shado\Zomboid\Workshop\DazedPower\Contents\mods\DazedPower\tools\blender\x.py"))
+_HERE = os.path.dirname(os.path.abspath(globals().get("__file__") or r"C:\Users\Shado\Zomboid\Workshop\DazedPower\tools\blender\x.py"))
 PZ_ANIMS = globals().get("PZ_ANIMS") or os.environ.get("PZ_ANIMS") or r"D:\SteamSSD\steamapps\common\ProjectZomboid\media\anims_X\Bob"
-MOD_MEDIA = globals().get("MOD_MEDIA") or os.path.normpath(os.path.join(_HERE, "..", "..", "common", "media"))
+MOD_MEDIA = globals().get("MOD_MEDIA") or os.path.normpath(os.path.join(_HERE, "..", "..", "Contents", "mods", "DazedPower", "common", "media"))
 
 # The .X reader/writer, the pose rig and the Blender preview live in dp_pullstart.py; take them without running it.
 _src = open(os.path.join(_HERE, "dp_pullstart.py"), encoding="utf-8").read().rsplit("\nrun()", 1)[0]

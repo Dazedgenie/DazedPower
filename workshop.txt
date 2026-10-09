@@ -1,8 +1,11 @@
 version=1
-title=Mod Template
-description=This is an example mod with two worlds.  You can use this as a template for your own map mods.
+title=Dazed Utilities: Power
+description=Solar, wind, pedal, steam and gas power for Project Zomboid Build 42, with battery banks, charge controllers, transformers that carry power across town, wired buildings and solar lamps.
 description=
-description=The first world has a single 300x300-tile cell.
-description=The second world adds cells all around the first world.
+description=Requires Dazed Utilities: Core (DazedCore), loaded first. Works with Dazed Utilities: Plumbing: generators and boilers burn and drink from its tanks, and its pump and purifier can be wired to a controller.
+description=
+description=Derived from Off-Grid: Solar Power by cakcan (CC BY-NC-SA 4.0).
+description=
+description=Mod ID: DazedPower
 tags=
 visibility=public

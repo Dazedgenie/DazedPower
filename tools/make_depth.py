@@ -9,18 +9,21 @@ in front; everything else gets a box as wide as the sprite's base. Depth sheets 
 them that way whatever the tile sheet's own width).
 """
 import io, sys
+import os
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-sys.path.insert(0, str(HERE.parent.parent / "DazedCore/tools/pzformat"))
+# The core's format helpers: the sibling dazedcore repo (or DAZEDCORE_DIR, the DazedCore mod folder).
+CORE_DIR = Path(os.environ.get("DAZEDCORE_DIR") or HERE.parent.parent / "dazedcore/Contents/mods/DazedCore")
+sys.path.insert(0, str(CORE_DIR / "tools/pzformat"))
 import dp_taxonomy as T  # noqa: E402
 import pzdepth as Z  # noqa: E402
 from packfile import TexturePack  # noqa: E402
 
-MEDIA = HERE.parent / "common/media"
+MEDIA = HERE.parent / "Contents/mods/DazedPower/common/media"
 CW, CH = 128, 256
 EDGE = {"S": "N", "E": "W", "N": "S", "W": "E"}     # a wall part facing S hangs on the north edge, and so on
 WALL_STANDOFF = {"bank": 0.30, "gauge": 0.10, "cooler": 0.25}
