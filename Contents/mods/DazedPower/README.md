@@ -28,15 +28,17 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Wall power gauge | Hangs on a wall; cable it to any part of a system. Its lamp shows the charge band, and Read Gauge (or a click) opens that system's monitor, read only. Takes no controller slot. |
 | Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. Sandbox *Electric fence hurts zombies*. |
 | Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. |
+| Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate (and sandbox *Heaters and coolers change room temperature*) it warms its room. Dazed Power Handbook, Electricity 3. |
 
 **Wiring.** A cable costs Electric Wire by length: one per 4 tiles by default (sandbox *Tiles per Electric Wire*,
 0 = free), and cutting it gives half of what it cost back (cables from found rigs, or run while cables were free, give nothing). Running or cutting a cable while the controller is switched on can burn
 your hand: the chance grows with the system's load and falls with Electricity skill (sandbox *Shock when wiring a
 live system*). Switch the controller off first and it is safe.
 
-**Generators on the monitor.** The GEN page runs the propane and petrol generators cabled to a controller: a master
-AUTO, the battery levels they start and stop at, and each engine's own AUTO and ON/OFF, with fuel, burn, hours left
-and condition. Makeshift engines are pull-cord: no AUTO, and they are started by hand.
+**The monitor.** **System monitor** opens one analog charge board: SOURCES IN and LOAD OUT dials, NET, the battery
+column, BANK, RECEIVED TODAY, CIRCUITS and the MAIN ISOLATOR. Its generator card runs the propane and petrol
+generators cabled to the controller: MASTER, each engine's AUTO and ON, and the START BELOW / STOP ABOVE levels, with
+fuel, burn, hours left and condition. Makeshift engines are pull-cord: no AUTO, and they are started by hand.
 
 **Electricians** start knowing every Makeshift build.
 
@@ -86,7 +88,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
-- **0.7.1 (rename).** Now called **Dazed Power** in the mod list and Workshop; needs **Dazed Core** (was "Dazed Utilities: Core"). Mod ID, saves and settings unchanged.
+- **0.7.1 (rename).** Now called **Dazed Power** in the mod list and Workshop; needs **Dazed Core** (was "Dazed Utilities: Core"). Mod ID, saves and settings unchanged. README: the monitor is described as the charge board it now is, and the electric space heater is listed.
 
 - **0.7.0 (performance).** The same simulation, cheaper to run and to sync. Each controller is looked up once per
   minute instead of six times; the load scan keeps running totals; wiring graphs, sprite decodes, the generator range
