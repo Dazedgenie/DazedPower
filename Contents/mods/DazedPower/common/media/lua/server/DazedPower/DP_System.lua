@@ -126,6 +126,31 @@ local function sync(obj)
     if obj and obj.transmitModData then obj:transmitModData() end
 end
 
+-- Object -> the exact ModData signature it was last pushed with by the tick below; pruned hourly by hand.
+local pushedSig = {}
+local pushedPruneIn = 60
+
+--- Push a part from the tick only when its ModData changed since the tick last pushed it.
+local function syncIfChanged(obj)
+    if not (obj and obj.transmitModData) then return end
+    local md = obj:getModData()
+    local d = md and md.dazedpower
+    local sig = type(d) == "table" and P.dataSig(d) or ""
+    if pushedSig[obj] ~= sig then
+        pushedSig[obj] = sig
+        obj:transmitModData()
+    end
+end
+
+--- Push a part from the tick and remember what it carried.
+local function syncNoting(obj)
+    if not (obj and obj.transmitModData) then return end
+    local md = obj:getModData()
+    local d = md and md.dazedpower
+    pushedSig[obj] = type(d) == "table" and P.dataSig(d) or ""
+    obj:transmitModData()
+end
+
 
 --- What the vanilla sandbox says a generator's reach is. Dazed Power uses the
 --  same numbers on purpose: the controller IS a generator as far as the engine
@@ -2327,14 +2352,21 @@ function S.updateController(rec, dt, hoursAgo, wet)
     -- forced shed raises neither telemetry flag, so a Reset (which clears
     -- d.lvd) followed by the forcing putting it straight back showed the
     -- wrong state on every client for up to ten minutes.
+    --
+    -- The controller always goes; the banks always go on the ten-minute
+    -- heartbeat (their charge moves every minute); every other part only
+    -- when its ModData changed since the tick last pushed it.
     if visualChanged or tel.lvdOpened or tel.lvdClosed
             or (d.lvd == true) ~= lvdBefore or rec.syncIn <= 0 or prioChanged then
+        local heartbeat = rec.syncIn <= 0
         rec.syncIn = SYNC_EVERY
         sync(gen)
-        for i = 1, #rec.arrays do sync(rec.arrays[i]) end
-        for i = 1, #rec.banks do sync(rec.banks[i]) end
-        for i = 1, #(rec.xfmrs or {}) do sync(rec.xfmrs[i]) end
-        for i = 1, #(rec.gauges or {}) do sync(rec.gauges[i]) end
+        for i = 1, #rec.arrays do syncIfChanged(rec.arrays[i]) end
+        for i = 1, #rec.banks do
+            if heartbeat then syncNoting(rec.banks[i]) else syncIfChanged(rec.banks[i]) end
+        end
+        for i = 1, #(rec.xfmrs or {}) do syncIfChanged(rec.xfmrs[i]) end
+        for i = 1, #(rec.gauges or {}) do syncIfChanged(rec.gauges[i]) end
     end
 end
 
@@ -2372,6 +2404,13 @@ function S.tick()
     -- One climate read for every controller this minute, instead of one per controller and per wrapper.
     if E.holdRead then E.holdRead(true) end
     healSuspects()
+    pushedPruneIn = pushedPruneIn - 1
+    if pushedPruneIn <= 0 then
+        pushedPruneIn = 60
+        for o in pairs(pushedSig) do
+            if not stillPlaced(o) then pushedSig[o] = nil end
+        end
+    end
     -- Once per minute for the whole world; see the note in updateController.
     local wet = sprinklersRunning()
     for i = #S.order, 1, -1 do

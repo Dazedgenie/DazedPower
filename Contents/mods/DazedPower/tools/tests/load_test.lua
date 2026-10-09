@@ -182,6 +182,15 @@ do
     check(before == 20 and r1 == 30 and v1 == 2 and gr == 30 and gv == 2 and Ip.generatorRange() == 20, "one cached generator range, refreshed on demand")
 end
 
+-- A part's ModData signature: exact, except named fields that only count once they move a whole step.
+do
+    local st = { windMs = 0.5 }
+    local a = P.dataSig({ windMs = 3.1, lit = true, cells = { 1, 2 } }, st)
+    check(a == P.dataSig({ windMs = 3.2, lit = true, cells = { 1, 2 } }, st) and a ~= P.dataSig({ windMs = 3.4, lit = true, cells = { 1, 2 } }, st)
+        and a ~= P.dataSig({ windMs = 3.1, lit = true, cells = { 1, 3 } }, st) and a ~= P.dataSig({ windMs = 3.1, lit = "true", cells = { 1, 2 } }, st),
+        "a ModData signature moves only when a client could see the change")
+end
+
 -- Parsed wires are remembered, but every caller still gets its own list to append to.
 do
     local wstr = M.wireAdd("", "1,1,0,array", "2,1,0,controller")

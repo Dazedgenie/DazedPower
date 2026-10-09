@@ -84,6 +84,46 @@ end
 
 local try, alive = P.try, P.alive
 
+---------------------------------------------------- pushing ModData to clients
+
+-- Fields that drift every step, and the step a client can tell apart; every other field is compared exactly.
+B.PUSH_STEP = { windMs = 0.5, windKph = 1, windWatts = 1, steamWatts = 1, genWatts = 1, pedalWatts = 1,
+                condition = 0.1, fuel = 0.01, water = 0.1, heat = 0.01,
+                lpg = 0.001, t1Fill = 0.001, t2Fill = 0.001, t1Cond = 0.001, t2Cond = 0.001 }
+-- In-game hours after which an object is pushed again even when nothing it shows has moved.
+B.PUSH_HEARTBEAT_H = 10 / 60
+local pushed = {}       -- object -> { sig, at } of its last push; multiplayer only, pruned every ten minutes
+local prunedAt = nil
+
+--- Send an object's ModData when what clients see of it changed, or `force` (a sprite or state flip).
+--  Single player keeps the old every-step call: there it only flags the object for the hot save.
+local function push(obj, force)
+    if not isServer() then
+        obj:transmitModData()
+        return
+    end
+    local md = obj:getModData()
+    local d = md and md.dazedpower
+    local sig = type(d) == "table" and P.dataSig(d, B.PUSH_STEP) or ""
+    local now = hoursNow()
+    local p = pushed[obj]
+    if force or not p or p.sig ~= sig or now < p.at or now - p.at >= B.PUSH_HEARTBEAT_H then
+        obj:transmitModData()
+        if p then p.sig, p.at = sig, now else pushed[obj] = { sig = sig, at = now } end
+    end
+end
+B.push = push
+
+--- Forget pushes of objects that left the world; weak tables are not honoured, so this is by hand.
+local function prunePushed()
+    local now = hoursNow()
+    if prunedAt and now >= prunedAt and now - prunedAt < B.PUSH_HEARTBEAT_H then return end
+    prunedAt = now
+    for obj in pairs(pushed) do
+        if not alive(obj) then pushed[obj] = nil end
+    end
+end
+
 ----------------------------------------------------------- finding our parts
 
 --- Our parts in a controller's system: whatever Dazed Power's own last relink
@@ -631,10 +671,10 @@ local function boilerEffects(b, now)
     elseif b.condition > 0 then
         d.blown = nil
     end
-    R.setVariant(obj, boilerState(d.condition, b.motion, d.lit, d.heat))
-    -- Every tick: the fuel and water gauges move every minute and the
-    -- player is watching them while feeding it.
-    obj:transmitModData()
+    local flipped = R.setVariant(obj, boilerState(d.condition, b.motion, d.lit, d.heat))
+    -- The fuel and water gauges move every minute and the player is watching them
+    -- while feeding it, so any move a client can see goes out at once.
+    push(obj, flipped)
 end
 
 --------------------------------------------------- propane: the live world
@@ -712,8 +752,7 @@ genEffects = function(g, now)
         end
     end
     local state = ((d.condition or 100) <= 35 and "broken") or (running and "running") or "off"
-    R.setVariant(obj, state)
-    obj:transmitModData()
+    push(obj, R.setVariant(obj, state))
 end
 
 --- The amplifier's live-world costs for one machine that is making power:
@@ -808,8 +847,7 @@ local function liveEffects(rec, src, dt)
     for i = 1, #(src.pedals or {}) do
         local p = src.pedals[i]
         if alive(p.obj) then
-            R.setVariant(p.obj, p.watts > 0 and "on" or "off")
-            p.obj:transmitModData()
+            push(p.obj, R.setVariant(p.obj, p.watts > 0 and "on" or "off"))
         end
     end
 
@@ -819,8 +857,7 @@ local function liveEffects(rec, src, dt)
         if alive(h.obj) then
             local d = P.data(h.obj)
             if h.motion == "turning" then d.condition = math.max(0, (d.condition or 100) - MM.HYDRO_WEAR * dt) end
-            R.setVariant(h.obj, h.motion == "turning" and "turning" or "still")
-            h.obj:transmitModData()
+            push(h.obj, R.setVariant(h.obj, h.motion == "turning" and "turning" or "still"))
         end
     end
 
@@ -830,8 +867,7 @@ local function liveEffects(rec, src, dt)
         local d = alive(obj) and P.data(obj)
         if d and d.indoors then
             d.windWatts, d.windMs = 0, 0
-            R.setVariant(obj, MM.turbineState("still", d.condition))
-            obj:transmitModData()
+            push(obj, R.setVariant(obj, MM.turbineState("still", d.condition)))
         end
     end
     for i = 1, #(src.turbines or {}) do
@@ -848,8 +884,7 @@ local function liveEffects(rec, src, dt)
             d.windWatts, d.windMs = tb.watts or 0, tb.ms or 0
             d.windKph, d.windFrom = src.windKph, src.windFrom
             d.overspeed = (spec.safe ~= nil and (tb.ms or 0) > spec.safe) or nil
-            R.setVariant(obj, MM.turbineState(tb.motion, d.condition), facing)
-            obj:transmitModData()
+            push(obj, R.setVariant(obj, MM.turbineState(tb.motion, d.condition), facing))
         end
     end
 
@@ -881,7 +916,7 @@ local function liveEffects(rec, src, dt)
         if (sa.extra or 0) > 0 and alive(sa.obj) then
             local d = P.data(sa.obj)
             d.condition = math.max(0, (d.condition or 100) - MM.SOLAR_AMP_WEAR * dt)
-            sa.obj:transmitModData()
+            push(sa.obj)
             ampEffects(sa.obj, 0, dt, now)
         end
     end
@@ -922,6 +957,7 @@ if not B.wrappedUpdate then
         if ctx.idleP and rec.idleKinds == ctx.idleP then rec.idleKinds = ctx.idle0 end
         if not ok then error(err, 0) end
         if ctx.src and (hoursAgo or 0) <= 0 then
+            prunePushed()
             local ok2, err2 = pcall(liveEffects, rec, ctx.src, dt or 0)
             if not ok2 then print("DazedPower: live effects failed: " .. tostring(err2)) end
         end

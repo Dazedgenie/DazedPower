@@ -551,6 +551,30 @@ function P.isEmpty(t)
     return true
 end
 
+-- Sort keys of any type the same way every time.
+local function keyLess(a, b) return tostring(a) < tostring(b) end
+
+--- A string that changes whenever a ModData table does: every field exactly, except the top-level
+--  numbers named in `steps` (field -> step), which only count once they move by a step.
+function P.dataSig(t, steps)
+    local keys = {}
+    for k in pairs(t) do keys[#keys + 1] = k end
+    table.sort(keys, keyLess)
+    local out = {}
+    for i = 1, #keys do
+        local k = keys[i]
+        local v = t[k]
+        local q = steps and type(v) == "number" and steps[k]
+        if q then v = math.floor(v / q + 0.5) end
+        if type(v) == "table" then
+            out[i] = tostring(k) .. "={" .. P.dataSig(v) .. "}"
+        else
+            out[i] = tostring(k) .. "=" .. type(v) .. ":" .. tostring(v)
+        end
+    end
+    return table.concat(out, ";")
+end
+
 --- Is this object still standing on a square (listed at an index there)?
 function P.alive(o)
     local ix = P.try(o, "getObjectIndex")
