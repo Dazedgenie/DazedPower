@@ -1080,18 +1080,11 @@ function S.giveWire(playerObj, n)
     end
 end
 
---- Re-read one square into `rec.drawn`, and answer what it draws.
---
---  The one place an appliance becomes a number. Both callers want the same
---  work done and the same cache entry written; they differ only in what they
---  do with the answer, so the accumulation stays with them.
 -- One number per square for the cache's presence index; exact in a double for any map coordinate.
 local function numKey(x, y, z) return (z + 64) * 1e10 + x * 1e5 + y end
 
---- Make sure the record's cache bookkeeping matches `rec.drawn`: a presence
---  index by number (so an empty square never builds a string key), the entry
---  count, and running totals. Anything that edits `rec.drawn` directly sets
---  `rec.drawnTot = nil`, and the bookkeeping is rebuilt here from the table.
+-- Rebuilds the presence index, entry count and running totals from `rec.drawn` when stale.
+-- Anything that edits `rec.drawn` directly sets `rec.drawnTot = nil` to trigger this.
 local function drawnState(rec)
     if rec.drawnTot and rec.drawnOf == rec.drawn then return end
     local ix, n, w, cold, u = {}, 0, 0, 0, 0
@@ -1214,10 +1207,8 @@ local function cacheTotals(rec)
     return tot.w, tot.cold, tot.u
 end
 
---- Fold the per-square kind splits into one table for the LOADS page, over a
---  cache that only holds squares that actually draw something or hold an
---  idle appliance, so this is a handful of entries. Skipped while no entry's
---  kinds changed since the last fold; a full fold also re-sums the totals exactly.
+-- Folds the per-square kind splits into one table for the LOADS page.
+-- Skipped while no entry's kinds changed; a full fold also re-sums the totals exactly.
 local function foldKinds(rec)
     drawnState(rec)
     if not rec.kindsDirty and rec.kinds and rec.idleKinds then return cacheTotals(rec) end
@@ -2352,10 +2343,7 @@ function S.updateController(rec, dt, hoursAgo, wet)
     -- forced shed raises neither telemetry flag, so a Reset (which clears
     -- d.lvd) followed by the forcing putting it straight back showed the
     -- wrong state on every client for up to ten minutes.
-    --
-    -- The controller always goes; the banks always go on the ten-minute
-    -- heartbeat (their charge moves every minute); every other part only
-    -- when its ModData changed since the tick last pushed it.
+    -- The controller always syncs, banks sync on the ten-minute heartbeat, other parts only when their ModData changed.
     if visualChanged or tel.lvdOpened or tel.lvdClosed
             or (d.lvd == true) ~= lvdBefore or rec.syncIn <= 0 or prioChanged then
         local heartbeat = rec.syncIn <= 0
