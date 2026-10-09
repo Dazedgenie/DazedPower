@@ -1,5 +1,7 @@
 version=1
 title=Dazed Power
+description=[b]Disclaimer: this mod was made with AI assistance.[/b] If you're not comfortable with that, please stop reading here.
+description=
 description=[h1]Dazed Power[/h1]
 description=[b]Off-grid electricity for Build 42: solar, wind, pedal, steam, water and gas, stored in battery banks and run from a charge controller.[/b]
 description=Light your base after the shutoff, wire whole houses back up, and watch every watt on an analog monitor.
