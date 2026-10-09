@@ -62,10 +62,27 @@ end
 
 --------------------------------------------------------------- status and sprites
 
+--- A.status, with the controller looked up once per system string in `cache` (sys -> { cd, why }).
+local function statusCached(o, kind, cache)
+    if kind == "heater" and not A.switchedOn(P.data(o)) then return false, "IGUI_DazedPower_HeaterSwitchedOff" end
+    local sys = P.data(o).sys
+    if type(sys) ~= "string" or sys == "" then return false, "IGUI_DazedPower_ApplLoose" end
+    local e = cache[sys]
+    if not e then
+        local cd, why = A.systemData(o)
+        e = { cd = cd or false, why = why }
+        cache[sys] = e
+    end
+    if not e.cd then return false, e.why end
+    return A.gate(e.cd, kind)
+end
+
 --- Bring one appliance's sprite and status fields in line with its system; true when anything changed.
-function A.refresh(o, kind)
+--  `cache` is optional: one controller tick's refreshes share their controller lookups through it.
+function A.refresh(o, kind, cache)
     local d = P.data(o)
-    local live, why = A.status(o, kind)
+    local live, why
+    if cache then live, why = statusCached(o, kind, cache) else live, why = A.status(o, kind) end
     local noRoom = nil
     if kind == "cooler" then
         noRoom = (A.roomOf(o) == nil) or nil
@@ -87,9 +104,10 @@ if not A.wrapped then
     function S.updateController(rec, dt, hoursAgo, wet)
         local r = upd0(rec, dt, hoursAgo, wet)
         if hoursAgo or not dt or dt <= 0 then return r end
+        local cache = {}
         for _, kind in ipairs(KINDS) do
             for _, o in ipairs(listOf(rec, kind)) do
-                if alive(o) then pcall(A.refresh, o, kind) end
+                if alive(o) then pcall(A.refresh, o, kind, cache) end
             end
         end
         return r
@@ -116,20 +134,55 @@ local function broadcast(sq, ids, damage)
     end
 end
 
+-- One number per square for the zombie index; exact in a double for any map coordinate.
+local function sqKey(x, y, z) return (z + 64) * 1e10 + x * 1e5 + y end
+
+--- Every zombie in the cell by square, built once per fence check; false when the cell cannot list them.
+local function zombieIndex(ctx)
+    if ctx.zi ~= nil then return ctx.zi end
+    local cell = getCell and getCell()
+    local list = cell and cell.getZombieList and cell:getZombieList()
+    if not (list and list.size) then
+        ctx.zi = false
+        return false
+    end
+    local zi = {}
+    for i = 0, list:size() - 1 do
+        local zb = list:get(i)
+        local s = zb and zb.getCurrentSquare and zb:getCurrentSquare()
+        if s then
+            local k = sqKey(s:getX(), s:getY(), s:getZ())
+            local l = zi[k]
+            if not l then l = {} zi[k] = l end
+            l[#l + 1] = zb
+        end
+    end
+    ctx.zi = zi
+    return zi
+end
+
 --- The zombies standing on a fence's square or the eight around it, or nil when there are none.
 --  The list is only made once a zombie is found: almost every check finds none.
-local function zombiesNear(sq)
+local function zombiesNear(sq, zi)
     local out = nil
     local x, y, z = sq:getX(), sq:getY(), sq:getZ()
     for dx = -1, 1 do
         for dy = -1, 1 do
-            local s = getSquare(x + dx, y + dy, z)
-            local mov = s and s:getMovingObjects()
-            for i = 0, (mov and mov:size() or 0) - 1 do
-                local o = mov:get(i)
-                if o and instanceof(o, "IsoZombie") then
+            if zi then
+                local l = zi[sqKey(x + dx, y + dy, z)]
+                for i = 1, (l and #l or 0) do
                     out = out or {}
-                    out[#out + 1] = o
+                    out[#out + 1] = l[i]
+                end
+            else
+                local s = getSquare(x + dx, y + dy, z)
+                local mov = s and s:getMovingObjects()
+                for i = 0, (mov and mov:size() or 0) - 1 do
+                    local o = mov:get(i)
+                    if o and instanceof(o, "IsoZombie") then
+                        out = out or {}
+                        out[#out + 1] = o
+                    end
                 end
             end
         end
@@ -138,7 +191,8 @@ local function zombiesNear(sq)
 end
 
 --- One fence section's check: zap what is in reach and off cooldown, paid from its system's racks.
-local function checkFence(fence, systems, dirty, now)
+--  `ctx` carries what one check shares: each system's gate and the zombie index.
+local function checkFence(fence, systems, dirty, now, ctx)
     -- A cheap look at the live flag first: P.data re-describes the sprite, and most fences are idle most ticks.
     local md = fence.getModData and fence:getModData()
     local raw = md and md.dazedpower
@@ -147,10 +201,16 @@ local function checkFence(fence, systems, dirty, now)
     if d.live ~= true then return end
     local sq = fence:getSquare()
     if not sq then return end
-    local zs = zombiesNear(sq)
+    -- The gate only reads the controller, which a check never changes, so it is asked once per system.
+    local gk = type(d.sys) == "string" and d.sys or ""
+    local open = ctx.gates[gk]
+    if open == nil then
+        open = A.gate((A.systemData(fence)), "fence") and true or false
+        ctx.gates[gk] = open
+    end
+    if not open then return end
+    local zs = zombiesNear(sq, zombieIndex(ctx))
     if not zs then return end
-    local cd = A.systemData(fence)
-    if not A.gate(cd, "fence") then return end
     local sys = systems[d.sys]
     if sys == nil then
         sys = Ch.systemOf(fence) or false
@@ -190,12 +250,12 @@ function A.onTick()
     A.tickCount = 0
     local now = nowMs()
     A.pruneCooldowns(A.cooldown, now)
-    local systems, dirty = {}, {}
+    local systems, dirty, ctx = {}, {}, { gates = {} }
     for i = 1, #(S.order or EMPTY) do
         local rec = S.controllers[S.order[i]]
         for _, f in ipairs(listOf(rec, "fence")) do
             if alive(f) then
-                local ok, err = pcall(checkFence, f, systems, dirty, now)
+                local ok, err = pcall(checkFence, f, systems, dirty, now, ctx)
                 if not ok then print("DazedPower: fence check failed: " .. tostring(err)) end
             end
         end
