@@ -182,6 +182,41 @@ local function objectOn(x, y, z, kind)
     return nil, true                              -- loaded, and it is gone
 end
 
+--- The controller object for a record, kept on the record between frames.
+--  Trusted while it is still listed on the record's square and that square is the one in memory now.
+local function cachedController(rec)
+    local gen = rec.toxGen
+    if gen then
+        local ix = try(gen, "getObjectIndex")
+        local sq = type(ix) == "number" and ix >= 0 and try(gen, "getSquare")
+        -- A chunk that streamed out and back builds new squares, so the cached one must still be the live one.
+        if sq and sq == rec.toxSq and getSquare(rec.x, rec.y, rec.z) == sq then return gen end
+    end
+    gen = objectOn(rec.x, rec.y, rec.z, "controller")
+    rec.toxGen = gen
+    rec.toxSq = gen and gen:getSquare() or nil
+    return gen
+end
+S.cachedController = cachedController
+
+-- Is this object still standing on a square? Stand-ins without getObjectIndex are trusted.
+local function stillPlaced(o)
+    if not o.getObjectIndex then return true end
+    local ix = try(o, "getObjectIndex")
+    return type(ix) == "number" and ix >= 0
+end
+
+--- The controller object for a record: the one S.tick resolved this minute, else a fresh lookup.
+--  Every per-controller hook reads it here, so one minute costs one square walk per controller.
+function S.controllerOf(rec)
+    local g = rec.tickGen
+    if g ~= nil then
+        if g == false then return nil end
+        if stillPlaced(g) then return g end
+    end
+    return (objectOn(rec.x, rec.y, rec.z, "controller"))
+end
+
 ------------------------------------------------------------ the wiring graph
 
 --  THE MODEL. A controller's `wire` string is the one authority on what is
@@ -582,7 +617,7 @@ end
 --  stranded, stamp the parts this system counts, and release the parts that
 --  are no longer in its graph.
 function S.relink(rec)
-    local ctrl = objectOn(rec.x, rec.y, rec.z, "controller")
+    local ctrl = S.controllerOf(rec)
     if not ctrl then
         rec.arrays, rec.banks, rec.xfmrs, rec.gauges = {}, {}, {}, {}
         rec.relinkAt = E.worldHours()
@@ -2031,8 +2066,9 @@ end
 --  model, act on the physical parts, record what happened, then drive the
 --  generator, write down what it serves, and push.
 function S.updateController(rec, dt, hoursAgo, wet)
-    local gen, loaded = objectOn(rec.x, rec.y, rec.z, "controller")
+    local gen = S.controllerOf(rec)
     if not gen then
+        local loaded = getSquare(rec.x, rec.y, rec.z) ~= nil or chunkLoaded(rec.x, rec.y, rec.z)
         if loaded then S.forget(rec.key) end
         return
     end
@@ -2286,7 +2322,9 @@ function S.tick()
         if not rec then
             table.remove(S.order, i)
         else
-            local gen = objectOn(rec.x, rec.y, rec.z, "controller")
+            local gen = cachedController(rec)
+            -- Kept for the whole tick so every hook below reads this object instead of walking the square again.
+            rec.tickGen = gen or false
             local last = gen and (P.data(gen).lastHour or -1) or -1
             local dt = (last < 0) and (1 / 60) or (now - last)
             if dt > 0 then
@@ -2311,6 +2349,10 @@ function S.tick()
     -- system adds goes into the registry, and the registry goes to clients
     -- in one message however many systems changed.
     if DazedPower.Distrib then DazedPower.Distrib.afterTick() end
+    for i = 1, #S.order do
+        local rec = S.controllers[S.order[i]]
+        if rec then rec.tickGen = nil end
+    end
     if E.holdRead then E.holdRead(false) end
 end
 
@@ -2495,31 +2537,30 @@ end
 --  bleed. This sweep runs per render tick and normally does nothing: it only
 --  pays when a managed controller's building actually reads toxic, and it
 --  still defers to any real generator sharing the house.
---- The controller object for a record, kept on the record between frames.
---  Trusted while it is still listed on the record's square and that square is the one in memory now.
-local function cachedController(rec)
-    local gen = rec.toxGen
-    if gen then
-        local ix = try(gen, "getObjectIndex")
-        local sq = type(ix) == "number" and ix >= 0 and try(gen, "getSquare")
-        -- A chunk that streamed out and back builds new squares, so the cached one must still be the live one.
-        if sq and sq == rec.toxSq and getSquare(rec.x, rec.y, rec.z) == sq then return gen end
-    end
-    gen = objectOn(rec.x, rec.y, rec.z, "controller")
-    rec.toxGen = gen
-    rec.toxSq = gen and gen:getSquare() or nil
-    return gen
-end
-S.cachedController = cachedController
+
+local TOX_REFRESH = 60       -- frames between re-reads of each controller's building
+local toxFrame = 0
 
 local function clearToxicFast()
+    toxFrame = toxFrame + 1
+    local refresh = toxFrame >= TOX_REFRESH
+    if refresh then toxFrame = 0 end
     for i = 1, #S.order do
         local rec = S.controllers[S.order[i]]
         if rec then
-            local gen = cachedController(rec)
-            if gen and try(gen, "isActivated") then
-                local sq = gen:getSquare()
-                clearOurToxic(sq and sq:getBuilding())
+            -- The building is kept on the record (false outdoors), so a frame with nothing toxic costs one isToxic call.
+            if refresh or rec.toxBld == nil then
+                local gen = cachedController(rec)
+                local sq = gen and gen:getSquare()
+                rec.toxBld = sq and sq:getBuilding() or false
+            end
+            local b = rec.toxBld
+            if b and try(b, "isToxic") then
+                local gen = cachedController(rec)
+                if gen and try(gen, "isActivated") then
+                    local sq = gen:getSquare()
+                    clearOurToxic(sq and sq:getBuilding())
+                end
             end
         end
     end

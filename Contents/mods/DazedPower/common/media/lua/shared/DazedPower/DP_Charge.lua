@@ -88,7 +88,7 @@ function Ch.systemOf(obj)
     local x, y, z = M.parseNodeKey(sys)
     local rec = x and S.controllers[x .. "," .. y .. "," .. z]
     if not rec then return nil end
-    local gen = P.objectAt(rec.x, rec.y, rec.z, "controller")
+    local gen = S.controllerOf and S.controllerOf(rec) or P.objectAt(rec.x, rec.y, rec.z, "controller")
     if not gen then return nil end
     local floorSoc = P.data(gen).floorSoc or 0.2
     local racks, nominal = {}, 0

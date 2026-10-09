@@ -901,7 +901,7 @@ local function liveEffects(rec, src, dt)
 
     -- The controller's breakdown, for anything that wants to show it. Its
     -- own total (d.gen) already includes all of this: Dazed Power computed it.
-    local gen = P.objectAt(rec.x, rec.y, rec.z, "controller")
+    local gen = S.controllerOf(rec)
     if gen then
         local d = P.data(gen)
         d.dpmPedalW, d.dpmWindW, d.dpmSteamW = src.pedalW or 0, src.windW or 0, src.steamW or 0
@@ -940,7 +940,7 @@ if not B.wrappedUpdate then
         end
         -- Nothing of ours is wired any more: take the SOURCES page's rows down.
         if not ctx.src and (hoursAgo or 0) <= 0 then
-            local c = P.objectAt(rec.x, rec.y, rec.z, "controller")
+            local c = S.controllerOf(rec)
             local cd = c and P.data(c)
             if cd and (cd.dpmRows ~= nil or cd.bkRows ~= nil or (cd.bkW or 0) ~= 0) then
                 cd.dpmRows, cd.dpmRowsSig = nil, nil

@@ -176,7 +176,7 @@ if not H.wrapped then
         for _, o in ipairs(rec.banks or {}) do before = before + (P.data(o).charge or 0) end
         local r = upd0(rec, dt, hoursAgo, wet)
         if hoursAgo or not dt or dt <= 0 then return r end
-        local gen = P.objectAt(rec.x, rec.y, rec.z, "controller")
+        local gen = S.controllerOf(rec)
         if not gen then return r end
         -- A bench's lamp shows whether its system is up.
         local gd = P.data(gen)

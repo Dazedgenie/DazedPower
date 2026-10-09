@@ -593,7 +593,7 @@ function D.afterTick()
     for i = 1, #S.order do
         local rec = S.controllers[S.order[i]]
         if rec then
-            local gen = I().objectOn(rec.x, rec.y, rec.z, "controller")
+            local gen = Sys().controllerOf(rec)
             if gen then D.publish(rec, gen) end
         end
     end
@@ -621,7 +621,7 @@ end
 
 --- Relink and republish one system now.
 local function replan(rec)
-    local ctrl = I().objectOn(rec.x, rec.y, rec.z, "controller")
+    local ctrl = Sys().controllerOf(rec)
     if not ctrl then return end
     rec.planSig = nil
     Sys().relink(rec)
@@ -852,7 +852,7 @@ local function partFor(player, args, reach)
     end
     local rec = I().recordOf(root)
     if not rec then return nil, "unwired" end
-    local ctrl = I().objectOn(rec.x, rec.y, rec.z, "controller")
+    local ctrl = Sys().controllerOf(rec)
     if not ctrl then return nil, "unwired" end
     -- The command may run before the system's first relink has seen a new
     -- transformer; relink now so the part list is current.

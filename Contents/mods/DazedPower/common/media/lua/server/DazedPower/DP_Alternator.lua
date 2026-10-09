@@ -59,13 +59,13 @@ local function engineCondition(v)
 end
 
 function A.hasLinks(rec)
-    local gen = rec and P.objectAt(rec.x, rec.y, rec.z, "controller")
+    local gen = rec and S.controllerOf(rec)
     return gen ~= nil and (P.data(gen).cars or "") ~= ""
 end
 
 --- The hooked cars that are here and running, as source entries; drops links whose car left.
 function A.liveCars(rec)
-    local gen = P.objectAt(rec.x, rec.y, rec.z, "controller")
+    local gen = S.controllerOf(rec)
     if not gen then return {} end
     local d = P.data(gen)
     if (d.cars or "") == "" then return {} end

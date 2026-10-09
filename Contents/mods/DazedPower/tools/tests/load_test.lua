@@ -158,6 +158,14 @@ local sys = { arrays = {}, bank = { cells = 2, charge = 0, capacity = 1000, eff 
 local _, t = M.step(sys, 1, env)
 check(t.sourceWatts == 500 and t.generated >= 500, "source watts counted in generation: " .. tostring(t.generated))
 
+-- One controller lookup per record per tick: a record carries the object S.tick resolved, and false means none.
+do
+    local S = DazedPower.System
+    local g = { getObjectIndex = function() return 0 end }
+    check(S.controllerOf({ x = 1, y = 1, z = 0, tickGen = g }) == g and S.controllerOf({ x = 1, y = 1, z = 0, tickGen = false }) == nil,
+        "S.controllerOf reads the controller the tick resolved")
+end
+
 dofile("features_test.lua")(check, E)
 dofile("systems_test.lua")(check, E)
 dofile("climate_power_test.lua")(check, E)
