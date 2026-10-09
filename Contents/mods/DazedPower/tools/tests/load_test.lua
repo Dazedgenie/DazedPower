@@ -131,6 +131,7 @@ local wb = P.spriteInfo(P.sprite("windmill", "ground", "workshop", "wobble", "S"
 check(wb and wb.state == "broken" and wb.frame == "wobble", "the wobble frame decodes as a broken windmill")
 check(P.sprite("windmill", "ground", "makeshift", "turning", "S") == "dazedpower_01_429", "frames don't shadow the real turning sprite")
 check(P.spriteInfo("dazedpower_02_156").frame == "spin1" and P.spriteInfo("dazedpower_02_156").tier == "makeshift", "frames start right after the heater")
+check(P.spriteInfo("dazedpower_01_73") == xl, "sprite info is built once per sheet index")
 local nItems = #P.allItems()
 check(nItems > 0, "allItems skips the frame rows: " .. nItems)
 check(P.spriteName(511) == "dazedpower_01_511" and P.spriteName(512) == "dazedpower_02_0", "the sheet spills onto a second tileset at 512")

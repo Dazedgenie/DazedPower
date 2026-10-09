@@ -86,8 +86,11 @@ if not W.wrapped then
     W.wrapped = true
 
     -- Identity: a registered load first, so a stale ModData stamp can never answer for it.
+    -- Our own sheet's sprites are never another mod's load, so they skip the registry walk.
     local describe0 = P.describe
     function P.describe(obj)
+        local spr = obj and obj.getSprite and obj:getSprite()
+        if spr and P.indexOf(spr:getName()) then return describe0(obj) end
         return W.identify(obj) or describe0(obj)
     end
 

@@ -404,18 +404,26 @@ function P.sprite(kind, mount, tier, state, facing, piece)
     return P.spriteName((row - 1) * P.COLS + fi)
 end
 
+-- Sheet index -> decoded info; the sheet is fixed, so each entry is built once.
+local infoMemo = {}
+
 --- Decompose one of the mod's sprite names, or nil if it is not ours. Anything but a string is not ours
 --  (Kahlua's string.match raises on a userdata). `pieces` is how many squares the part covers and `master`
 --  whether this is the one that carries its state.
+--  The table is shared per sheet index: read it, never change it.
 function P.spriteInfo(name)
     local idx = P.indexOf(name)
     if not idx then return nil end
+    local hit = infoMemo[idx]
+    if hit then return hit end
     local r = P.ROWS[math.floor(idx / P.COLS) + 1]
     if not r then return nil end
     local pieces = P.piecesOf(r.kind, r.mount)
-    return { kind = r.kind, mount = r.mount, tier = r.tier, state = r.state,
-             facing = P.FACINGS[(idx % P.COLS) + 1], index = idx,
-             piece = r.piece, pieces = pieces, master = (r.piece == 1), frame = r.frame }
+    hit = { kind = r.kind, mount = r.mount, tier = r.tier, state = r.state,
+            facing = P.FACINGS[(idx % P.COLS) + 1], index = idx,
+            piece = r.piece, pieces = pieces, master = (r.piece == 1), frame = r.frame }
+    infoMemo[idx] = hit
+    return hit
 end
 
 --- Everything the mod knows about an object, or nil if it is not one of ours.
