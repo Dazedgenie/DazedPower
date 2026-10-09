@@ -1709,7 +1709,7 @@ local function foreignGeneratorIn(building)
         -- age < 0: the clock was set back (debug, admin); walk again
         if age >= 0 and age < FOREIGN_RECHECK_H
                 and try(c.gen, "isActivated") == true
-                and (try(c.gen, "getObjectIndex") or -1) >= 0 then
+                and P.alive(c.gen) then
             return true
         end
     end

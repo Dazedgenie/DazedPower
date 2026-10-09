@@ -81,7 +81,8 @@ function GP.applySettings(g, d, eff, stop)
     local startPct, stopPct = math.floor(eff * 100 + 0.5), math.floor(stop * 100 + 0.5)
     if g.startPct == startPct and g.stopPct == stopPct and g.hold == hold then return false end
     g.startPct, g.stopPct, g.hold = startPct, stopPct, hold
-    if g.obj and try(g.obj, "getObjectIndex") ~= -1 then
+    -- P.alive, not "index ~= -1": a failed index read came back nil and passed as standing.
+    if g.obj and P.alive(g.obj) then
         local gd = P.data(g.obj)
         gd.startPct, gd.stopPct, gd.hold = startPct, stopPct, hold
         g.obj:transmitModData()

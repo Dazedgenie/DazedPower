@@ -168,4 +168,14 @@ return function(check, E)
         isServer = s0
         check(ok == true and mill.sprite == sp(nil, "turning"), "a server puts the plain turning sprite back for clients to sync")
     end
+
+    ------------------------------------------------------------ small guards
+    do
+        local GP = DazedPower.GenPanel
+        local sent = 0
+        local broken = { getObjectIndex = function() error("gone") end, transmitModData = function() sent = sent + 1 end }
+        local g = { obj = broken }
+        check(GP.applySettings(g, {}, 0.3, 0.9) == true and sent == 0 and g.startPct == 30,
+            "generator settings are kept on the entry but not sent to an object whose index cannot be read")
+    end
 end
