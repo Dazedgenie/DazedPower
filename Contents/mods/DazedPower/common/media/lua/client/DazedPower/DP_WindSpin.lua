@@ -10,6 +10,7 @@
 ]]
 
 require "DazedPower/DP_Parts"
+require "DazedPower/DPM_Machines"
 require "DazedCore/DC_Options"
 
 DazedPower = DazedPower or {}
@@ -25,6 +26,7 @@ W.MAX_MS = 15                   -- wind at the rotor past which the blades blur 
 W.WOBBLE_MS = 2                 -- a broken rotor rocks once the wind passes this
 W.SWEEP_MS = 5000               -- how often the squares round each player are searched for windmills
 W.SWEEP_RADIUS = 16
+W.OPTION_MS = 1000              -- how long the option tick box's answer is trusted
 W.FRAMES = { "spin1", "spin2", "spin3", "spin4" }
 W.CUT_IN = { makeshift = 3.5, salvaged = 3.0, workshop = 2.5 }
 
@@ -32,10 +34,35 @@ W.tracked = W.tracked or {}     -- object -> { phase = frames advanced }
 W.count = W.count or 0          -- how many are tracked (Kahlua has no next())
 local spriteMemo = {}
 local lastTick, lastSweep = nil, 0
+-- tier -> frame -> facing -> sprite name, so a frame step builds no strings.
+local frameNames = {}
+local optAt, optOn = nil, true
 
 --- The player's tick box on the shared Dazed Utilities page; on unless unticked.
 function W.enabled()
     return DazedCore.Options.on("DazedPower", W.OPTION)
+end
+
+-- W.enabled, asked at most once per W.OPTION_MS of real time.
+local function enabledCached(now)
+    if optAt == nil or now < optAt or now - optAt >= W.OPTION_MS then
+        optAt, optOn = now, W.enabled()
+    end
+    return optOn
+end
+
+-- The windmill sprite for tier, state or frame, and facing, remembered.
+local function windmillSprite(tier, frame, facing)
+    local byFrame = frameNames[tier]
+    if not byFrame then byFrame = {} frameNames[tier] = byFrame end
+    local byFacing = byFrame[frame]
+    if not byFacing then byFacing = {} byFrame[frame] = byFacing end
+    local name = byFacing[facing]
+    if name == nil then
+        name = P.sprite("windmill", "ground", tier, frame, facing) or false
+        byFacing[facing] = name
+    end
+    return name or nil
 end
 
 -- The registered sprite for a name, looked up once.
@@ -64,16 +91,16 @@ function W.pick(info, d, phase)
     local facing = (d and d.facing) or info.facing
     local ms = (d and d.windMs) or 0
     if state == "turning" then
-        if ms >= W.MAX_MS then return P.sprite("windmill", "ground", info.tier, "turning", facing) end
+        if ms >= W.MAX_MS then return windmillSprite(info.tier, "turning", facing) end
         local frame = W.FRAMES[(math.floor(phase) % #W.FRAMES) + 1]
-        return P.sprite("windmill", "ground", info.tier, frame, facing)
+        return windmillSprite(info.tier, frame, facing)
     end
     if state == "broken" and ms >= W.WOBBLE_MS then
         -- Uneven rocking: two beats on the rest, one rocked off it.
         local beat = math.floor(phase) % 3
-        return P.sprite("windmill", "ground", info.tier, beat == 2 and "wobble" or "broken", facing)
+        return windmillSprite(info.tier, beat == 2 and "wobble" or "broken", facing)
     end
-    return P.sprite("windmill", "ground", info.tier, state, facing)
+    return windmillSprite(info.tier, state, facing)
 end
 
 --- Blade frames a second for wind of `ms` at the rotor on this tier.
@@ -112,13 +139,19 @@ local function sweep(px, py, pz)
     end
 end
 
+-- The living local players, gathered into one table reused every frame; returns it and the count.
+local playerList = {}
 local function localPlayers()
-    local out = {}
+    local n = 0
     for i = 0, getNumActivePlayers() - 1 do
         local p = getSpecificPlayer(i)
-        if p and not p:isDead() then out[#out + 1] = p end
+        if p and not p:isDead() then
+            n = n + 1
+            playerList[n] = p
+        end
     end
-    return out
+    for i = n + 1, #playerList do playerList[i] = nil end
+    return playerList, n
 end
 
 --- Put every tracked windmill back on the sprite its state names (option turned off).
@@ -141,15 +174,15 @@ local function tick()
     local now = getTimestampMs()
     local dt = lastTick and math.min(0.25, (now - lastTick) / 1000) or 0
     lastTick = now
-    if not W.enabled() then
+    if not enabledCached(now) then
         if W.count > 0 then W.restoreAll() end
         return
     end
-    local players = localPlayers()
-    if #players == 0 then return end
+    local players, np = localPlayers()
+    if np == 0 then return end
     if now - lastSweep >= W.SWEEP_MS then
         lastSweep = now
-        for _, p in ipairs(players) do sweep(math.floor(p:getX()), math.floor(p:getY()), math.floor(p:getZ())) end
+        for i = 1, np do local p = players[i] sweep(math.floor(p:getX()), math.floor(p:getY()), math.floor(p:getZ())) end
     end
     for obj, t in pairs(W.tracked) do
         local sq = obj:getSquare()
@@ -158,7 +191,8 @@ local function tick()
             W.count = W.count - 1
         else
             local near = false
-            for _, p in ipairs(players) do
+            for i = 1, np do
+                local p = players[i]
                 if math.abs(p:getX() - sq:getX()) <= W.RANGE and math.abs(p:getY() - sq:getY()) <= W.RANGE then near = true break end
             end
             if near then
@@ -170,9 +204,18 @@ local function tick()
                     local md = obj:hasModData() and obj:getModData()
                     local d = md and md.dazedpower
                     local state = (d and d.state) or info.state
-                    t.phase = t.phase + dt * W.fps(info.tier, d and d.windMs or 0, state)
-                    local want = W.pick(info, d, t.phase)
-                    if want then show(obj, want) end
+                    local ms = (d and d.windMs) or 0
+                    t.phase = t.phase + dt * W.fps(info.tier, ms, state)
+                    -- The sprite only depends on these, so a frame where none moved changes nothing.
+                    local f, facing = math.floor(t.phase), (d and d.facing) or info.facing
+                    local band = (ms >= W.MAX_MS and 2) or (ms >= W.WOBBLE_MS and 1) or 0
+                    local cur = obj:getSprite()
+                    if f ~= t.f or state ~= t.state or facing ~= t.facing or band ~= t.band or info.tier ~= t.tier or cur ~= t.spr then
+                        t.f, t.state, t.facing, t.band, t.tier = f, state, facing, band, info.tier
+                        local want = W.pick(info, d, t.phase)
+                        if want then show(obj, want) end
+                        t.spr = obj:getSprite()
+                    end
                 end
             end
         end
@@ -188,7 +231,8 @@ register()
 
 if Events and not W.hooked then
     W.hooked = true
-    if Events.LoadGridsquare then Events.LoadGridsquare.Add(onSquare) end
+    -- Windmills that stream in or are placed come through DPM_Machines rather than a hook on every square loaded.
+    DazedPower.More.Machines.onAdd(W.consider)
     if Events.OnObjectAdded then Events.OnObjectAdded.Add(W.consider) end
     if Events.OnTick then Events.OnTick.Add(tick) end
 end

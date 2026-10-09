@@ -2,15 +2,17 @@
      Client only and driven by the synced sprite state, so it behaves the same in multiplayer; zombie noise stays in DPM_Bridge. ]]
 
 require "DazedPower/DPM_Parts"
+require "DazedPower/DPM_Machines"
 
 DazedPower.More = DazedPower.More or {}
 DazedPower.More.Sounds = DazedPower.More.Sounds or {}
 local S = DazedPower.More.Sounds
 local R = DazedPower.More.Parts
+local Mc = DazedPower.More.Machines
 
 S.RANGE = 18                -- squares around the player that are listened for
 S.FLOORS = 1                -- floors above and below the player
-S.SCAN_MS = 1500            -- real time between scans
+S.SCAN_MS = 1500            -- real time between passes over the tracked machines
 
 -- What each machine plays in each state: a list of looping vanilla sounds.
 S.LOOPS = {
@@ -79,55 +81,57 @@ local function voice(key, sq, kind, state, prev)
 end
 
 --- One machine's kind and state from its sprite, or nil.
-local function machineOn(sq)
-    local objs = sq:getObjects()
-    for i = 0, objs:size() - 1 do
-        local obj = objs:get(i)
-        local spr = obj and obj:getSprite()
-        local name = spr and spr:getName()
-        if name and string.find(name, PREFIX_PATTERN) then
-            local hit = soundOf[name]
-            if hit == nil then
-                local info = R.spriteInfo(name)
-                hit = (info and S.LOOPS[info.kind]) and { info.kind, info.state } or false
-                soundOf[name] = hit
-            end
-            if hit then return hit[1], hit[2] end
-        end
+local function machineState(obj)
+    local spr = obj:getSprite()
+    local name = spr and spr:getName()
+    if not (name and string.find(name, PREFIX_PATTERN)) then return nil end
+    local hit = soundOf[name]
+    if hit == nil then
+        local info = R.spriteInfo(name)
+        hit = (info and S.LOOPS[info.kind]) and { info.kind, info.state } or false
+        soundOf[name] = hit
     end
+    if hit then return hit[1], hit[2] end
     return nil
 end
 
+-- The local players, gathered into one table reused every pass.
+local players, nPlayers = {}, 0
+
 --- Listen around every local player; machines out of range or gone fall silent.
+--  Walks the machines DPM_Machines tracks rather than every square in earshot.
 function S.scan()
-    local cell = getCell and getCell()
-    if not cell then return end
-    local heard, seen = {}, {}
     local range, floors, floor = S.RANGE, S.FLOORS, math.floor
+    nPlayers = 0
     for p = 0, (getNumActivePlayers and getNumActivePlayers() or 1) - 1 do
         local pl = getSpecificPlayer(p)
         if pl and not pl:isDead() then
-            local px, py, pz = floor(pl:getX()), floor(pl:getY()), floor(pl:getZ())
-            for z = math.max(0, pz - floors), pz + floors do
-                for x = px - range, px + range do
-                    for y = py - range, py + range do
-                        local sq = cell:getGridSquare(x, y, z)
-                        if sq then
-                            local kind, state = machineOn(sq)
-                            if kind then
-                                local key = keyOf(sq)
-                                if not heard[key] then
-                                    heard[key] = true
-                                    voice(key, sq, kind, state, S.seen[key])
-                                    seen[key] = state
-                                end
-                            end
-                        end
-                    end
-                end
-            end
+            nPlayers = nPlayers + 1
+            local e = players[nPlayers]
+            if not e then e = {} players[nPlayers] = e end
+            e.x, e.y, e.z = floor(pl:getX()), floor(pl:getY()), floor(pl:getZ())
         end
     end
+    local heard, seen = {}, {}
+    Mc.each(function(obj, sq)
+        local x, y, z = sq:getX(), sq:getY(), sq:getZ()
+        for i = 1, nPlayers do
+            local e = players[i]
+            if math.abs(x - e.x) <= range and math.abs(y - e.y) <= range
+                    and z >= math.max(0, e.z - floors) and z <= e.z + floors then
+                local kind, state = machineState(obj)
+                if kind then
+                    local key = keyOf(sq)
+                    if not heard[key] then
+                        heard[key] = true
+                        voice(key, sq, kind, state, S.seen[key])
+                        seen[key] = state
+                    end
+                end
+                break
+            end
+        end
+    end)
     for key in pairs(S.live) do
         if not heard[key] then silence(key, false) end
     end

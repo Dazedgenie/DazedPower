@@ -53,7 +53,8 @@ return function(check, E)
         check(f.kind == "windmill" and f.frame ~= nil and (obj.swaps or 0) >= 3, "it steps through frames: " .. tostring(obj.swaps))
         local on0 = DazedCore.Options.on
         DazedCore.Options.on = function() return false end
-        now = now + 33; W.tick()
+        -- The tick box is read at most once per W.OPTION_MS, so the change shows within that.
+        now = now + W.OPTION_MS; W.tick()
         check(P.spriteInfo(obj.sprite:getName()).frame == nil and W.count == 0, "turning the option off puts the plain sprite back")
         DazedCore.Options.on = on0
         getSprite, getNumActivePlayers, getSpecificPlayer, getTimestampMs, getCell = g0, n0, s0, t0, c0

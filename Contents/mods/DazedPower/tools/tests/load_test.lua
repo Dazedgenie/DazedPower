@@ -191,6 +191,24 @@ do
         "a ModData signature moves only when a client could see the change")
 end
 
+-- The client's machine list: a power source is tracked, anything else is not, and one that left is dropped.
+do
+    local Mc = DazedPower.More.Machines
+    local function obj(name)
+        local o = { ix = 0 }
+        function o:getSprite() return { getName = function() return name end } end
+        function o:getObjectIndex() return self.ix end
+        function o:getSquare() return self.ix >= 0 and {} or nil end
+        return o
+    end
+    local wm, arr = obj(P.sprite("windmill", "ground", "salvaged", "turning", "S")), obj(P.sprite("array", "ground", "makeshift", "clear", "S"))
+    Mc.consider(wm); Mc.consider(arr)
+    local tracked = Mc.objs[wm] == true and Mc.objs[arr] == nil
+    wm.ix = -1
+    Mc.each(function() end)
+    check(tracked and Mc.objs[wm] == nil, "the machine list tracks power sources and drops the ones that left")
+end
+
 -- Parsed wires are remembered, but every caller still gets its own list to append to.
 do
     local wstr = M.wireAdd("", "1,1,0,array", "2,1,0,controller")
