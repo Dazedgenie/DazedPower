@@ -268,7 +268,21 @@ end
 
 --------------------------------------------------------------- cooler
 
+-- Item id -> world hour of its last sendItemStats; pruned every ten minutes, as weak tables are not honoured.
+A.statsSentAt = A.statsSentAt or {}
+A.STATS_EVERY_H = 1
+
+-- 0 fresh, 1 stale, 2 rotten: the bands a client shows for a food item's age.
+local function freshBand(item, age)
+    local offMax = tonumber(P.try(item, "getOffAgeMax"))
+    if offMax and age >= offMax then return 2 end
+    local off = tonumber(P.try(item, "getOffAge"))
+    if off and age >= off then return 1 end
+    return 0
+end
+
 --- Credit one food item; true when its age changed.
+--  Clients are told when the item's freshness band changes, else at most once an in-game hour.
 local function creditFood(item, credit)
     if not A.foodTakesCredit({ frozen = P.try(item, "isFrozen") == true, burnt = P.try(item, "isBurnt") == true,
                                perishable = (tonumber(P.try(item, "getOffAgeMax")) or 1e9) < 1e9 }) then
@@ -279,7 +293,16 @@ local function creditFood(item, credit)
     local new = A.compensatedAge(age, credit)
     if new == age then return false end
     item:setAge(new)
-    if isServer() and sendItemStats then pcall(sendItemStats, item) end
+    if isServer() and sendItemStats then
+        local id = P.try(item, "getID")
+        local now = E.worldHours()
+        local last = id ~= nil and A.statsSentAt[id] or nil
+        if id == nil or last == nil or now < last or now - last >= A.STATS_EVERY_H
+                or freshBand(item, age) ~= freshBand(item, new) then
+            pcall(sendItemStats, item)
+            if id ~= nil then A.statsSentAt[id] = now end
+        end
+    end
     return true
 end
 
@@ -340,6 +363,10 @@ local function coolOne(o)
 end
 
 function A.everyTenMinutes()
+    local now = E.worldHours()
+    for id, t in pairs(A.statsSentAt) do
+        if now < t or now - t > 2 * A.STATS_EVERY_H then A.statsSentAt[id] = nil end
+    end
     for i = 1, #(S.order or {}) do
         local rec = S.controllers[S.order[i]]
         for _, o in ipairs(listOf(rec, "cooler")) do

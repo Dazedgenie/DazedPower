@@ -695,6 +695,8 @@ function D.sweep(rec)
             local stored = rec.unitSum[uk]
             if loaded or not stored then
                 local w, cold, cost = 0, 0, 0
+                -- Every square here is on this chunk, so its list of shapes is looked up once.
+                local clist = ix[ch.kx .. "," .. ch.ky]
                 for y = math.max(s.y0, y0), math.min(s.y1, y0 + 7) do
                     local xa, xb = R.rowSpan(s, y)
                     if xa then
@@ -706,7 +708,7 @@ function D.sweep(rec)
                                 -- summed from the cache: a first visit to an
                                 -- unloaded unit walks the whole unit too.
                                 cost = cost + 1
-                                if R.owner(shapes, ix, sw.si, x, y, z) then
+                                if R.ownerIn(shapes, clist, sw.si, x, y, z) then
                                     local sw_, sc
                                     if loaded then
                                         sw_, sc = internal.readSquare(rec, x, y, z)
