@@ -304,5 +304,21 @@ do
     check(src:find('%(id == "genNext" and 1 or %-1%) %+ n%) %% n') ~= nil, "generator paging adds n before % so it never goes negative")
 end
 
+-- Dazed Core's debug spawn gets one of every part and loose item, and none of the controller's extra records.
+do
+    local P = DazedPower.Parts
+    local set = DazedCore.DebugSpawn and DazedCore.DebugSpawn.sets.power
+    local list = set and set.items() or {}
+    local declared, seen, ok = {}, {}, set ~= nil
+    for _, it in ipairs(P.allItems()) do declared[it] = true end
+    for _, it in ipairs(list) do
+        if seen[it] or not declared[it] then ok = false end
+        seen[it] = true
+    end
+    check(ok and #list == #P.allItems() - 14, "the debug spawn set lists every declared item once, controllers once (" .. #list .. ")")
+    check(not seen[P.CONTROLLER_ITEM_ON.workshop.S] and seen["Base.DazedArrayXLWorkshop"] and seen[P.AMP_ITEM],
+        "the debug spawn set skips the running controller and reaches the 2x2 array and the amplifier")
+end
+
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)
