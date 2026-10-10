@@ -4,6 +4,7 @@
      same controller. ]]
 
 require "DazedCore/DC_Boot"
+require "DazedCore/DC_DebugSpawn"     -- by name, so it is there whichever mod's shared files load first
 require "DazedPower/DP_Parts"
 
 local S = DazedCore.DebugSpawn
@@ -24,7 +25,9 @@ S.register("power", "Dazed Power", function()
             end
         end
     end
-    for _, it in ipairs({ P.MANUAL, P.MANUAL_ADV, P.ALMANAC, P.AMP_ITEM }) do out[#out + 1] = it end
-    for _, gear in ipairs(P.GEAR_ORDER) do out[#out + 1] = P.GEAR_ITEM[gear] end
+    for _, k in ipairs({ "MANUAL", "MANUAL_ADV", "ALMANAC", "AMP_ITEM" }) do
+        if P[k] then out[#out + 1] = P[k] end
+    end
+    for _, gear in ipairs(P.GEAR_ORDER or {}) do out[#out + 1] = P.GEAR_ITEM[gear] end
     return out
 end)
