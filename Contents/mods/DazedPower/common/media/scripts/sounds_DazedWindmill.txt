@@ -1,0 +1,36 @@
+module Base
+{
+    /* Old farm water-pump windmill */
+    sound DazedWindmillOld_Start
+    {
+        category = Object, is3D = true,
+        clip { file = media/sound/DazedWindmillOld_Start.ogg, distanceMax = 30, volume = 0.8, }
+    }
+    sound DazedWindmillOld_Loop
+    {
+        category = Object, is3D = true, loop = true,
+        clip { file = media/sound/DazedWindmillOld_Loop.ogg, distanceMax = 30, volume = 0.8, }
+    }
+    sound DazedWindmillOld_Stop
+    {
+        category = Object, is3D = true,
+        clip { file = media/sound/DazedWindmillOld_Stop.ogg, distanceMax = 30, volume = 0.8, }
+    }
+
+    /* Modern small wind turbine */
+    sound DazedWindmillModern_Start
+    {
+        category = Object, is3D = true,
+        clip { file = media/sound/DazedWindmillModern_Start.ogg, distanceMax = 30, volume = 0.8, }
+    }
+    sound DazedWindmillModern_Loop
+    {
+        category = Object, is3D = true, loop = true,
+        clip { file = media/sound/DazedWindmillModern_Loop.ogg, distanceMax = 30, volume = 0.8, }
+    }
+    sound DazedWindmillModern_Stop
+    {
+        category = Object, is3D = true,
+        clip { file = media/sound/DazedWindmillModern_Stop.ogg, distanceMax = 30, volume = 0.8, }
+    }
+}
