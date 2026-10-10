@@ -93,4 +93,4 @@ description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?
 description=
 description=[i]Mod ID: DazedPower · Version 0.7.4[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
-visibility=public
+visibility=private
