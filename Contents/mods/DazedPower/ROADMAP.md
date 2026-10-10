@@ -44,6 +44,13 @@ Polish (all three mods)
 - Performance pass over the minute ticks and square scans.
 - Translation-ready: key lists and a template for community languages.
 
+## Ideas (added 2026-10-10, from the community scan; not designed or coded)
+
+- Wood-gas generator: a gasifier that burns logs, planks or charcoal to run a modified generator; dirty, needs ash
+  cleanout, period-correct (WWII tech). Different from Plumbing's biogas digester.
+- Time-left estimate: a "runs out in about 2 d 6 h" line on the BATT and GEN pages and the wall gauge, from battery
+  charge at the current load and fuel left per generator.
+
 ## Considered and left out
 
 Transformer grades, inverters as a separate part, a water heater, motion-sensing lamps, cable overlay sprites.
