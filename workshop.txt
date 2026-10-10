@@ -83,7 +83,7 @@ description=
 description=[hr][/hr]
 description=
 description=[h2]The Dazed suite[/h2]
-description=[b]Dazed Core[/b] · [b]Dazed Plumbing[/b] · [b]Dazed Dank[/b] · Coming soon: Dazed Butchery, Dazed Cooking, Dazed Climate, Dazed Essentials
+description=[b]Dazed Core[/b] · [b]Dazed Plumbing[/b] · [b]Dazed Dank[/b] · [b]Dazed Climate[/b] · Coming soon: Dazed Butchery, Dazed Cooking, Dazed Essentials
 description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
