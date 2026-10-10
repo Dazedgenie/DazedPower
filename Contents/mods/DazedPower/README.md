@@ -1,4 +1,4 @@
-# Dazed Power  (v0.7.2, Build 42)
+# Dazed Power  (v0.7.3, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core** (`DazedCore`), loaded first. Works with
@@ -88,6 +88,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.7.3 (windmill sounds).** Windmills have their own sounds instead of a washing machine's churn. Makeshift and Salvaged windmills creak, clank and pump like an old farm windmill; the Workshop Wind Turbine whooshes and hums. Each spins up when it starts turning, loops while it turns, and winds down when it stops, furls or breaks. Sounds are in `media/sound`, defined in `media/scripts/sounds_DazedWindmill.txt`; `tools/audio/windmill_synth.py` regenerates them.
 - **0.7.2 (fewer sandbox options, 21 down to 14).** Merged or removed the options that were rarely touched. *Panel weathering* now covers snow and dust together, *Battery wear* also covers deep-discharge damage (0 = no wear at all), *Found solar gear* sets both yard rigs and barn stock, and a transformer's line is always 2.5 times the link radius. The electric fence always hurts zombies, heaters and coolers always warm rooms with Dazed Climate, and Realistic Mode (1993 panels) is now set only by the Realistic and Hardcore presets. Existing saves keep working; any value you had set for a merged or removed option falls back to its default.
 - **0.7.1 (rename).** Now called **Dazed Power** in the mod list and Workshop; needs **Dazed Core** (was "Dazed Utilities: Core"). Mod ID, saves and settings unchanged. README: the monitor is described as the charge board it now is, and the electric space heater is listed.
   - **Fix:** the Micro-Hydro Wheel can be repaired (*Dazed Power -> Repair it*: electronics scrap, screws, a screwdriver; +30 condition), like the other machines. It wore down and stopped at 35 with no way back.

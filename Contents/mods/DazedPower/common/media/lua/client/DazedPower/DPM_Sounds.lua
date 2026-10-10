@@ -21,14 +21,21 @@ S.LOOPS = {
     steam    = { warming = { "FireplaceRunning" },
                  running = { "FireplaceRunning", "FactoryMachineAmbiance" } },
     pedal    = { on = { "ClothingDryerRunning" } },
-    -- the pylon hum was an ambient-bus sound and too quiet to hear; a washer's churn reads as the rotor's whump
-    windmill = { turning = { "ClothingWasherRunning" } },
+    -- Windmills use the mod's own sounds (media/scripts/sounds_DazedWindmill.txt), one set per look.
+    windmill_old    = { turning = { "DazedWindmillOld_Loop" } },
+    windmill_modern = { turning = { "DazedWindmillModern_Loop" } },
 }
--- One-shots when an engine is seen starting or stopping.
-S.START = { petrol = "GeneratorStarting", propane = "OldGeneratorStarting" }
-S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping" }
+-- Kinds whose sound set depends on tier: kind -> tier -> key in S.LOOPS.
+S.VOICE = { windmill = { makeshift = "windmill_old", salvaged = "windmill_old", workshop = "windmill_modern" } }
+-- One-shots when a machine is seen starting or stopping.
+S.START = { petrol = "GeneratorStarting", propane = "OldGeneratorStarting",
+            windmill_old = "DazedWindmillOld_Start", windmill_modern = "DazedWindmillModern_Start" }
+S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping",
+           windmill_old = "DazedWindmillOld_Stop", windmill_modern = "DazedWindmillModern_Stop" }
+-- A spin-up clip ends at full speed, so its loop waits this long (ms) to take over instead of overlapping.
+S.LOOP_DELAY_MS = { windmill_old = 5900, windmill_modern = 4900 }
 
-S.live = S.live or {}       -- key -> { emitter, ids, kind, state }
+S.live = S.live or {}       -- key -> { emitter, ids, kind, state, startAt }
 S.seen = S.seen or {}       -- key -> state at the last scan
 
 -- Anchored, so a vanilla name fails on its first character without a substring being made.
@@ -43,9 +50,19 @@ local function silence(key, stopSound)
     local rec = S.live[key]
     if not rec then return end
     for _, id in ipairs(rec.ids) do pcall(rec.emitter.stopSound, rec.emitter, id) end
+    if rec.startId then pcall(rec.emitter.stopSound, rec.emitter, rec.startId) end  -- cut a spin-up short
     local stop = stopSound and S.STOP[rec.kind]
     if stop then pcall(rec.emitter.playSound, rec.emitter, stop) end
     S.live[key] = nil
+end
+
+--- Play a machine's loops on its emitter and clear any pending delayed start.
+local function startLoops(rec)
+    rec.startAt = nil
+    for _, name in ipairs(S.LOOPS[rec.kind][rec.state] or {}) do
+        local ok, id = pcall(rec.emitter.playSound, rec.emitter, name)
+        if ok and id then rec.ids[#rec.ids + 1] = id end
+    end
 end
 
 --- Start, keep or stop the loops for a machine now in `state` (was `prev` last scan).
@@ -53,6 +70,7 @@ local function voice(key, sq, kind, state, prev)
     local loops = S.LOOPS[kind][state]
     local rec = S.live[key]
     if rec and rec.kind == kind and rec.state == state then
+        if rec.startAt then return end                          -- still spinning up; startDue takes it from here
         -- a loop the engine dropped (sound reset, emitter reused) is restarted
         for i, id in ipairs(rec.ids) do
             local ok, playing = pcall(rec.emitter.isPlaying, rec.emitter, id)
@@ -69,18 +87,28 @@ local function voice(key, sq, kind, state, prev)
     if not world then return end
     local ok, emitter = pcall(world.getFreeEmitter, world, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ())
     if not ok or not emitter then return end
+    local rec2 = { emitter = emitter, ids = {}, kind = kind, state = state }
+    S.live[key] = rec2
     if prev and not S.LOOPS[kind][prev] and S.START[kind] then  -- just switched on in earshot
-        pcall(emitter.playSound, emitter, S.START[kind])
+        local ok2, sid = pcall(emitter.playSound, emitter, S.START[kind])
+        if ok2 then rec2.startId = sid end
+        local delay = S.LOOP_DELAY_MS[kind]
+        if delay then
+            rec2.startAt = (getTimestampMs and getTimestampMs() or 0) + delay
+            return
+        end
     end
-    local ids = {}
-    for _, name in ipairs(loops) do
-        local ok2, id = pcall(emitter.playSound, emitter, name)
-        if ok2 and id then ids[#ids + 1] = id end
-    end
-    S.live[key] = { emitter = emitter, ids = ids, kind = kind, state = state }
+    startLoops(rec2)
 end
 
---- One machine's kind and state from its sprite, or nil.
+--- Start loops whose spin-up clip has finished; runs every tick but only walks the live machines.
+local function startDue(now)
+    for _, rec in pairs(S.live) do
+        if rec.startAt and now >= rec.startAt then startLoops(rec) end
+    end
+end
+
+--- One machine's sound set (its kind, or kind and tier via S.VOICE) and state from its sprite, or nil.
 local function machineState(obj)
     local spr = obj:getSprite()
     local name = spr and spr:getName()
@@ -88,7 +116,9 @@ local function machineState(obj)
     local hit = soundOf[name]
     if hit == nil then
         local info = R.spriteInfo(name)
-        hit = (info and S.LOOPS[info.kind]) and { info.kind, info.state } or false
+        local v = info and S.VOICE[info.kind]
+        local key = info and ((v and (v[info.tier] or v.makeshift)) or info.kind)
+        hit = (key and S.LOOPS[key]) and { key, info.state } or false
         soundOf[name] = hit
     end
     if hit then return hit[1], hit[2] end
@@ -141,6 +171,7 @@ end
 local last = 0
 local function onTick()
     local now = getTimestampMs and getTimestampMs() or 0
+    startDue(now)
     if now - last < S.SCAN_MS then return end
     last = now
     local ok, err = pcall(S.scan)
