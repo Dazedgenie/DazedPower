@@ -35,7 +35,7 @@ S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping",
 -- A spin-up clip ends at full speed, so its loop waits this long (ms) to take over instead of overlapping.
 S.LOOP_DELAY_MS = { windmill_old = 5900, windmill_modern = 4900 }
 
-S.live = S.live or {}       -- key -> { emitter, ids, kind, state, startAt }
+S.live = S.live or {}       -- key -> { emitter, ids, kind, state, x, y, z, startAt, startId, startEmitter }
 S.seen = S.seen or {}       -- key -> state at the last scan
 
 -- Anchored, so a vanilla name fails on its first character without a substring being made.
@@ -49,19 +49,54 @@ local function keyOf(sq) return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ(
 local function silence(key, stopSound)
     local rec = S.live[key]
     if not rec then return end
-    for _, id in ipairs(rec.ids) do pcall(rec.emitter.stopSound, rec.emitter, id) end
-    if rec.startId then pcall(rec.emitter.stopSound, rec.emitter, rec.startId) end  -- cut a spin-up short
+    for _, id in ipairs(rec.ids) do
+        if id then pcall(rec.emitter.stopSound, rec.emitter, id) end
+    end
+    if rec.startId then                                         -- cut a spin-up short, wherever it plays
+        local e = rec.startEmitter or rec.emitter
+        pcall(e.stopSound, e, rec.startId)
+    end
     local stop = stopSound and S.STOP[rec.kind]
     if stop then pcall(rec.emitter.playSound, rec.emitter, stop) end
     S.live[key] = nil
 end
 
---- Play a machine's loops on its emitter and clear any pending delayed start.
+-- Sounds that already failed to play, so the console names each one once instead of every scan.
+local warned = {}
+
+--- Play one sound on an emitter; the handle, or nil (and one console line) when the engine refused it.
+local function play(emitter, name)
+    local ok, id = pcall(emitter.playSound, emitter, name)
+    if ok and id and id ~= 0 then return id end
+    if not warned[name] and print then
+        warned[name] = true
+        print("DazedPower sounds: could not play " .. tostring(name) .. (ok and "" or (": " .. tostring(id))))
+    end
+    return nil
+end
+
+--- A free world emitter at the middle of a square, or nil.
+local function emitterAt(x, y, z)
+    local world = getWorld and getWorld()
+    if not world then return nil end
+    local ok, emitter = pcall(world.getFreeEmitter, world, x + 0.5, y + 0.5, z)
+    if ok and emitter then return emitter end
+    return nil
+end
+
+--- Play a machine's loops and clear any pending delayed start. A machine that played a spin-up clip gets a
+--  fresh emitter for its loops: the world hands an emitter back to its pool once nothing on it is playing,
+--  so the spin-up's emitter can be gone (or reused) by the time the loop is due.
 local function startLoops(rec)
+    local waited = rec.startAt ~= nil
     rec.startAt = nil
-    for _, name in ipairs(S.LOOPS[rec.kind][rec.state] or {}) do
-        local ok, id = pcall(rec.emitter.playSound, rec.emitter, name)
-        if ok and id then rec.ids[#rec.ids + 1] = id end
+    if waited then
+        local fresh = emitterAt(rec.x, rec.y, rec.z)
+        if fresh then rec.emitter, rec.startEmitter = fresh, rec.emitter end
+    end
+    rec.ids = {}
+    for i, name in ipairs(S.LOOPS[rec.kind][rec.state] or {}) do
+        rec.ids[i] = play(rec.emitter, name) or false
     end
 end
 
@@ -71,29 +106,35 @@ local function voice(key, sq, kind, state, prev)
     local rec = S.live[key]
     if rec and rec.kind == kind and rec.state == state then
         if rec.startAt then return end                          -- still spinning up; startDue takes it from here
-        -- a loop the engine dropped (sound reset, emitter reused) is restarted
-        for i, id in ipairs(rec.ids) do
-            local ok, playing = pcall(rec.emitter.isPlaying, rec.emitter, id)
-            if ok and playing == false then
-                local ok2, nid = pcall(rec.emitter.playSound, rec.emitter, loops[i])
-                if ok2 and nid then rec.ids[i] = nid end
+        -- a loop the engine dropped (sound reset, emitter handed back to the pool) or never started:
+        -- start the set again on a fresh emitter, since the old one may no longer play anything
+        for i = 1, #loops do
+            local id = rec.ids[i]
+            local ok, playing = false, false
+            if id then ok, playing = pcall(rec.emitter.isPlaying, rec.emitter, id) end
+            if not (ok and playing ~= false) then
+                for _, old in ipairs(rec.ids) do
+                    if old then pcall(rec.emitter.stopSound, rec.emitter, old) end
+                end
+                rec.emitter = emitterAt(rec.x, rec.y, rec.z) or rec.emitter
+                rec.ids = {}
+                for j, name in ipairs(loops) do rec.ids[j] = play(rec.emitter, name) or false end
+                break
             end
         end
         return
     end
     silence(key, rec ~= nil and not loops)                     -- just switched off: play its stop
     if not loops then return end
-    local world = getWorld and getWorld()
-    if not world then return end
-    local ok, emitter = pcall(world.getFreeEmitter, world, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ())
-    if not ok or not emitter then return end
-    local rec2 = { emitter = emitter, ids = {}, kind = kind, state = state }
+    local x, y, z = sq:getX(), sq:getY(), sq:getZ()
+    local emitter = emitterAt(x, y, z)
+    if not emitter then return end
+    local rec2 = { emitter = emitter, ids = {}, kind = kind, state = state, x = x, y = y, z = z }
     S.live[key] = rec2
     if prev and not S.LOOPS[kind][prev] and S.START[kind] then  -- just switched on in earshot
-        local ok2, sid = pcall(emitter.playSound, emitter, S.START[kind])
-        if ok2 then rec2.startId = sid end
+        rec2.startId = play(emitter, S.START[kind])
         local delay = S.LOOP_DELAY_MS[kind]
-        if delay then
+        if delay and rec2.startId then
             rec2.startAt = (getTimestampMs and getTimestampMs() or 0) + delay
             return
         end
