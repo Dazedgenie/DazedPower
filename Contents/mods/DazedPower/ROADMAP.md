@@ -46,8 +46,7 @@ Polish (all three mods)
 
 ## Ideas (added 2026-10-10, from the community scan; not designed or coded)
 
-- Wood-gas generator: a gasifier that burns logs, planks or charcoal to run a modified generator; dirty, needs ash
-  cleanout, period-correct (WWII tech). Different from Plumbing's biogas digester.
+- Wood-gas generator: coded in 0.8.0 (three grades, warm-up, ash cleanout, wood fuel in fire-hours; stand-in art).
 - Time-left estimate: a "runs out in about 2 d 6 h" line on the BATT and GEN pages and the wall gauge, from battery
   charge at the current load and fuel left per generator.
 

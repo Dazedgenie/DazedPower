@@ -12,7 +12,7 @@ local P = DazedPower.Parts
 local MM = DazedPower.More.Model
 
 R.TILESET, R.COLS, R.FACINGS, R.FACING_INDEX = P.TILESET, P.COLS, P.FACINGS, P.FACING_INDEX
-R.KINDS = { "pedal", "windmill", "steam", "windsock", "vane", "propane", "petrol" }
+R.KINDS = { "pedal", "windmill", "steam", "windsock", "vane", "propane", "petrol", "woodgas" }
 R.KIND_SET = {}
 for _, k in ipairs(R.KINDS) do R.KIND_SET[k] = true end
 R.INSTRUMENT = P.INSTRUMENT
@@ -71,7 +71,7 @@ function R.setVariant(obj, state, facing)
     return P.setState(obj, state, facing)
 end
 
---- A propane or petrol generator whose engine is running, which may not be lifted or turned.
+--- A propane, petrol or wood gas generator whose engine is running, which may not be lifted or turned.
 function R.runningGen(obj)
     local info = R.describe(obj)
     if not info or not R.GAS_ENGINE[info.kind] then return false end

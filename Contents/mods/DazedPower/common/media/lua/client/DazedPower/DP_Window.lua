@@ -136,7 +136,7 @@ local function unitAt(r)
     if type(r) ~= "table" or not getSquare then return nil end
     local x, y, z = tonumber(r.x), tonumber(r.y), tonumber(r.z)
     if not (x and y and z) then return nil end
-    return P.objectAt(x, y, z, r.kind == "petrol" and "petrol" or "propane")
+    return P.objectAt(x, y, z, (r.kind == "petrol" or r.kind == "woodgas") and r.kind or "propane")
 end
 
 --- Why the owner's lock refuses this player a GEN control, or nil: the generator's own when it is
@@ -371,6 +371,7 @@ function DP_Window:refresh()
         bkWhToday = d.bkWhToday or 0,
         bkFuelL = d.bkFuelL or 0,
         bkFuelKg = d.bkFuelKg or 0,
+        bkFuelWood = d.bkFuelWood or 0,
         bkMore = d.bkMore or 0,
         -- The SOURCES IN list: every wired fixture (Dazed Power More's bridge) and the arrays' own share.
         dpmRows = d.dpmRows,

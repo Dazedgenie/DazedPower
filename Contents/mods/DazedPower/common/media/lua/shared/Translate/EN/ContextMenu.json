@@ -83,5 +83,6 @@
     "ContextMenu_DazedPower_ApplOff": "Off: {1}",
     "ContextMenu_DazedPower_FenceZaps": "Zaps today: {1}",
     "ContextMenu_DazedPower_CoolerCount": "Containers cooled: {1}",
-    "ContextMenu_DazedPower_CoolerNoRoom": "Not inside a room, so it cools nothing"
+    "ContextMenu_DazedPower_CoolerNoRoom": "Not inside a room, so it cools nothing",
+    "ContextMenu_DazedPower_WoodGasAsh": "Clean out the ash ({1}% full)"
 }

@@ -131,7 +131,7 @@ return function(check, E)
           "the Electrician is recognised either way")
     local sparky = who("electrician")
     local n1 = EL.grant(sparky)
-    check(n1 == #DazedPower.RecipeLists.ELECTRICIAN and n1 == 11 and EL.grant(sparky) == 0, "eleven Makeshift builds, learned once")
+    check(n1 == #DazedPower.RecipeLists.ELECTRICIAN and n1 == 12 and EL.grant(sparky) == 0, "twelve Makeshift builds, learned once")
     local allMakeshift = true
     for _, r in ipairs(DazedPower.RecipeLists.ELECTRICIAN) do if not r:find("Makeshift") then allMakeshift = false end end
     check(allMakeshift and EL.grant(who("chef")) == 0, "only Makeshift builds, only for an Electrician")
@@ -195,6 +195,33 @@ return function(check, E)
     GP.command(nil, ctrl2, "bkMaster", { value = false })
     GP.mirror(ctrl2, d2, { gens = gens, genW = 0 }, 0)
     check(d2.bkAuto == false and gens[2].hold == true and P.data(gens[2].obj).hold == true, "master AUTO off holds every engine")
+
+    ------------------------------------------------------------ the wood gas generator
+    local wspec = MM.propaneSpec("salvaged", "woodgas")
+    local w = { tier = "salvaged", kind = "woodgas", mode = "on", lpg = 30, condition = 100 }
+    check(MM.propaneSwitch(w, nil) == true, "a wood gas engine starts with wood in the hopper")
+    w.running = true
+    local out = MM.propaneStep(w, wspec.warmup / 2, 1000)
+    check(out == 0 and w.warming and w.running and math.abs(w.gas - 0.5) < 1e-6, "half its warm-up: no power yet, still warming")
+    check(MM.genState("woodgas", 100, true, w.warming) == "warming", "its sprite shows warming")
+    local lpg0 = w.lpg
+    out = MM.propaneStep(w, 1, 1000)
+    check(out > 0 and w.gas == 1 and not w.warming, "once hot it makes power: " .. tostring(out))
+    check(lpg0 - w.lpg > 0 and math.abs(w.ash - (30 - w.lpg)) < 1e-6, "every fire-hour burned leaves its ash")
+    w.ash = wspec.ash - 0.01
+    MM.propaneStep(w, 1, 1000)
+    check(not w.running and w.choked and MM.ashChoked(w), "a full grate chokes and stalls it")
+    check(MM.propaneSwitch(w, nil) == false, "and it will not restart until the ash is out")
+    w.ash, w.choked = 0, nil
+    check(MM.propaneSwitch(w, nil) == true, "a clean grate runs again")
+    w.running = false
+    MM.propaneStep(w, MM.WOODGAS_COOL_HOURS, 0)
+    check(w.gas == 0, "a stopped gasifier goes cold")
+    local mk, ws = MM.propaneSpec("makeshift", "woodgas"), MM.propaneSpec("workshop", "woodgas")
+    check(mk.rated < wspec.rated and wspec.rated < ws.rated and mk.warmup > ws.warmup and mk.ash < ws.ash and not mk.auto,
+          "the grades climb: more power, quicker warm-up, more ash room; the drum kind is pull-start")
+    local wrow = GP.row(gen("woodgas", "workshop", { running = true, watts = 2000, lpg = 20 }))
+    check(wrow.u == "h" and wrow.t == "woodgas_workshop", "the GEN page counts wood in fire-hours")
 
     ------------------------------------------------------------ seeded rig grades
     local Seed = DazedPower.Seed

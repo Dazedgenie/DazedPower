@@ -2233,7 +2233,7 @@ end
 --  nothing else, and nothing lands on it: it is a leaf, so the controller
 --  that starts and stops it is never in doubt. Its lead is a short one
 --  (M.cableReach's default).
-M.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true }
+M.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true }
 M.LOAD_KINDS = { waterpump = true, purifier = true }
 M.INSTRUMENT_KINDS = { windsock = true, vane = true, rod = true }
 -- A wall gauge only reads a system: it lands on any wired part, nothing lands on it, and it takes no

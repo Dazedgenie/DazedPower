@@ -28,6 +28,8 @@ DazedPower.RecipeLists = {
         "MakeDazedGroundingRod",
         "MakeDazedChargerBench",
         "MakeDazedSpaceHeater",
+        "MakeDazedWoodGasMakeshift",
+        "MakeDazedWoodGasSalvaged",
         "MakeDazedGearKitLow",
         "MakeDazedGearKitStock",
     },
@@ -48,6 +50,7 @@ DazedPower.RecipeLists = {
         "MakeDazedWaterWheel",
         "MakeDazedElectricFence",
         "MakeDazedRoomCooler",
+        "MakeDazedWoodGasWorkshop",
         "MakeDazedGearKitRacing",
     },
     ELECTRICIAN = {
@@ -62,6 +65,7 @@ DazedPower.RecipeLists = {
         "MakeDazedSteamMakeshift",
         "MakeDazedPropaneMakeshift",
         "MakeDazedPetrolMakeshift",
+        "MakeDazedWoodGasMakeshift",
     },
 }
 return DazedPower.RecipeLists

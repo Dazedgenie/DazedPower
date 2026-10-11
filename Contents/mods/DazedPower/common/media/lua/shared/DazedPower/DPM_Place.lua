@@ -99,7 +99,7 @@ if not H.placeWrapped then
                         d.fuel, d.water = src.fuel or d.fuel, src.water or d.water
                         d.lit, d.heat = false, 0
                     end
-                    if mine.kind == "propane" or mine.kind == "petrol" then
+                    if mine.kind == "propane" or mine.kind == "petrol" or mine.kind == "woodgas" then
                         -- The reservoir's gas and the auto-start level come
                         -- with it, and it never comes down running. A real
                         -- pick-up arrives with its ports empty (G.stow stood
@@ -114,6 +114,8 @@ if not H.placeWrapped then
                         for _, f in ipairs({ "t1Type", "t1Fill", "t1Cond", "t2Type", "t2Fill", "t2Cond" }) do
                             d[f] = src[f]
                         end
+                        -- a wood gas generator keeps its ash; it went into a bag stopped, so it comes out cold
+                        if mine.kind == "woodgas" then d.ash, d.gas, d.warming, d.choked = tonumber(src.ash), 0, nil, src.choked end
                     end
                     if mine.kind == "vane" then
                         -- The vane's record moves with it (plain numbers, see

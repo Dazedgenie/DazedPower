@@ -23,7 +23,7 @@ local try = P.try
 GP.MAX_ROWS = 4                 -- the generators the charge board pages through
 GP.STEP = 0.05                  -- one press of a level's - or +
 GP.FAULT_AT = 35                -- condition at or under which an engine shows FAULT (as the bridge's "broken")
-GP.UNIT = { propane = "kg", petrol = "L" }
+GP.UNIT = { propane = "kg", petrol = "L", woodgas = "h" }
 
 local function round(v, places)
     local m = 10 ^ (places or 0)
@@ -105,6 +105,7 @@ function GP.mirror(ctrl, d, src, dt)
         GP.applySettings(g, d, eff, stop)
         local used = math.max(0, (g.fuel0 or 0) - MM.propaneFuel(g))
         if g.kind == "petrol" then d.bkFuelL = (d.bkFuelL or 0) + used
+        elseif g.kind == "woodgas" then d.bkFuelWood = (d.bkFuelWood or 0) + used
         else d.bkFuelKg = (d.bkFuelKg or 0) + used end
         if (g.condition or 100) > GP.FAULT_AT then cap = cap + MM.propaneAvailable(g) end
         rows[#rows + 1] = GP.row(g)
@@ -146,7 +147,7 @@ end
 local function genOf(ctrl, args)
     local x, y, z = tonumber(args.gx), tonumber(args.gy), tonumber(args.gz)
     if not (x and y and z) then return nil end
-    local kind = (args.kind == "petrol") and "petrol" or "propane"
+    local kind = (args.kind == "petrol" or args.kind == "woodgas") and args.kind or "propane"
     local obj = P.objectAt(x, y, z, kind)
     if not obj then return nil end
     -- It must hang off this controller's own system, or the page could reach anyone's engine.

@@ -149,15 +149,22 @@ local function status(obj, info)
                                 string.format("%.1f", (d.fuel or 0) / M.steamFullBurn(info.tier)))
         bits[#bits + 1] = P.txt("IGUI_DazedPower_SteamWater", math.floor((d.water or 0) + 0.5),
                                 M.steamSpec(info.tier).tank)
-    elseif info.kind == "propane" or info.kind == "petrol" then
+    elseif R.GAS_ENGINE[info.kind] then
         d.kind = d.kind or info.kind
         local spec = M.propaneSpec(info.tier, info.kind)
-        if d.running then
+        local wood = info.kind == "woodgas"
+        if wood and d.running and d.warming then
+            bits[#bits + 1] = P.txt("IGUI_DazedPower_WoodGasWarming", math.floor((d.gas or 0) * 100 + 0.5))
+            if d.indoors then bits[#bits + 1] = getText("IGUI_DazedPower_GenFumes") end
+        elseif wood and M.ashChoked({ kind = "woodgas", tier = info.tier, ash = d.ash }) then
+            bits[#bits + 1] = getText("IGUI_DazedPower_WoodGasChoked")
+        elseif d.running then
             bits[#bits + 1] = P.txt("IGUI_DazedPower_GenRunningW", math.floor((d.genWatts or 0) + 0.5))
             if d.indoors then bits[#bits + 1] = getText("IGUI_DazedPower_GenFumes") end
             if d.leaking then bits[#bits + 1] = getText("IGUI_DazedPower_GenLeaking") end
         elseif d.noFuel and M.propaneFuel(d) <= 0 then
-            bits[#bits + 1] = getText(info.kind == "petrol" and "IGUI_DazedPower_GenNoFuelPetrol" or "IGUI_DazedPower_GasNoFuel")
+            bits[#bits + 1] = getText((info.kind == "petrol" and "IGUI_DazedPower_GenNoFuelPetrol")
+                                      or (wood and "IGUI_DazedPower_WoodGasNoFuel") or "IGUI_DazedPower_GasNoFuel")
         elseif d.coldFail then
             bits[#bits + 1] = getText("IGUI_DazedPower_GenColdFail")
         elseif d.mode == "auto" and spec.auto then
@@ -165,8 +172,13 @@ local function status(obj, info)
         else
             bits[#bits + 1] = getText("IGUI_DazedPower_GasOff")
         end
-        bits[#bits + 1] = P.txt(info.kind == "petrol" and "IGUI_DazedPower_GenFuelL" or "IGUI_DazedPower_GenFuelKg",
-                                string.format("%.1f", M.propaneFuel(d)))
+        if wood then
+            bits[#bits + 1] = P.txt("IGUI_DazedPower_WoodGasFuel", string.format("%.1f", M.propaneFuel(d)), spec.reservoir)
+            bits[#bits + 1] = P.txt("IGUI_DazedPower_WoodGasAsh", math.floor(math.min(1, (d.ash or 0) / spec.ash) * 100 + 0.5))
+        else
+            bits[#bits + 1] = P.txt(info.kind == "petrol" and "IGUI_DazedPower_GenFuelL" or "IGUI_DazedPower_GenFuelKg",
+                                    string.format("%.1f", M.propaneFuel(d)))
+        end
     end
     bits[#bits + 1] = P.txt("IGUI_DazedPower_ConditionPct", math.floor(d.condition or 100))
     return table.concat(bits, "   ")
@@ -234,9 +246,14 @@ end
 
 local function fmtH(h) return string.format("%.1f", h) end
 
-local function fuelRows(menu, wo, target, playerObj, room)
+--- `onFeed` queues the feeding (the boiler's by default); `woodOnly` offers wood and charcoal and nothing
+--  else (a gasifier's hopper: paper and cloth make no gas worth having).
+local function fuelRows(menu, wo, target, playerObj, room, onFeed, woodOnly)
+    onFeed = onFeed or DazedPower.More.onSteamFuel
     local top = ICON(menu:addOption(getText("ContextMenu_DazedPower_FuelMenu"), wo, nil), menu, "cells")
-    local all = collectRecurse(playerObj:getInventory(), isFuel)
+    local all = collectRecurse(playerObj:getInventory(), woodOnly and function(it)
+        return it ~= nil and WOOD[it:getFullType()] == true and not (it.isEquipped and it:isEquipped())
+    end or isFuel)
     if room < 0.1 then
         top.notAvailable = true; top.toolTip = tip("Tooltip_DazedPower_SteamHopperFull"); return
     end
@@ -275,7 +292,7 @@ local function fuelRows(menu, wo, target, playerObj, room)
     table.sort(wood, function(a, b) return fuelHours(a) > fuelHours(b) end)
     local woodFits, woodH = fitting(wood, room)
     local quick = sub:addOption(P.txt("ContextMenu_DazedPower_FuelAllWood", #woodFits, fmtH(woodH)), wo,
-                                DazedPower.More.onSteamFuel, target, playerObj, woodFits)
+                                onFeed, target, playerObj, woodFits)
     if #woodFits == 0 then
         quick.notAvailable = true
         quick.toolTip = tip(#wood == 0 and "Tooltip_DazedPower_FuelNoWood" or "Tooltip_DazedPower_FuelWoodTooBig")
@@ -291,15 +308,15 @@ local function fuelRows(menu, wo, target, playerObj, room)
             opt.notAvailable = true
             opt.toolTip = C.tip(P.txt("Tooltip_DazedPower_FuelTooBig", fmtH(room), fmtH(g.each)))
         elseif #g.items == 1 then
-            sub:addOption(label, wo, DazedPower.More.onSteamFuel, target, playerObj, { g.items[1] })
+            sub:addOption(label, wo, onFeed, target, playerObj, { g.items[1] })
         else
             local opt = sub:addOption(label, wo, nil)
             local kind = ISContextMenu:getNew(sub)
             sub:addSubMenu(opt, kind)
-            kind:addOption(getText("ContextMenu_DazedPower_FuelOne"), wo, DazedPower.More.onSteamFuel,
+            kind:addOption(getText("ContextMenu_DazedPower_FuelOne"), wo, onFeed,
                            target, playerObj, { fits[1] })
             local many = kind:addOption(P.txt("ContextMenu_DazedPower_FuelAllType", #fits), wo,
-                                        DazedPower.More.onSteamFuel, target, playerObj, fits)
+                                        onFeed, target, playerObj, fits)
             if #fits < 2 then
                 many.notAvailable = true
                 many.toolTip = C.tip(P.txt("Tooltip_DazedPower_FuelTooBig", fmtH(room - g.each), fmtH(g.each)))
@@ -440,6 +457,7 @@ end
 local function propaneRows(menu, wo, target, playerObj, d, info)
     d.kind = d.kind or info.kind
     local petrol = info.kind == "petrol"
+    local wood = info.kind == "woodgas"
     local spec = M.propaneSpec(info.tier, info.kind)
     local function grey(opt, key) opt.notAvailable = true; opt.toolTip = tip(key) end
     local fuel = M.propaneFuel(d)
@@ -451,7 +469,9 @@ local function propaneRows(menu, wo, target, playerObj, d, info)
                                         DazedPower.More.onPropaneSwitch, target, playerObj, "on"),
                          menu, "switchOn")
         if (d.condition or 100) <= 0 then grey(opt, "Tooltip_DazedPower_GenWrecked")
-        elseif fuel <= 0 then grey(opt, petrol and "Tooltip_DazedPower_PetrolNoFuel" or "Tooltip_DazedPower_GenNoFuel") end
+        elseif wood and M.ashChoked({ kind = "woodgas", tier = info.tier, ash = d.ash }) then grey(opt, "Tooltip_DazedPower_WoodGasChoked")
+        elseif fuel <= 0 then grey(opt, (petrol and "Tooltip_DazedPower_PetrolNoFuel")
+                                        or (wood and "Tooltip_DazedPower_WoodGasNoFuel") or "Tooltip_DazedPower_GenNoFuel") end
     end
     if spec.auto and d.mode ~= "auto" then
         local opt = ICON(menu:addOption(P.txt("ContextMenu_DazedPower_GenAuto", d.startPct or M.PROPANE_START_SOC), wo,
@@ -464,6 +484,18 @@ local function propaneRows(menu, wo, target, playerObj, d, info)
                             target, playerObj, "off"), menu, "switchOff")
     end
     -- Its auto start and stop levels are the controller's, set on the monitor's GEN page (DP_GenPanel).
+
+    -- Wood gas: a hopper fed with wood like a boiler's firebox, and a grate to clear. No ports, no line.
+    if wood then
+        fuelRows(menu, wo, target, playerObj, spec.reservoir - (d.lpg or 0), DazedPower.More.onWoodGasFuel, true)
+        local ash = d.ash or 0
+        local opt = ICON(menu:addOption(P.txt("ContextMenu_DazedPower_WoodGasAsh",
+                                              math.floor(math.min(1, ash / spec.ash) * 100 + 0.5)), wo,
+                                        DazedPower.More.onWoodGasAsh, target, playerObj), menu, "clean")
+        if d.running then grey(opt, "Tooltip_DazedPower_WoodGasAshRunning")
+        elseif ash < 0.05 then grey(opt, "Tooltip_DazedPower_WoodGasAshClean") end
+        return
+    end
 
     -- The ports: unhook what is on one, or hook a carried tank up to a free one.
     local tanks = tanksCarried(playerObj)
@@ -566,7 +598,7 @@ local function addRows(menu, wo, target, playerObj)
     line.notAvailable = true
     if info.kind == "pedal" then pedalRows(menu, wo, target, playerObj, d)
     elseif info.kind == "steam" then steamRows(menu, wo, target, playerObj, d, info)
-    elseif info.kind == "propane" or info.kind == "petrol" then propaneRows(menu, wo, target, playerObj, d, info)
+    elseif R.GAS_ENGINE[info.kind] then propaneRows(menu, wo, target, playerObj, d, info)
     elseif info.kind == "windmill" and not M.windSpec(info.tier).tracks then
         -- no tail fin: the rotor stays where it is turned
         local top = menu:addOption(getText("ContextMenu_DazedPower_TurnRotor"), wo, nil)
@@ -649,6 +681,15 @@ end
 function H.onPetrolFill(wo, object, playerObj, can)
     if not (can and C.approach(playerObj, object)) then return end
     ISTimedActionQueue.add(DPM_PetrolFill:new(playerObj, object, can))
+end
+function H.onWoodGasFuel(wo, object, playerObj, items)
+    if not items or #items == 0 then return end
+    if not C.approach(playerObj, object) then return end
+    for _, it in ipairs(items) do ISTimedActionQueue.add(DPM_WoodGasFuel:new(playerObj, object, it)) end
+end
+function H.onWoodGasAsh(wo, object, playerObj)
+    if not C.approach(playerObj, object) then return end
+    ISTimedActionQueue.add(DPM_WoodGasAsh:new(playerObj, object))
 end
 function H.onSteamFire(wo, object, playerObj, light, starter)
     if not C.approach(playerObj, object) then return end

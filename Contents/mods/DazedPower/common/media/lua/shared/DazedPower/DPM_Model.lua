@@ -710,16 +710,66 @@ M.PETROL_SPEC = {
                      ports = 0, auto = true,  noise = 20, wear = 0.5 },
 }
 
---- The spec table for a grade of either gas engine. `kind` is "petrol" for
---  the petrol generator and anything else for the propane one.
+--  THE WOOD GAS GENERATOR (kind "woodgas") is the same engine run on wood:
+--  a gasifier, the WWII farm and lorry kind, smoulders wood in a closed
+--  firebox short of air, and the smoky gas it gives off (carbon monoxide and
+--  hydrogen, cooled and filtered) runs an ordinary engine. Three things set
+--  it apart from the bottled-fuel engines:
+--
+--    fuel    wood, loaded into a HOPPER and counted the way the steam engine
+--            counts it: fire-hours (M.FIRE_HOUR_KWH of heat each, a log 6,
+--            a plank 2, charcoal double by weight; M.steamFuelHours). The
+--            reservoir field (`lpg`) holds fire-hours for this kind.
+--    warmup  the gasifier has to come up to heat before it makes gas worth
+--            burning: WOODGAS_WARMUP hours from cold at idle burn, making
+--            nothing (`gas`, 0..1, rises while it runs and falls when it
+--            stops). Its sprite shows "warming" until then.
+--    ash     what is burned leaves ash and char in the grate. At `ash`
+--            fire-hours burned the grate is choked and the engine stalls
+--            until someone clears it out (`ash` field, reset by the clean-out).
+--
+--  Gasifier and engine together turn 9-16% of the wood's heat into
+--  electricity, so a log is worth roughly 3.4-6 kWh at the plug: better than
+--  steam, and far more work per kilowatt-hour than a can of petrol. Tar in
+--  the gas fouls the engine, so it wears faster than the bottled kinds.
+M.WOODGAS_COOL_HOURS = 2       -- a hot gasifier goes cold this long after it stops
+M.WOODGAS_SPEC = {
+    --  as PROPANE_SPEC, with reservoir in fire-hours (the hopper), plus
+    --  warmup: hours from cold.  ash: fire-hours burned before the grate chokes.
+    makeshift    = { rated = 700,  eff = 0.09, idle = 0.40, reservoir = 24,
+                     ports = 0, auto = false, noise = 26, wear = 2.5, warmup = 0.5,  ash = 36 },
+    salvaged     = { rated = 1600, eff = 0.12, idle = 0.35, reservoir = 36,
+                     ports = 0, auto = true,  noise = 22, wear = 1.5, warmup = 0.35, ash = 60 },
+    workshop = { rated = 3000, eff = 0.16, idle = 0.30, reservoir = 54,
+                     ports = 0, auto = true,  noise = 18, wear = 0.8, warmup = 0.25, ash = 108 },
+}
+
+--- The spec table for a grade of any gas engine: "petrol", "woodgas", and
+--  anything else for the propane one.
 function M.propaneSpec(tier, kind)
     if kind == "petrol" then return M.PETROL_SPEC[tier or "salvaged"] or M.PETROL_SPEC.salvaged end
+    if kind == "woodgas" then return M.WOODGAS_SPEC[tier or "salvaged"] or M.WOODGAS_SPEC.salvaged end
     return M.PROPANE_SPEC[tier or "salvaged"] or M.PROPANE_SPEC.salvaged
 end
 
---- Kilowatt-hours in one unit of the engine's fuel (kg propane, L petrol).
+--- Kilowatt-hours in one unit of the engine's fuel (kg propane, L petrol, fire-hours of wood).
 function M.fuelKwh(kind)
+    if kind == "woodgas" then return M.FIRE_HOUR_KWH end
     return (kind == "petrol") and M.PETROL_KWH_PER_L or M.PROPANE_KWH_PER_KG
+end
+
+--- The sprite state of a gas engine: broken when worn out, a wood gas one
+--  "warming" while its gasifier comes up to heat, running, or off.
+function M.genState(kind, condition, running, warming)
+    if (condition or 100) <= 35 then return "broken" end
+    if running and warming and kind == "woodgas" then return "warming" end
+    return running and "running" or "off"
+end
+
+--- Is a wood gas generator's grate choked with ash?
+function M.ashChoked(g)
+    if g.kind ~= "woodgas" then return false end
+    return (g.ash or 0) >= M.propaneSpec(g.tier, g.kind).ash - 1e-6
 end
 
 --- Kilograms of propane burned per hour at full load.
@@ -833,7 +883,7 @@ function M.propaneSwitch(g, soc)
     if mode == "auto" and not spec.auto then mode = "on" end
     local run
     if M.propaneFuel(g) > 0 then g.noFuel = nil end
-    if (g.condition or 100) <= 0 or M.propaneFuel(g) <= 0 then
+    if (g.condition or 100) <= 0 or M.propaneFuel(g) <= 0 or M.ashChoked(g) then
         run = false
     elseif mode == "on" then
         run = true
@@ -876,25 +926,53 @@ end
 function M.propaneStep(g, dtHours, wantW)
     local dt = max(0, dtHours or 0)
     g.condition = clamp(g.condition or 100, 0, 100)
+    local wood = g.kind == "woodgas"
+    if wood and not g.running then
+        -- a stopped gasifier cools; nothing else happens to it
+        g.gas = max(0, (g.gas or 0) - dt / M.WOODGAS_COOL_HOURS)
+        g.warming = nil
+    end
     if not g.running or dt <= 0 then return 0, 0, 0 end
     local spec = M.propaneSpec(g.tier, g.kind)
-    local w = clamp(wantW or 0, 0, M.propaneAvailable(g))
     local cond = g.condition
     local leakRate = 0
     if cond < M.PROPANE_LEAK_BELOW then
         leakRate = M.PROPANE_LEAK_KG * (M.PROPANE_LEAK_BELOW - cond) / M.PROPANE_LEAK_BELOW
     end
+    -- Wood gas: first bring the gasifier up to heat, at idle burn and no output.
+    local tWarm, warmBurn = 0, 0
+    if wood and (g.gas or 0) < 1 then
+        local idleRate = M.propaneBurnAt(g.tier, 0, g.kind) + leakRate
+        tWarm = min(dt, (1 - (g.gas or 0)) * spec.warmup)
+        if idleRate > 0 then tWarm = min(tWarm, M.propaneFuel(g) / idleRate) end
+        warmBurn = M.propaneDraw(g, idleRate * tWarm)
+        g.gas = min(1, (g.gas or 0) + tWarm / spec.warmup)
+    end
+    local left = dt - tWarm
+    local w = clamp(wantW or 0, 0, M.propaneAvailable(g))
+    if wood and (g.gas or 0) < 1 then w, left = 0, 0 end
     local rate = M.propaneBurnAt(g.tier, w, g.kind) + leakRate
     local fuel = M.propaneFuel(g)
-    local tRun = (rate > 0) and min(dt, fuel / rate) or dt
-    M.propaneDraw(g, rate * tRun)
-    if tRun < dt then
+    local tRun = (rate > 0) and min(left, fuel / rate) or left
+    if wood then
+        -- the grate chokes once it has burned its ash allowance
+        local room = max(0, spec.ash - (g.ash or 0) - warmBurn)
+        if rate > 0 then tRun = min(tRun, room / rate) end
+    end
+    local burned = M.propaneDraw(g, rate * tRun)
+    if wood then
+        g.ash = (g.ash or 0) + warmBurn + burned
+        if M.ashChoked(g) then g.running, g.choked = false, true end
+    end
+    if g.running and tWarm + tRun < dt - 1e-9 and (not wood or (g.gas or 0) >= 1 or M.propaneFuel(g) <= 0) then
         g.running = false                 -- ran dry part-way
         g.noFuel = true
     end
-    g.condition = max(0, cond - M.PROPANE_RUN_WEAR * spec.wear * M.ampWear(g.amp) * tRun)
+    local ran = tWarm + tRun
+    g.condition = max(0, cond - M.PROPANE_RUN_WEAR * spec.wear * M.ampWear(g.amp) * ran)
     if g.condition <= 0 then g.running = false end
-    return w * tRun / max(dt, 1e-9), tRun, leakRate * tRun
+    if wood then g.warming = (g.running and (g.gas or 0) < 1) or nil end
+    return w * tRun / max(dt, 1e-9), ran, leakRate * ran
 end
 
 --- The chance, over `hours` of running, that worn fittings start a fire.

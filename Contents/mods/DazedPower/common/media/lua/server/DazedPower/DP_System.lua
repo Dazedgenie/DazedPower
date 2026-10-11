@@ -1932,7 +1932,7 @@ local function rollLedger(d)
     d.bkWhPrev = d.bkWhToday or 0
     d.bkFuelPrev = d.bkFuelToday or 0
     d.bkWhToday, d.bkFuelToday = 0, 0
-    d.bkFuelL, d.bkFuelKg = 0, 0          -- the GEN page's fuel today (DP_GenPanel)
+    d.bkFuelL, d.bkFuelKg, d.bkFuelWood = 0, 0, 0   -- the GEN page's fuel today (DP_GenPanel)
     -- The DAY trace clears HERE and nowhere later: any later "did the day
     -- change" test would compare against the ledgerDay this just updated.
     d.dayHist = {}

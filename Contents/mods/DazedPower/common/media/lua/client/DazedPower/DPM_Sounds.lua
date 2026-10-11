@@ -18,6 +18,8 @@ S.SCAN_MS = 1500            -- real time between passes over the tracked machine
 S.LOOPS = {
     petrol   = { running = { "GeneratorLoop" } },
     propane  = { running = { "OldGeneratorLoop" } },
+    woodgas  = { warming = { "FireplaceRunning" },
+                 running = { "OldGeneratorLoop", "FireplaceRunning" } },
     steam    = { warming = { "FireplaceRunning" },
                  running = { "FireplaceRunning", "FactoryMachineAmbiance" } },
     pedal    = { on = { "ClothingDryerRunning" } },
@@ -28,9 +30,9 @@ S.LOOPS = {
 -- Kinds whose sound set depends on tier: kind -> tier -> key in S.LOOPS.
 S.VOICE = { windmill = { makeshift = "windmill_old", salvaged = "windmill_old", workshop = "windmill_modern" } }
 -- One-shots when a machine is seen starting or stopping.
-S.START = { petrol = "GeneratorStarting", propane = "OldGeneratorStarting",
+S.START = { petrol = "GeneratorStarting", propane = "OldGeneratorStarting", woodgas = "OldGeneratorStarting",
             windmill_old = "DazedWindmillOld_Start", windmill_modern = "DazedWindmillModern_Start" }
-S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping",
+S.STOP = { petrol = "GeneratorStopping", propane = "OldGeneratorStopping", woodgas = "OldGeneratorStopping",
            windmill_old = "DazedWindmillOld_Stop", windmill_modern = "DazedWindmillModern_Stop" }
 -- A spin-up clip ends at full speed, so its loop waits this long (ms) to take over instead of overlapping.
 S.LOOP_DELAY_MS = { windmill_old = 5900, windmill_modern = 4900 }

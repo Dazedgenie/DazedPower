@@ -93,15 +93,21 @@ end
 
 local function propaneRows(add, obj, info, d)
     d.kind = d.kind or info.kind
-    local petrol = info.kind == "petrol"
+    local petrol, wood = info.kind == "petrol", info.kind == "woodgas"
     local spec = M.propaneSpec(info.tier, info.kind)
     local fuel = M.propaneFuel(d)
-    local unit, perTank = petrol and "L" or "kg", petrol and 20 or M.TANK_KG
+    local unit, perTank = petrol and "L" or (wood and "h" or "kg"), petrol and 20 or (wood and spec.reservoir or M.TANK_KG)
     local state, col
     if (d.condition or 100) <= 0 then state, col = getText("IGUI_DazedPower_GenWrecked"), "bad"
+    elseif d.running and wood and d.warming then
+        state, col = P.txt("IGUI_DazedPower_WoodGasWarming", math.floor((d.gas or 0) * 100 + 0.5)), "warn"
     elseif d.running then
         state, col = P.txt("IGUI_DazedPower_GenRunningW", math.floor((d.genWatts or 0) + 0.5)), "good"
-    elseif fuel <= 0 then state, col = getText(petrol and "IGUI_DazedPower_GenNoFuelPetrol" or "IGUI_DazedPower_GasNoFuel"), "bad"
+    elseif wood and M.ashChoked({ kind = "woodgas", tier = info.tier, ash = d.ash }) then
+        state, col = getText("IGUI_DazedPower_WoodGasChoked"), "bad"
+    elseif fuel <= 0 then
+        state, col = getText(petrol and "IGUI_DazedPower_GenNoFuelPetrol"
+                             or (wood and "IGUI_DazedPower_WoodGasNoFuel" or "IGUI_DazedPower_GasNoFuel")), "bad"
     elseif d.mode == "auto" and spec.auto then
         state, col = P.txt("IGUI_DazedPower_GenAutoWaiting", d.startPct or M.PROPANE_START_SOC), "dim"
     else state, col = getText("IGUI_DazedPower_GasOff"), "dim" end
@@ -116,7 +122,13 @@ local function propaneRows(add, obj, info, d)
                                                          or "IGUI_DazedPower_InfoSwitchOff"))
     end
 
-    if petrol then
+    if wood then
+        add(getText("IGUI_DazedPower_InfoHopper"), P.txt("IGUI_DazedPower_WoodGasFuel", f1(fuel), tostring(spec.reservoir)),
+            fuel <= 0 and "bad" or (fuel < spec.reservoir * 0.25 and "warn" or nil))
+        local ash = (d.ash or 0) / spec.ash
+        add(getText("IGUI_DazedPower_InfoAsh"), P.txt("IGUI_DazedPower_WoodGasAsh", pct(ash)),
+            ash >= 1 and "bad" or (ash >= 0.75 and "warn" or nil))
+    elseif petrol then
         add(getText("IGUI_DazedPower_InfoPetrol"), P.txt("IGUI_DazedPower_InfoPetrolValue", f1(fuel)),
             fuel <= 0 and "bad" or (fuel < perTank * 0.25 and "warn" or nil))
     else
@@ -124,9 +136,9 @@ local function propaneRows(add, obj, info, d)
             P.txt("IGUI_DazedPower_InfoPropaneValue", f1(fuel), f1(fuel / M.TANK_KG)),
             fuel <= 0 and "bad" or (fuel < M.TANK_KG * 0.25 and "warn" or nil))
     end
-    add(getText("IGUI_DazedPower_InfoReservoir"),
+    if not wood then add(getText("IGUI_DazedPower_InfoReservoir"),
         P.txt("IGUI_DazedPower_InfoOfMax", f1(d.lpg or 0), tostring(spec.reservoir), unit,
-              pct((d.lpg or 0) / spec.reservoir)))
+              pct((d.lpg or 0) / spec.reservoir))) end
     for port = 1, spec.ports do
         local key = (spec.ports > 1) and P.txt("IGUI_DazedPower_InfoPortN", port) or getText("IGUI_DazedPower_InfoPort")
         if d["t" .. port .. "Type"] then
@@ -135,7 +147,8 @@ local function propaneRows(add, obj, info, d)
             add(key, getText("IGUI_DazedPower_InfoPortEmpty"), "dim")
         end
     end
-    add(getText("IGUI_DazedPower_InfoBurns"), P.txt(petrol and "IGUI_DazedPower_InfoBurnsValueL" or "IGUI_DazedPower_InfoBurnsValue",
+    add(getText("IGUI_DazedPower_InfoBurns"), P.txt(petrol and "IGUI_DazedPower_InfoBurnsValueL"
+        or (wood and "IGUI_DazedPower_InfoBurnsValueWood" or "IGUI_DazedPower_InfoBurnsValue"),
         f1(M.propaneBurnAt(info.tier, spec.rated, info.kind)), f1(M.propaneBurnAt(info.tier, 0, info.kind))))
     local rt = M.propaneRuntime({ tier = info.tier, kind = info.kind, lpg = d.lpg, condition = d.condition,
         feedTank = d.feedTank, lineTx = d.lineTx, lineTy = d.lineTy, lineTz = d.lineTz,
@@ -151,6 +164,7 @@ local function propaneRows(add, obj, info, d)
     end
     add(getText("IGUI_DazedPower_InfoRated"), string.format("%d W", spec.rated))
     add(getText("IGUI_DazedPower_InfoEff"), pct(spec.eff))
+    if wood then add(getText("IGUI_DazedPower_InfoWarmup"), P.txt("IGUI_DazedPower_InfoMinutes", math.floor(spec.warmup * 60 + 0.5))) end
     add(getText("IGUI_DazedPower_InfoAutoStart"), yesNo(spec.auto))
     add(getText("IGUI_DazedPower_InfoNoise"), P.count("IGUI_DazedPower_TileCount", spec.noise))
 end
@@ -202,7 +216,7 @@ function H.infoRows(obj)
     if info.kind == "steam" then steamRows(add, obj, info, d)
     elseif info.kind == "windmill" then windRows(add, obj, info, d)
     elseif info.kind == "pedal" then pedalRows(add, obj, info, d)
-    elseif info.kind == "propane" or info.kind == "petrol" then propaneRows(add, obj, info, d) end
+    elseif info.kind == "propane" or info.kind == "petrol" or info.kind == "woodgas" then propaneRows(add, obj, info, d) end
     if d.amp then
         add(getText("IGUI_DazedPower_InfoAmp"), P.txt("IGUI_DazedPower_InfoAmpValue",
             math.floor((M.AMP_POWER - 1) * 100 + 0.5), f1(M.AMP_WEAR)), "warn")
