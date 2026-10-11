@@ -47,10 +47,12 @@ scene.view_settings.exposure = -0.1
 
 
 def setup_gpu():
-    """Use the first GPU backend that has a device; CPU otherwise."""
+    """Use the first GPU backend that has a device; CPU otherwise. DZ_DEVICE (OPTIX, CUDA, ..., CPU) picks one."""
+    want = os.environ.get("DZ_DEVICE", "").upper()
+    if want == "CPU": return "CPU"
     try:
         prefs = bpy.context.preferences.addons["cycles"].preferences
-        for t in ("OPTIX", "CUDA", "HIP", "ONEAPI", "METAL"):
+        for t in ((want,) if want else ("OPTIX", "CUDA", "HIP", "ONEAPI", "METAL")):
             try:
                 prefs.compute_device_type = t
                 prefs.get_devices()

@@ -145,58 +145,11 @@ def hydro_stand_in(state, facing):
     return tinted(src, (70, 120, 190), 0.4) if src.exists() else Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
 
 
-HEATER_BODY = (206, 200, 186)
-
-
-def heater_stand_in(state, facing):
-    """A stand-in floor space heater: a small iso box whose front grille glows orange while it runs."""
-    from PIL import ImageDraw
-    out = Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
-    d = ImageDraw.Draw(out)
-    hx, hy = (0.30, 0.13) if facing in ("S", "N") else (0.13, 0.30)
-    hpx = 46                                        # body height in pixels
-
-    def pt(x, y, z=0):
-        return (64 + (x - y) * 64, 224 + (x + y) * 32 - z)
-
-    def shade(c, k):
-        return tuple(int(v * k) for v in c) + (255,)
-    top = [pt(-hx, -hy, hpx), pt(hx, -hy, hpx), pt(hx, hy, hpx), pt(-hx, hy, hpx)]
-    south = [pt(-hx, hy), pt(hx, hy), pt(hx, hy, hpx), pt(-hx, hy, hpx)]
-    east = [pt(hx, -hy), pt(hx, hy), pt(hx, hy, hpx), pt(hx, -hy, hpx)]
-    d.polygon([pt(-hx - 0.04, -hy - 0.04), pt(hx + 0.04, -hy - 0.04), pt(hx + 0.04, hy + 0.04), pt(-hx - 0.04, hy + 0.04)],
-              fill=(40, 40, 40, 90))
-    d.polygon(south, fill=shade(HEATER_BODY, 0.82), outline=(70, 66, 60, 255))
-    d.polygon(east, fill=shade(HEATER_BODY, 0.66), outline=(70, 66, 60, 255))
-    d.polygon(top, fill=shade(HEATER_BODY, 1.0), outline=(70, 66, 60, 255))
-    glow = (255, 128, 40, 255) if state == "on" else (58, 54, 50, 255)
-    if facing in ("S", "E"):
-        # the grille: bars across the front face, inset from its edges
-        for i in range(5):
-            z = 10 + i * 6
-            if facing == "S":
-                a, b = pt(-hx * 0.75, hy, z), pt(hx * 0.75, hy, z)
-            else:
-                a, b = pt(hx, -hy * 0.75, z), pt(hx, hy * 0.75, z)
-            d.line([a, b], fill=glow, width=3)
-    # the knob and its lamp on the top
-    kx, ky = pt(hx * 0.5, 0, hpx)
-    d.ellipse((kx - 3, ky - 2, kx + 3, ky + 2), fill=(50, 50, 50, 255))
-    lx, ly = pt(-hx * 0.5, 0, hpx)
-    d.ellipse((lx - 2, ly - 2, lx + 2, ly + 2), fill=(240, 80, 40, 255) if state == "on" else (80, 80, 80, 255))
-    return out
-
-
 def new_icon(kind):
     """A stand-in 32x32 icon for the grounding rod, the charger bench and the water wheel."""
     from PIL import ImageDraw
     im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    if kind == "heater":
-        d.rounded_rectangle((6, 6, 25, 27), 3, fill=HEATER_BODY + (255,), outline=(70, 66, 60, 255))
-        for y in range(11, 24, 3): d.line((9, y, 22, y), fill=(255, 128, 40, 255), width=1)
-        d.ellipse((19, 7, 23, 10), fill=(50, 50, 50, 255))
-        return im
     if kind == "rod":
         d.rectangle((15, 4, 17, 27), fill=(176, 108, 58, 255)); d.ellipse((13, 2, 19, 8), fill=(232, 190, 120, 255))
         d.ellipse((9, 26, 23, 30), fill=(70, 62, 52, 255))
@@ -212,7 +165,9 @@ def new_icon(kind):
 def stand_in(kind, mount, tier, state, facing, piece):
     """(sheet, old index) of the stand-in cell for a new sprite."""
     f = T.FACINGS.index(facing)
-    if kind in ("rod", "bench", "hydro", "heater"):
+    if kind in RENDER_ONLY:
+        sys.exit("no art for %s/%s %s: render it (tools/blender/dz2.py dp:%s) and import it" % (kind, state, facing, kind))
+    if kind in ("rod", "bench", "hydro"):
         return "new", (kind, state, facing)
     if kind == "woodgas":
         return "new", (kind, state, facing, tier)
@@ -381,8 +336,8 @@ def build_pack(cells, out):
     return len(pk.pages)
 
 
-# Kinds whose only art is the committed pack (no tools/art cells or stand-in yet).
-PACK_ONLY = ("fence", "cooler")
+# Kinds with no stand-in at all: their art is the Blender render in tools/art, and a missing cell is an error.
+RENDER_ONLY = ("fence", "cooler", "heater")
 
 
 WOODGAS_LOOK = {"off": "off", "warming": "off", "running": "running", "broken": "broken"}
@@ -398,7 +353,7 @@ def woodgas_stand_in(state, facing, tier):
 def new_cell(kind, state, facing, tier=None):
     if kind == "woodgas": return woodgas_stand_in(state, facing, tier)
     return (rod_stand_in(facing) if kind == "rod" else bench_stand_in(state, facing) if kind == "bench"
-            else heater_stand_in(state, facing) if kind == "heater" else hydro_stand_in(state, facing))
+            else hydro_stand_in(state, facing))
 
 
 def write_tiledef(tiles):
@@ -452,7 +407,6 @@ def main():
     mp = TexturePack.read(SRC / "offgridmore.pack"); mp_sheet = Image.open(io.BytesIO(mp.pages[0].png)).convert("RGBA")
     og_stem = og.pages[0].entries[0].name.rsplit("_", 1)[0]
     mp_stem = mp.pages[0].entries[0].name.rsplit("_", 1)[0]
-    committed = TexturePack.read(MEDIA / "texturepacks/dazedpower.pack")
     cells, tiles = {}, []
     for ri, (kind, mount, tier, state, piece) in enumerate(T.ROWS):
         for fi, facing in enumerate(T.FACINGS):
@@ -463,11 +417,6 @@ def main():
                 if im.size != (CW, CH): im = im.resize((CW, CH), Image.LANCZOS)
                 cells[n] = im
             else:
-                if kind in PACK_ONLY:
-                    cells[n] = cell_from_pack(committed, T.sprite_name(n))
-                    if cells[n] is None: sys.exit("%s has no art in the committed pack" % T.sprite_name(n))
-                    tiles.append(Tile(tile_props(kind, mount, tier, state, facing, piece, n)))
-                    continue
                 sheet, old = stand_in(kind, mount, tier, state, facing, piece)
                 if sheet == "gen": cells[n] = gauge_stand_in(*old)
                 elif sheet == "new": cells[n] = new_cell(*old)
@@ -491,10 +440,12 @@ def write_icons(only_missing=False):
                 item = T.item_of(kind, mount, tier)
                 own = ART / "icons" / (item + ".png")
                 dest = MEDIA / "textures" / ("Item_%s.png" % item)
-                if (only_missing or kind in PACK_ONLY) and dest.exists(): continue
+                if only_missing and dest.exists(): continue
+                if not own.exists() and kind in RENDER_ONLY:
+                    sys.exit("no icon for %s: render it (tools/blender/dz2.py icons:dp:%s) and import it" % (item, item))
                 if not own.exists() and kind == "gauge":
                     gauge_icon().save(dest); continue
-                if not own.exists() and kind in ("rod", "bench", "hydro", "heater"):
+                if not own.exists() and kind in ("rod", "bench", "hydro"):
                     new_icon(kind).save(dest); continue
                 if not own.exists() and kind == "woodgas":
                     # stand-in: the propane generator's icon of the same grade, pulled toward rust brown
