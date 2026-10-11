@@ -63,5 +63,8 @@
     "Base.DazedWaterWheel": "Micro-Hydro Wheel",
     "Base.DazedElectricFence": "Electric Fence",
     "Base.DazedRoomCooler": "Room Cooler",
-    "Base.DazedSpaceHeater": "Electric Space Heater"
+    "Base.DazedSpaceHeater": "Electric Space Heater",
+    "Base.DazedWoodGasMakeshift": "Makeshift Wood Gas Generator",
+    "Base.DazedWoodGasSalvaged": "Salvaged Wood Gas Generator",
+    "Base.DazedWoodGasWorkshop": "Workshop Wood Gas Generator"
 }

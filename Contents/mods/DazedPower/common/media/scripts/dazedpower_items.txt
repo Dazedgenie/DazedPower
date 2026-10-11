@@ -929,4 +929,49 @@ module Base
         Tags                = base:hasmetal;base:showcondition,
     }
 
+    item DazedWoodGasMakeshift
+    {
+        DisplayName         = Makeshift Wood Gas Generator,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 34.0,
+        Icon                = DazedWoodGasMakeshift,
+        WorldObjectSprite   = dazedpower_02_217,
+        ConditionMax        = 100,
+        MetalValue          = 85.0,
+        Tooltip             = Tooltip_DazedWoodGasMakeshift,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal;base:showcondition,
+    }
+
+    item DazedWoodGasSalvaged
+    {
+        DisplayName         = Salvaged Wood Gas Generator,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 48.0,
+        Icon                = DazedWoodGasSalvaged,
+        WorldObjectSprite   = dazedpower_02_233,
+        ConditionMax        = 100,
+        MetalValue          = 120.0,
+        Tooltip             = Tooltip_DazedWoodGasSalvaged,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal;base:showcondition,
+    }
+
+    item DazedWoodGasWorkshop
+    {
+        DisplayName         = Workshop Wood Gas Generator,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 62.0,
+        Icon                = DazedWoodGasWorkshop,
+        WorldObjectSprite   = dazedpower_02_249,
+        ConditionMax        = 100,
+        MetalValue          = 155.0,
+        Tooltip             = Tooltip_DazedWoodGasWorkshop,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal;base:showcondition,
+    }
+
 }

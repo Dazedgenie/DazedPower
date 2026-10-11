@@ -101,10 +101,11 @@ def gauge_icon():
     return im
 
 
-def tinted(src, tint, strength=0.45):
-    """The old cell `src` (a PNG in tools/art) pulled toward `tint`, as a stand-in for a part with no render yet."""
+def tinted(src, tint, strength=0.45, cell=True):
+    """The old cell `src` (a PNG in tools/art) pulled toward `tint`, as a stand-in for a part with no render yet.
+    `cell` False keeps the picture's own size (an icon)."""
     im = Image.open(src).convert("RGBA")
-    if im.size != (CW, CH): im = im.resize((CW, CH), Image.LANCZOS)
+    if cell and im.size != (CW, CH): im = im.resize((CW, CH), Image.LANCZOS)
     px = im.load()
     for y in range(im.height):
         for x in range(im.width):
@@ -213,6 +214,8 @@ def stand_in(kind, mount, tier, state, facing, piece):
     f = T.FACINGS.index(facing)
     if kind in ("rod", "bench", "hydro", "heater"):
         return "new", (kind, state, facing)
+    if kind == "woodgas":
+        return "new", (kind, state, facing, tier)
     if kind == "gauge":
         return "gen", (state, facing)
     if kind == "array":
@@ -382,7 +385,18 @@ def build_pack(cells, out):
 PACK_ONLY = ("fence", "cooler")
 
 
-def new_cell(kind, state, facing):
+WOODGAS_LOOK = {"off": "off", "warming": "off", "running": "running", "broken": "broken"}
+
+
+def woodgas_stand_in(state, facing, tier):
+    """A stand-in wood gas generator: the propane generator of the same grade pulled toward rust brown, greyed while it warms."""
+    src = ART / ("%d.png" % T.sprite_index("propane", "ground", tier, WOODGAS_LOOK[state], facing))
+    if not src.exists(): return Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
+    return tinted(src, (150, 150, 150) if state == "warming" else (120, 78, 44), 0.35)
+
+
+def new_cell(kind, state, facing, tier=None):
+    if kind == "woodgas": return woodgas_stand_in(state, facing, tier)
     return (rod_stand_in(facing) if kind == "rod" else bench_stand_in(state, facing) if kind == "bench"
             else heater_stand_in(state, facing) if kind == "heater" else hydro_stand_in(state, facing))
 
@@ -482,6 +496,10 @@ def write_icons(only_missing=False):
                     gauge_icon().save(dest); continue
                 if not own.exists() and kind in ("rod", "bench", "hydro", "heater"):
                     new_icon(kind).save(dest); continue
+                if not own.exists() and kind == "woodgas":
+                    # stand-in: the propane generator's icon of the same grade, pulled toward rust brown
+                    tinted(MEDIA / "textures" / ("Item_%s.png" % T.item_of("propane", "ground", tier)), (120, 78, 44), 0.35, cell=False).save(dest)
+                    continue
                 src = own if own.exists() else SRC / "icons" / ("Item_%s.png" % old_icon(kind, mount, tier))
                 Image.open(src).convert("RGBA").save(dest)
     for new, old in (("DazedPowerManual", "OffGridManual"), ("DazedPowerManualAdv", "OffGridManualAdv"), ("DazedAlmanac", "OffGridAlmanac"),
