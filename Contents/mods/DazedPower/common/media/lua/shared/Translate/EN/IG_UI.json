@@ -470,5 +470,19 @@
     "IGUI_DazedPower_OptWindSpinTip": "Turning windmills spin and broken ones rock in the wind. Only on your screen; untick it to save a little work on slow machines.",
     "IGUI_DazedPower_OptPedalRide": "Ride pedal generators",
     "IGUI_DazedPower_OptPedalRideTip": "Sit on the saddle and pedal. Untick to work the pedals from beside the machine instead.",
-    "IGUI_DazedPower_DebugBanks": "Spawn every battery rack fill level around me"
+    "IGUI_DazedPower_DebugBanks": "Spawn every battery rack fill level around me",
+    "IGUI_DazedPower_WoodGasWarming": "warming up the gasifier, {1}%",
+    "IGUI_DazedPower_WoodGasChoked": "grate choked with ash",
+    "IGUI_DazedPower_WoodGasNoFuel": "out of wood",
+    "IGUI_DazedPower_WoodGasFuel": "{1} of {2} fire-hours",
+    "IGUI_DazedPower_WoodGasAsh": "{1} full",
+    "IGUI_DazedPower_InfoHopper": "Wood in the hopper",
+    "IGUI_DazedPower_InfoAsh": "Ash in the grate",
+    "IGUI_DazedPower_InfoWarmup": "Warm-up from cold",
+    "IGUI_DazedPower_InfoMinutes": "{1} min",
+    "IGUI_DazedPower_InfoBurnsValueWood": "{1} fire-hours an hour flat out, {2} with no load",
+    "IGUI_DazedPower_SrcWoodGas": "Wood gas",
+    "IGUI_DazedPower_BrandWoodGasMakeshift": "WOODGAS MK",
+    "IGUI_DazedPower_BrandWoodGasSalvaged": "WOODGAS SV",
+    "IGUI_DazedPower_BrandWoodGasWorkshop": "WOODGAS WS"
 }

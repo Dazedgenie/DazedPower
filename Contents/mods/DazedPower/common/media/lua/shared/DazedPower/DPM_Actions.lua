@@ -666,6 +666,65 @@ function DPM_PetrolFill:new(character, object, can)
     return o
 end
 
+-- Wood gas: feeding the hopper one piece at a time (wood and charcoal only, in fire-hours,
+-- the boiler's measure), and clearing the ash out of a cold grate.
+local WOOD_FUEL = {
+    ["Base.Log"] = true, ["Base.Plank"] = true, ["Base.TreeBranch2"] = true,
+    ["Base.Twigs"] = true, ["Base.UnusableWood"] = true, ["Base.ScrapWood"] = true,
+    ["Base.Firewood"] = true, ["Base.Charcoal"] = true,
+}
+MA.WOOD_FUEL = WOOD_FUEL
+
+local function woodGasStillApplies(action)
+    if not genStillApplies(action) then return false end
+    return P.describe(action.object).kind == "woodgas"
+end
+
+DPM_WoodGasFuel = genAction("DPM_WoodGasFuel", function() return 50 end, woodGasStillApplies)
+
+function DPM_WoodGasFuel:complete()
+    if not woodGasStillApplies(self) then return true end
+    local item = self.item
+    local cont = stillCarried(item)
+    if not cont or not WOOD_FUEL[item:getFullType()] then return true end
+    local d = P.data(self.object)
+    local info = P.describe(self.object)
+    local spec = M.propaneSpec(info.tier, info.kind)
+    local hours = M.steamFuelHours(MA.itemWeight(item), item:getFullType())
+    if hours <= 0 or (d.lpg or 0) + hours > spec.reservoir + 0.001 then return true end
+    d.lpg = (d.lpg or 0) + hours
+    d.noFuel = nil
+    cont:Remove(item)
+    sendRemoveItemFromContainer(cont, item)
+    self.object:transmitModData()
+    return true
+end
+
+function DPM_WoodGasFuel:new(character, object, item)
+    local o = ISBaseTimedAction.new(self, character)
+    o.object, o.item = object, item
+    o.maxTime = o:getDuration()
+    return o
+end
+
+DPM_WoodGasAsh = genAction("DPM_WoodGasAsh", function() return 240 end, woodGasStillApplies)
+
+function DPM_WoodGasAsh:complete()
+    if not woodGasStillApplies(self) then return true end
+    local d = P.data(self.object)
+    if d.running then return true end                         -- never into a live grate
+    d.ash, d.choked = 0, nil
+    self.object:transmitModData()
+    return true
+end
+
+function DPM_WoodGasAsh:new(character, object)
+    local o = ISBaseTimedAction.new(self, character)
+    o.object = object
+    o.maxTime = o:getDuration()
+    return o
+end
+
 -- The switch. Starting a makeshift one is a pull-cord, so it takes longer;
 -- the standby units have a starter button. ON with fuel and a working
 -- engine starts it now; AUTO hands it to the battery (DPM_Bridge, within a
@@ -702,7 +761,7 @@ function DPM_PropaneSwitch:complete()
     elseif mode == "on" then
         local g = { tier = info.tier, kind = info.kind, mode = "on", condition = d.condition, lpg = d.lpg, feedTank = d.feedTank,
                     lineTx = d.lineTx, lineTy = d.lineTy, lineTz = d.lineTz,
-                    t1Type = d.t1Type, t1Fill = d.t1Fill, t2Type = d.t2Type, t2Fill = d.t2Fill,
+                    t1Type = d.t1Type, t1Fill = d.t1Fill, t2Type = d.t2Type, t2Fill = d.t2Fill, ash = d.ash,
                     running = d.running, ambient = (not d.running) and E.engineAir(self.object) or nil, now = E.worldHours() }
         d.running = M.propaneSwitch(g, nil)
         d.noFuel = g.noFuel
@@ -712,7 +771,10 @@ function DPM_PropaneSwitch:complete()
             DazedCore.Note.say(self.character, "IGUI_DazedPower_GenColdNote", nil, true)
         end
     end
-    R.setVariant(self.object, ((d.condition or 100) <= 35 and "broken") or (d.running and "running") or "off")
+    -- a wood gas engine just lit is warming until its gasifier comes up to heat (DPM_Model.propaneStep)
+    if d.running and info.kind == "woodgas" and (d.gas or 0) < 1 then d.warming = true end
+    if not d.running then d.warming = nil end
+    R.setVariant(self.object, M.genState(info.kind, d.condition, d.running, d.warming))
     self.object:transmitModData()
     return true
 end

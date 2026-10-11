@@ -139,9 +139,9 @@ local function collect(rec)
         -- out[kind] only for the power sources: an instrument is never wired
         -- (DPM_Model.wireLegal), so it should never be here; if an old save
         -- somehow claims one, it is left out rather than counted.
-        -- the petrol generator is filed with the propane ones: the same
-        -- engine code runs both (each entry says which it is: g.kind)
-        local slot = (kind == "petrol") and "propane" or kind
+        -- the petrol and wood gas generators are filed with the propane ones: the
+        -- same engine code runs all three (each entry says which it is: g.kind)
+        local slot = (kind == "petrol" or kind == "woodgas") and "propane" or kind
         -- Plumbing's wired pump and purifier are loads, filed together (DPM_Water).
         if UM.LOAD_KINDS and UM.LOAD_KINDS[kind] then slot = "water" end
         if x and out[slot] then
@@ -215,7 +215,9 @@ end
 --  can mutate them and a replay can write them back.
 local genEntry, genEffects
 B.GEN_FIELDS = { "mode", "running", "lpg", "feedTank", "lineTx", "lineTy", "lineTz", "t1Type", "t1Fill", "t1Cond", "t2Type", "t2Fill",
-                 "t2Cond", "condition", "startPct", "stopPct", "hold", "noFuel", "coldFail", "coldFailAt" }
+                 "t2Cond", "condition", "startPct", "stopPct", "hold", "noFuel",
+                 "ash", "gas", "choked", "warming",           -- wood gas only (DPM_Model)
+                 "coldFail", "coldFailAt" }
 genEntry = function(obj, info, d)
     local g = { obj = obj, tier = info.tier, kind = info.kind, amp = d.amp == true }
     for _, f in ipairs(B.GEN_FIELDS) do g[f] = d[f] end
@@ -782,8 +784,7 @@ genEffects = function(g, now)
             end
         end
     end
-    local state = ((d.condition or 100) <= 35 and "broken") or (running and "running") or "off"
-    push(obj, R.setVariant(obj, state))
+    push(obj, R.setVariant(obj, MM.genState(g.kind, d.condition, running, d.warming)))
 end
 
 --- The amplifier's live-world costs for one machine that is making power:
@@ -850,8 +851,8 @@ local function sourceRows(rec, src)
     end
     for _, g in ipairs(src.gens or {}) do
         local d = P.data(g.obj)
-        local st = ((g.condition or 100) <= 35 and "broken") or (g.running and "running") or "off"
-        local r = add(g.obj, g.kind == "petrol" and "petrol" or "propane", g.tier, st, (g.watts or 0) * eff, g.condition)
+        local st = MM.genState(g.kind, g.condition, g.running, g.warming)
+        local r = add(g.obj, (g.kind == "petrol" or g.kind == "woodgas") and g.kind or "propane", g.tier, st, (g.watts or 0) * eff, g.condition)
         r.v = math.floor(MM.propaneFuel(g) * 10 + 0.5) / 10
     end
     table.sort(rows, function(a, b) if a.w ~= b.w then return a.w > b.w end
@@ -1133,7 +1134,7 @@ local function settleLoose(obj, now)
         d.dry = ((dry or 0) > 0) or nil
         boilerEffects(b, now)                 -- sprite, noise, a dry one's danger; transmits
         return true
-    elseif info.kind == "propane" or info.kind == "petrol" then
+    elseif R.GAS_ENGINE[info.kind] then
         -- Loose, there is no battery to read: AUTO stops it; a switch left
         -- ON keeps it turning over at idle, burning gas for nothing.
         local gap = now - (d.looseAt or now)

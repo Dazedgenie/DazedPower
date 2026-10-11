@@ -25,14 +25,16 @@ Board.COLORS = C
 
 local COMPRESSOR = { fridge = true, freezer = true, fridgefreezer = true }
 local SRC_KIND = { pedal = "IGUI_DazedPower_SrcPedal", windmill = "IGUI_DazedPower_SrcWind", steam = "IGUI_DazedPower_SrcSteam",
-    propane = "IGUI_DazedPower_SrcPropane", petrol = "IGUI_DazedPower_SrcPetrol", hydro = "IGUI_DazedPower_SrcHydro",
+    propane = "IGUI_DazedPower_SrcPropane", petrol = "IGUI_DazedPower_SrcPetrol", woodgas = "IGUI_DazedPower_SrcWoodGas", hydro = "IGUI_DazedPower_SrcHydro",
     car = "IGUI_DazedPower_SrcCar", solar = "IGUI_DazedPower_SrcSolar" }
 local GEN_STATE = { running = "IGUI_DazedPower_GenRun", standby = "IGUI_DazedPower_GenStandby", off = "IGUI_DazedPower_GenOff",
     nofuel = "IGUI_DazedPower_GenNoFuel", fault = "IGUI_DazedPower_GenFault", indoors = "IGUI_DazedPower_GenIndoors",
     server = "IGUI_DazedPower_GenServer", cold = "IGUI_DazedPower_GenCold" }
 local GEN_BRAND = { propane_makeshift = "IGUI_DazedPower_BrandPropaneMakeshift", propane_salvaged = "IGUI_DazedPower_BrandPropaneSalvaged",
     propane_workshop = "IGUI_DazedPower_BrandPropaneWorkshop", petrol_makeshift = "IGUI_DazedPower_BrandPetrolMakeshift",
-    petrol_salvaged = "IGUI_DazedPower_BrandPetrolSalvaged", petrol_workshop = "IGUI_DazedPower_BrandPetrolWorkshop" }
+    petrol_salvaged = "IGUI_DazedPower_BrandPetrolSalvaged", petrol_workshop = "IGUI_DazedPower_BrandPetrolWorkshop",
+    woodgas_makeshift = "IGUI_DazedPower_BrandWoodGasMakeshift", woodgas_salvaged = "IGUI_DazedPower_BrandWoodGasSalvaged",
+    woodgas_workshop = "IGUI_DazedPower_BrandWoodGasWorkshop" }
 
 --- "WATER PUMP" as "Water pump"; short words such as TV stay as they are.
 function Board.titleCase(str)

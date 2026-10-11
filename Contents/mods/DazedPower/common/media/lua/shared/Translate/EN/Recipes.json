@@ -90,6 +90,12 @@
     "ScrapDazedRoomCooler": "Scrap Room Cooler",
     "MakeDazedSpaceHeater": "Build Electric Space Heater",
     "ScrapDazedSpaceHeater": "Scrap Electric Space Heater",
+    "MakeDazedWoodGasMakeshift": "Build Makeshift Wood Gas Generator",
+    "ScrapDazedWoodGasMakeshift": "Scrap Makeshift Wood Gas Generator",
+    "MakeDazedWoodGasSalvaged": "Build Salvaged Wood Gas Generator",
+    "ScrapDazedWoodGasSalvaged": "Scrap Salvaged Wood Gas Generator",
+    "MakeDazedWoodGasWorkshop": "Build Workshop Wood Gas Generator",
+    "ScrapDazedWoodGasWorkshop": "Scrap Workshop Wood Gas Generator",
     "MakeDazedGearKitLow": "Make Low-Ratio Gear Kit",
     "MakeDazedGearKitStock": "Make Stock Gear Kit",
     "MakeDazedGearKitRacing": "Make Racing Gear Kit"

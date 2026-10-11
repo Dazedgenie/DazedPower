@@ -249,11 +249,11 @@ end
 P.PIECE_OFFSET = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } }
 
 -- The power sources Dazed Power brought, and the two wind instruments that are parts but never wire or tick.
-P.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true }
+P.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true }
 -- A grounding rod is never wired and never ticks; it only protects a controller from lightning by standing near it.
 P.PASSIVE = { rod = true }
 P.INSTRUMENT = { windsock = true, vane = true }
-P.GAS_ENGINE = { propane = true, petrol = true }
+P.GAS_ENGINE = { propane = true, petrol = true, woodgas = true }
 
 --- How many cells each bank grade holds, by mount. Mirrors dp_taxonomy.BANK_CELLS and M.bankCells.
 P.BANK_CELLS = {
