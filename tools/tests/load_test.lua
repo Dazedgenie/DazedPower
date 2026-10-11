@@ -320,5 +320,46 @@ do
         "the debug spawn set skips the running controller and reaches the 2x2 array and the amplifier")
 end
 
+-- The battery rack set places every floor rack fill level itself, a square apart, with the cells to match.
+do
+    local P, Seed = DazedPower.Parts, DazedPower.Seed
+    local set = DazedCore.DebugSpawn and DazedCore.DebugSpawn.sets.powerBanks
+    check(set and set.place and set.label == "IGUI_DazedPower_DebugBanks", "the battery rack debug set places itself")
+    if set and set.place and Seed then
+        local floorObj = { isFloor = function() return true end }
+        local objs = { size = function() return 1 end, get = function() return floorObj end }
+        local sqs = {}
+        local function sq(x, y, z)
+            local k = x .. "," .. y
+            sqs[k] = sqs[k] or { x = x, y = y, isSolid = function() return false end,
+                                  isSolidTrans = function() return false end, getObjects = function() return objs end }
+            return sqs[k]
+        end
+        local oldCell, oldPlace = getCell, Seed.place
+        local made, used, ok = {}, {}, true
+        getCell = function() return { getGridSquare = function(_, x, y, z) return sq(x, y, z) end } end
+        Seed.place = function(s, kind, mount, tier, state, facing)
+            local k = s.x .. "," .. s.y
+            if used[k] then ok = false end
+            used[k] = true
+            local md = {}
+            local o = { getModData = function() return md end, transmitModData = function() end }
+            made[#made + 1] = { o = o, tier = tier, state = state, facing = facing }
+            return o
+        end
+        local ch = { getX = function() return 100 end, getY = function() return 100 end, getZ = function() return 0 end }
+        local placed = set.place(ch)
+        getCell, Seed.place = oldCell, oldPlace
+        for _, m in ipairs(made) do
+            local d = P.data(m.o)
+            if "c" .. d.cells ~= m.state or #d.cellList ~= d.cells then ok = false end
+        end
+        local facings = {}
+        for _, m in ipairs(made) do if m.tier == "workshop" and m.state == "c8" then facings[m.facing] = true end end
+        check(ok and placed == 24 and #made == 24, "every rack fill level is placed once, cells matching its sprite (" .. tostring(placed) .. ")")
+        check(facings.E and facings.S and facings.W and facings.N, "the full Workshop rack is placed in all four facings")
+    end
+end
+
 print(string.format("load_test: %d checks, %d failed", checks, fails))
 os.exit(fails == 0 and 0 or 1)
