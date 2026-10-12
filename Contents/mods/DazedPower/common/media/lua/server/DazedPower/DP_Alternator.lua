@@ -15,10 +15,13 @@ local function buildIndex()
     local cell = getCell and getCell()
     local list = cell and cell:getVehicles()
     local byId = {}
-    for i = 0, (list and list:size() or 0) - 1 do
-        local v = list:get(i)
+    if not list then return byId end
+    -- B42 hands back a java.util.HashSet, which has no get(i): walk it with its iterator.
+    local it = list:iterator()
+    while it:hasNext() do
+        local v = it:next()
         local id = A.idOf(v)
-        -- The first vehicle with an id wins, as the old front-to-back search did.
+        -- The first vehicle with an id wins.
         if id and byId[id] == nil then byId[id] = v end
     end
     return byId
