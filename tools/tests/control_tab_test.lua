@@ -140,14 +140,14 @@ check(lamps[2][1] == "Tripped: 1" and lamps[2][2] == "red", "one tripped")
 check(lamps[3][1] == "Low battery: 1" and lamps[3][2] == "amber", "one low battery")
 local ctl = view.cards[1]
 check(ctl.title == "Controllers" and #ctl.items == 7, "six records and one away-only snapshot listed: " .. #ctl.items)
-check(ctl.items[1].tone == "red" and ctl.items[1].text:find("Makeshift charge controller, 10620, 9750", 1, true), "trouble first: the tripped school")
+check(ctl.items[1].tone == "red" and ctl.items[1].text:find("Makeshift controller, 10620, 9750", 1, true), "trouble first: the tripped school")
 check(ctl.items[2].tone == "amber" and ctl.items[2].sub:find("low-voltage cut-off", 1, true), "then the cut-off")
 local byText = {}
 for _, it in ipairs(ctl.items) do byText[it.text] = it end
-local farm = byText["Workshop MPPT charge controller, 10655, 9380"]
-check(farm and farm.tone == "green" and farm.sub == "Kyle - 78% - +1.4 kW - 8 cells - running", "the farm row: " .. tostring(farm and farm.sub))
+local farm = byText["Workshop MPPT, 10655, 9380"]
+check(farm and farm.tone == "green" and farm.sub == "running - Kyle - 78% - +1.4 kW - 8 cells", "the farm row: " .. tostring(farm and farm.sub))
 check(farm and #farm.buttons == 3 and farm.buttons[1].need == "admin" and farm.buttons[1].args.x == 10655, "loaded rows carry Reset/Repair/Fill")
-local empty = byText["Makeshift charge controller, 10700, 9400"]
+local empty = byText["Makeshift controller, 10700, 9400"]
 check(empty and empty.tone == "muted" and empty.sub:find("no sources", 1, true) and empty.sub:find("unowned", 1, true), "no sources is muted")
 local gone = byText["Charge controller, 11200, 9000"]
 check(gone and gone.tone == "muted" and gone.sub == "unloaded, away 54%" and gone.buttons == nil, "an unloaded controller has no buttons")

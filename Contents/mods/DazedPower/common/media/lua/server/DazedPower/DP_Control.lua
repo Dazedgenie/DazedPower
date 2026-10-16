@@ -34,10 +34,10 @@ local GAS = { propane = true, petrol = true, woodgas = true }
 
 -- Plain English: the server has no translations.
 local CTRL_NAME = {
-    makeshift = "Makeshift charge controller",
-    workshop = "Workshop MPPT charge controller",
-    salvaged = "Salvaged charge controller",
-    basic = "Basic charge controller",
+    makeshift = "Makeshift controller",
+    workshop = "Workshop MPPT",
+    salvaged = "Salvaged controller",
+    basic = "Basic controller",
 }
 local GAS_NAME = { propane = "propane generator", petrol = "petrol generator", woodgas = "wood gas generator" }
 local TIER_WORD = { makeshift = "Makeshift", salvaged = "Salvaged", workshop = "Workshop", basic = "Basic" }
@@ -179,7 +179,7 @@ local function facts(rec)
     f.loaded = true
     local info = P.describe and P.describe(ctrl)
     local tier = info and info.tier or d.tier or "makeshift"
-    f.name = CTRL_NAME[tier] or ((TIER_WORD[tier] or tostring(tier)) .. " charge controller")
+    f.name = CTRL_NAME[tier] or ((TIER_WORD[tier] or tostring(tier))  .. " controller")
     f.room = roomName(rec.x, rec.y, rec.z)
     f.owner = type(d.owner) == "string" and d.owner ~= "" and d.owner or nil
     f.soc = tonumber(d.soc) or 0
@@ -257,11 +257,12 @@ local function at(f) return { x = f.x, y = f.y, z = f.z } end
 local function controllerItem(f)
     local bits = {}
     if f.loaded then
+        -- the state first: a long line is cut short at the right, and the state is what staff look for
+        bits[#bits + 1] = f.state
         bits[#bits + 1] = f.owner or "unowned"
         bits[#bits + 1] = f.hasBank and (pct(f.soc) .. "%") or "no bank"
         if f.tone ~= "muted" and f.state ~= "low-voltage cut-off" then bits[#bits + 1] = kw(f.net) end
         if f.cells > 0 then bits[#bits + 1] = f.cells .. " cells" end
-        bits[#bits + 1] = f.state
     else
         bits[#bits + 1] = f.state
     end
