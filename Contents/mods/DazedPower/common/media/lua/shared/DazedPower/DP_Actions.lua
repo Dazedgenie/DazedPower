@@ -182,7 +182,7 @@ function DP_BankCell:isValid()
     if not self.object or self.object:getObjectIndex() == -1 then return false end
     local d = P.data(self.object)
     if self.install then
-        return (d.cells or 0) < P.cellCap(self.object) and self.battery ~= nil
+        return (d.cells or 0) < P.cellCap(self.object) and self.battery ~= nil and M.isCellItem(self.battery)
     end
     if not mayRemoveCell(self) then return false end
     return P.findCell(d, self.cellId) ~= nil
@@ -231,7 +231,7 @@ function DP_BankCell:stillApplies()
     if not info or info.kind ~= "bank" then return false end
     local d = P.data(self.object)
     if self.install then
-        return self.battery ~= nil and (d.cells or 0) < P.cellCap(self.object)
+        return self.battery ~= nil and M.isCellItem(self.battery) and (d.cells or 0) < P.cellCap(self.object)
     end
     -- The owner lock covers what is IN the rack, not only the rack: under
     -- "whoever placed it", lifting the cabinet was refused and emptying it of
@@ -302,11 +302,14 @@ function DP_BankCell:complete()
         -- battery from an older save that has no bay of its own, which would
         -- slide down into it.
         P.pinBays(b.cellList or {}, cap)
+        -- A makeshift/deep-cycle cell whose item type is gone cannot be handed
+        -- back as a car battery: leave it in the rack.
+        if not P.cellReturnable(P.findCell(d, self.cellId)) then return true end
         local out = M.removeCell(b, self.cellId)
         -- Nil means somebody else took it first. A no-op that finished
         -- cleanly, so true rather than false: see the note at the top.
         if not out then return true end
-        local item = P.cellItem(out.type, out.fill, out.cond, out.wear)
+        local item = P.cellItem(out.type, out.fill, out.cond, out.wear, out.w)
         if item then
             local inv = self.character:getInventory()
             inv:AddItem(item)

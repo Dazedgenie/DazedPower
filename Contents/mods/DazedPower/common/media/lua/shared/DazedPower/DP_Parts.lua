@@ -651,7 +651,7 @@ end
 function P.bankHealth(d)
     local list = d.cellList
     if not list or #list == 0 then return 1 end
-    return DazedPower.Model.cellSum(list) / #list
+    return DazedPower.Model.healthSum(list) / #list
 end
 
 --- The rack's best possible health: the mean of what its cells can still recover to.
@@ -1078,17 +1078,22 @@ end
 --  comes back as Base.CarBattery1 at the same charge and condition. By the
 --  time a cell becomes an item it is already out of the rack, so handing back
 --  nothing would destroy both the battery and its share of the charge; this
---  keeps the value and loses only the branding.
+--  keeps the value and loses only the branding. Except a cell whose weight is
+--  not 1 (a makeshift or deep-cycle battery, `weight` or cell.w): a car battery
+--  is not what it was, so nil, and the removal action refuses (P.cellReturnable).
 --
 --  setCurrentUsesFloat, not setUsedDelta: the pair is asymmetric on
 --  InventoryItem (only the setter half of setUsedDelta exists, and only on
 --  DrainableComboItem), so the mod uses the float accessors, which are
 --  declared on the base class in both directions. See itemFill in DP_Actions.
-function P.cellItem(batteryType, fill, cond, wear)
+function P.cellItem(batteryType, fill, cond, wear, weight)
     local M = DazedPower.Model
     local wanted = batteryType or "Base.CarBattery1"
     local item = instanceItem(wanted)
     if not item and wanted ~= "Base.CarBattery1" then
+        -- A cell worth other than one car battery is never swapped for one:
+        -- that would turn a third (or double) of a battery into a whole one.
+        if (weight or 1) ~= 1 then return nil end
         print("DazedPower: cell type " .. tostring(wanted)
               .. " no longer exists, substituting Base.CarBattery1")
         item = instanceItem("Base.CarBattery1")
@@ -1103,6 +1108,14 @@ function P.cellItem(batteryType, fill, cond, wear)
     end
     if wear and wear > 0 and item.getModData then item:getModData().dazedWear = wear end
     return item
+end
+
+--- Can this rack cell leave as an item? False only for a non-unit-weight cell
+--  whose type no longer exists, which has no honest replacement.
+function P.cellReturnable(cell)
+    if not cell then return false end
+    if (cell.w or 1) == 1 then return true end
+    return instanceItem(cell.type or "Base.CarBattery1") ~= nil
 end
 
 --- The wear a battery item carries from an earlier rack, 0..1.

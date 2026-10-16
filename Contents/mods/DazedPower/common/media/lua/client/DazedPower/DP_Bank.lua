@@ -263,7 +263,7 @@ function DP_Bank:cellTip(cell)
         getText("Tooltip_DazedPower_CellCondition"),
         math.floor(cell.health * 100 + 0.5),
         getText("Tooltip_DazedPower_CellHolds"),
-        math.floor(cell.health * self.cellWh + 0.5),
+        math.floor(cell.health * M.cellW(cell) * self.cellWh + 0.5),
         getText("Tooltip_DazedPower_CellCharge"),
         math.floor(self.fill * 100 + 0.5))
 end

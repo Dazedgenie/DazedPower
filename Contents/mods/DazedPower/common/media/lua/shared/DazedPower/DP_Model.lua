@@ -740,10 +740,60 @@ function M.healthCeiling(cell)
     return 1 - clamp((cell and cell.wear) or 0, 0, M.MAX_WEAR)
 end
 
---- Summed health of a cell list. Capacity is proportional to THIS, not to a
+--- What a battery type is worth next to the rack tier's own cell, 1 unless an
+--  add-on registered it. A cell records its item type, so an old save's cells
+--  (all car batteries) read 1 and nothing about them moves.
+M.CELL_WEIGHT = M.CELL_WEIGHT or {}
+
+--- Teach racks a battery that is not a car battery: `weight` is its Wh over the
+--  tier's cell Wh (a 240 Wh makeshift battery in a 720 Wh slot is 1/3).
+function M.registerCellWeight(fullType, weight)
+    if fullType and (weight or 0) > 0 then M.CELL_WEIGHT[fullType] = weight end
+end
+
+function M.cellWeight(fullType)
+    return M.CELL_WEIGHT[fullType] or 1
+end
+
+--- A cell's own weight: the one it was installed with (saved as cell.w when it
+--  is not 1, so a later change to the registry cannot re-price a rack), else
+--  the registry's for its type, else 1 for an old save's cell.
+function M.cellW(cell)
+    return (cell and cell.w) or M.cellWeight(cell and cell.type)
+end
+
+--- Summed weights of a cell list, health ignored: the rack's nameplate in cells.
+function M.weightSum(cellList)
+    local s = 0
+    for i = 1, #(cellList or {}) do s = s + M.cellW(cellList[i]) end
+    return s
+end
+
+--- Does a rack take this item: a car battery by tag, or any type with a weight.
+--  Our add-on items never carry the vanilla tag, because the vanilla charger
+--  and car part would read it too.
+function M.isCellItem(item)
+    if not item then return false end
+    local t = item.getFullType and item:getFullType()
+    if t and M.CELL_WEIGHT[t] then return true end
+    return item.hasTag ~= nil and ItemTag ~= nil and ItemTag.CAR_BATTERY ~= nil
+        and item:hasTag(ItemTag.CAR_BATTERY) == true
+end
+
+--- Summed health of a cell list, each cell scaled by its battery's weight.
+--  Capacity is proportional to THIS, not to a
 --  raw count: a battery installed at 55% condition is 55% of a cell, and it
 --  costs its own share only. It never gates its neighbours.
 function M.cellSum(cellList)
+    local s = 0
+    for i = 1, #(cellList or {}) do
+        s = s + clamp(cellList[i].health or 1, 0, 1) * M.cellW(cellList[i])
+    end
+    return s
+end
+
+--- The same sum without the weights: condition alone, for the mean-health readouts.
+function M.healthSum(cellList)
     local s = 0
     for i = 1, #(cellList or {}) do
         s = s + clamp(cellList[i].health or 1, 0, 1)
@@ -843,10 +893,12 @@ function M.installCell(b, itemType, cond, fill, wear)
         health = cond,
         wear = wear,
     }
+    local w = M.cellWeight(cell.type)
+    if w ~= 1 then cell.w = w end
     b.nextCellId = b.nextCellId + 1
     b.cellList[#b.cellList + 1] = cell
 
-    b.charge = max(0, (b.charge or 0) + fill * cond * M.cellWh(b.tier, b.scale))
+    b.charge = max(0, (b.charge or 0) + fill * cond * M.cellW(cell) * M.cellWh(b.tier, b.scale))
     local nom = M.bankNominal(b)
     if b.charge > nom then b.charge = nom end
     return cell
@@ -872,9 +924,9 @@ function M.removeCell(b, cellId)
 
     local health = clamp(cell.health or 1, 0, 1)
     local fill = M.bankFill(b)
-    b.charge = max(0, (b.charge or 0) - fill * health * M.cellWh(b.tier, b.scale))
+    b.charge = max(0, (b.charge or 0) - fill * health * M.cellW(cell) * M.cellWh(b.tier, b.scale))
     table.remove(list, idx)
-    return { type = cell.type, cond = health, fill = fill, wear = cell.wear or 0 }
+    return { type = cell.type, cond = health, fill = fill, wear = cell.wear or 0, w = cell.w }
 end
 
 --- Lead-acid loses usable capacity in the cold. A scrap bank is down near 42%

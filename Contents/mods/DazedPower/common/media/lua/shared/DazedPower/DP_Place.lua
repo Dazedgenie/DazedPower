@@ -101,7 +101,7 @@ G.LOCK_OWNER  = 3
 --  charge the rack was holding and the condition that cell had. `cell` is
 --  what G.takeCells hands out: { type, fill, cond }.
 function G.giveBackCell(square, cell)
-    local item = P.cellItem(cell.type, cell.fill, cell.cond, cell.wear)
+    local item = P.cellItem(cell.type, cell.fill, cell.cond, cell.wear, cell.w)
     if item and square then square:AddWorldInventoryItem(item, 0.5, 0.5, 0.0) end
     return item
 end

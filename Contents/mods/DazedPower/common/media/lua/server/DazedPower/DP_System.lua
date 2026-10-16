@@ -1612,7 +1612,7 @@ local function scatter(rec, bank, env, healthDelta, ageWh)
         -- Throughput wears the cells for good, shared out by what each rack holds.
         if ageWh and ageWh > 0 and total > 0 then
             local info = P.describe(o)
-            local nameplate = info and (d.cells or 0) * M.cellWh(info.tier, P.bankScale()) or 0
+            local nameplate = info and M.weightSum(d.cellList) * M.cellWh(info.tier, P.bankScale()) or 0
             P.ageBank(d, M.ageDelta(ageWh * share, nameplate, info and info.tier, (P.sandbox("AgeRate") or 100) / 100))
         end
         local soc = caps[i] > 0 and math.min(1, d.charge / caps[i]) or 0
@@ -1659,7 +1659,7 @@ local function equalise(rec, env, surplusWh, dt)
             -- Nameplate capacity, not the cold- and health-derated figure:
             -- what a recovery costs should not depend on the weather.
             local spec = M.bankSpec(info.tier)
-            local nameplate = (d.cells or 0) * spec.wh * bankScale
+            local nameplate = M.weightSum(d.cellList) * spec.wh * bankScale
             local before = P.bankHealth(d)
             local h, wh = M.equaliseStep(before, left, nameplate, dt)
             -- Same delta onto every cell. An equalisation charge really

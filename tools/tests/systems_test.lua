@@ -25,6 +25,61 @@ return function(check, E)
     local out = M.removeCell(rack, c2.id)
     check(out.wear == M.MAX_WEAR, "a removed cell hands its wear back")
 
+    ------------------------------------------------------------ cell weights
+    -- A battery worth less (or more) than the tier's cell: Wh in a rack are Wh of the item, no more.
+    M.registerCellWeight("Test.Third", 1 / 3)
+    M.registerCellWeight("Test.Heavy", 1400 / 720)
+    local wr = { cellList = {}, charge = 0, tier = "salvaged", scale = 1 }
+    M.installCell(wr, "Base.CarBattery1", 1, 1)
+    check(math.abs(M.cellSum(wr.cellList) - 1) < 1e-9 and math.abs(wr.charge - 720) < 1e-6, "a car battery is weight 1 and unchanged")
+    local third = M.installCell(wr, "Test.Third", 1, 1)
+    check(math.abs(M.cellSum(wr.cellList) - (1 + 1 / 3)) < 1e-9, "a makeshift cell is worth a third of a car battery in cellSum")
+    check(math.abs(wr.charge - 960) < 1e-6, "it brings its own 240 Wh with it")
+    check(math.abs(M.bankNominal(wr) - 960) < 1e-6 and math.abs(P.bankHealth({ cellList = wr.cellList }) - 1) < 1e-9, "nominal follows the weight; mean health does not")
+    local back = M.removeCell(wr, third.id)
+    check(back.type == "Test.Third" and math.abs(back.fill - 1) < 1e-9 and math.abs(wr.charge - 720) < 1e-6, "install then remove round-trips the energy")
+    local hv = M.installCell(wr, "Test.Heavy", 0.5, 0.5)
+    check(math.abs(M.cellSum(wr.cellList) - (1 + 0.5 * 1400 / 720)) < 1e-9, "a deep-cycle cell is worth ~1.94 car batteries at full health")
+    check(math.abs(wr.charge - (720 + 0.25 * 1400)) < 1e-6, "it arrives with condition x fill of its 1400 Wh")
+    local hb = M.removeCell(wr, hv.id)
+    -- Cells share one state of charge, so the cell leaves with the rack's fill; what matters is that no Wh appear or vanish.
+    check(math.abs(hb.fill * hb.cond * 1400 + wr.charge - (720 + 0.25 * 1400)) < 1e-6, "removing a deep-cycle cell conserves the energy in item plus rack")
+    local old = { { type = "Base.CarBattery2", health = 0.5 }, { health = 1 } }
+    check(math.abs(M.cellSum(old) - 1.5) < 1e-9 and M.cellWeight(nil) == 1, "cells with no registered type, or none at all, count as before")
+    check(M.isCellItem({ getFullType = function() return "Test.Third" end }) and not M.isCellItem({ getFullType = function() return "Base.Nail" end })
+        and not M.isCellItem(nil), "a rack accepts a registered type and nothing else without the tag")
+
+    -- The weight is saved on the cell: a later registry change cannot re-price a rack.
+    local sr = { cellList = {}, charge = 0, tier = "salvaged", scale = 1 }
+    local sc = M.installCell(sr, "Test.Third", 1, 1)
+    local cc = M.installCell(sr, "Base.CarBattery1", 1, 1)
+    check(math.abs(sc.w - 1 / 3) < 1e-9 and cc.w == nil, "a non-unit cell saves its weight; a car battery stays as before")
+    M.CELL_WEIGHT["Test.Third"] = nil
+    check(math.abs(M.cellSum(sr.cellList) - (1 + 1 / 3)) < 1e-9 and math.abs(M.weightSum(sr.cellList) - (1 + 1 / 3)) < 1e-9,
+        "cellSum and weightSum keep the saved weight after the type is unregistered")
+    local sb = M.removeCell(sr, sc.id)
+    check(math.abs(sr.charge - 720) < 1e-6 and math.abs(sb.w - 1 / 3) < 1e-9, "removal uses the saved weight too, and hands it on")
+    check(M.cellW({ type = "Test.Third" }) == 1 and M.cellW({}) == 1 and M.cellW(nil) == 1, "an old cell with no saved weight and no registration reads 1")
+    M.registerCellWeight("Test.Third", 1 / 3)
+    check(math.abs(M.cellW({ type = "Test.Third" }) - 1 / 3) < 1e-9, "an old cell of a registered type reads the registry weight")
+
+    -- Removal never upgrades a makeshift cell into a car battery.
+    local realInstance = instanceItem
+    local made = {}
+    instanceItem = function(t) if t == "Base.CarBattery1" or t == "Test.Third" then made[#made + 1] = t; return {} end return nil end
+    local gone = P.cellItem("Test.Gone", 1, 1, 0, 1 / 3)
+    check(gone == nil and #made == 0, "a vanished makeshift type yields no item and no car battery")
+    check(P.cellItem("Test.Gone", 1, 1, 0) ~= nil, "a vanished unit-weight type still falls back to a car battery")
+    check(not P.cellReturnable({ type = "Test.Gone", w = 1 / 3 }) and P.cellReturnable({ type = "Test.Third", w = 1 / 3 })
+        and P.cellReturnable({ type = "Test.Gone" }), "removal is refused only for a non-unit cell that cannot be made")
+    instanceItem = realInstance
+
+    -- Wear and equalisation bill against the weight sum, not the cell count.
+    local nl = { { type = "Base.CarBattery1" }, { type = "Test.Third", w = 1 / 3 } }
+    check(math.abs(M.weightSum(nl) * M.cellWh("salvaged", 1) - (4 / 3) * 720) < 1e-6 and M.weightSum({}) == 0 and M.weightSum(nil) == 0,
+        "nameplate for wear and equalisation is the weight sum times cell Wh")
+    M.CELL_WEIGHT["Test.Third"], M.CELL_WEIGHT["Test.Heavy"] = nil, nil
+
     ------------------------------------------------------------ load priority
     local Pr = DazedPower.Priority
     local cd = {}

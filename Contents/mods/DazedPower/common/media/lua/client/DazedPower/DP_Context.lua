@@ -190,9 +190,10 @@ end
 
 -- ItemContainer.getAllTag takes an ItemTag, never a String, so the tag has to
 -- come from the exposed ItemTag container rather than a literal. Matching the
--- tag rather than Base.CarBattery1/2/3 means a modded battery works too.
+-- tag rather than Base.CarBattery1/2/3 means a modded battery works too, and
+-- Model.isCellItem also takes add-on batteries registered with a cell weight.
 local function predicateCarBattery(item)
-    return item ~= nil and item:hasTag(ItemTag.CAR_BATTERY)
+    return M.isCellItem(item)
 end
 
 --- Exported so the bank panel's slot predicate and this menu agree on what
