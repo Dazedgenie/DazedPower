@@ -8,4 +8,5 @@ CORE=${1:-${DAZEDCORE_LUA:-../../../dazedcore/Contents/mods/DazedCore/common/med
 rc=0
 lua syntax_check.lua "$ROOT" || rc=1
 lua load_test.lua "$ROOT" "$CORE" || rc=1
+lua control_tab_test.lua "$CORE" || rc=1
 exit $rc
