@@ -57,6 +57,30 @@ function Board.fmtWh(wh)
     return string.format("%d Wh", math.floor(wh + 0.5))
 end
 
+--- How long the bank lasts or takes to fill at the current net flow, from the numbers the board already
+--  has. Returns nil (nothing to say), or "empty" / "full" and whole hours. Draining counts down to the red
+--  line (the low-voltage floor); charging counts up to full. Approximate: ignores sun and load changes.
+function Board.runtime(s)
+    if not (s and s.online and s.powered) then return nil end
+    local net, cap, charge = s.net or 0, s.capacity or 0, s.charge or 0
+    if cap <= 0 or math.abs(net) < 5 then return nil end
+    if net < 0 then
+        local usable = charge - clamp(s.dod or 0.25, 0, 1) * cap
+        if usable <= 0 then return nil end
+        return "empty", usable / -net
+    end
+    local room = cap - charge
+    if room <= cap * 0.01 then return nil end
+    return "full", room / net
+end
+
+--- Hours as "45 min", "6.4 h" or "2 d 6 h".
+function Board.fmtHours(h)
+    if h < 1 then return string.format("%d min", math.max(1, math.floor(h * 60 + 0.5))) end
+    if h < 48 then return string.format("%.1f h", h) end
+    return string.format("%d d %d h", math.floor(h / 24), math.floor(h % 24 + 0.5))
+end
+
 --- The smallest dial range that holds `peak` with a little headroom.
 function Board.fullScale(peak)
     for _, v in ipairs(Board.SCALES) do
@@ -229,6 +253,13 @@ function Board.build(s, o)
             text(ch, wx + ww / 2, 262 - fh("CodeLarge") / 2, C.white, "CodeLarge", "center")
         end
         text(unit, nx + total + 10, 262 - fh("Medium") / 2, C.ink, "Medium")
+        -- Time left: when the bank runs down to the red line, or fills, at this net flow.
+        local rk, rh = Board.runtime(s)
+        if rk then
+            local tx = nx + total + 30
+            text(fit(TX(rk == "empty" and "IGUI_DazedPower_BoardRunsOut" or "IGUI_DazedPower_BoardFills", Board.fmtHours(rh)),
+                "NewSmall", 392 - tx), tx, 262 - fh("NewSmall") / 2, rk == "empty" and C.amber or C.ink, "NewSmall")
+        end
     end
     section1()
 

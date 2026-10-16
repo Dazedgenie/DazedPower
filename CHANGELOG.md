@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.3 (2026-10-16)
+- New: the monitor board (and the wall gauge) shows a time-left estimate beside NET: "~6.4 h left" until the bank hits its red line when draining, "full in ~2 h" when charging, from the current net watts.
+
 ## 0.8.2 (2026-10-14)
 - Fixed: the wood gas generator's "Clean out the ash" option lost its percentage. A lone % in a translation string breaks the game's text formatting; the ash, warm-up and status texts now use %% like the rest. The status line also reads "ash 45% full" instead of "45 full".
 

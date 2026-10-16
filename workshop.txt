@@ -46,7 +46,7 @@ description=[*][b]Charge controllers[/b]: Makeshift manages 8 parts, Workshop 24
 description=[*][b]Load priority[/b]: Essential, Normal or Low per machine. As the batteries run down, Low is cut first.
 description=[/list]
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/board.png?v=2[/img]
-description=Right-click the controller, [b]System monitor[/b]: the analog charge board shows sources and load on two dials, every cell, today's harvest, every circuit, the main isolator and your generators.
+description=Right-click the controller, [b]System monitor[/b]: the analog charge board shows sources and load on two dials, how long the bank will last at this draw, every cell, today's harvest, every circuit, the main isolator and your generators.
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-gear.png?v=2[/img]
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/gear.png?v=2[/img]

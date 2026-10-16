@@ -443,6 +443,8 @@
     "IGUI_DazedPower_BoardLoadOut": "LOAD OUT",
     "IGUI_DazedPower_BoardKw": "kW",
     "IGUI_DazedPower_BoardNet": "NET",
+    "IGUI_DazedPower_BoardRunsOut": "~{1} left",
+    "IGUI_DazedPower_BoardFills": "full in ~{1}",
     "IGUI_DazedPower_BoardFloor": "red line: floor {1}",
     "IGUI_DazedPower_BoardBank": "BANK · {1} CELLS",
     "IGUI_DazedPower_BoardCellNote": "charge per cell · amber lamp = worn cell",
