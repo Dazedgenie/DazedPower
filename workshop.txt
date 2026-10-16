@@ -3,7 +3,7 @@ id=3817322112
 title=Dazed Power
 description=[b]Disclaimer: this mod was made with AI assistance.[/b] If you're not comfortable with that, please stop reading here.
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/banner.jpg[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/banner.jpg?v=2[/img]
 description=
 description=Off-grid electricity for [b]Build 42[/b]: solar, wind, pedal, water, steam and gas, stored in battery banks and run from a charge controller. Light your base after the shutoff and wire whole houses back up.
 description=
@@ -16,8 +16,8 @@ description=[tr][td][b]Works with[/b][/td][td]Dazed Plumbing, Climate, Cooking, 
 description=[tr][td][b]Mod ID[/b][/td][td]DazedPower[/td][/tr]
 description=[/table]
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-first.png[/img]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/first-system.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-first.png?v=2[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/first-system.png?v=2[/img]
 description=[olist]
 description=[*]Place a [b]solar array[/b] in the open, facing the sun.
 description=[*]Place a [b]battery bank[/b] and load it with car batteries.
@@ -26,8 +26,8 @@ description=[*]Run a cable from each part to the controller (right-click, Connec
 description=[/olist]
 description=The in-game [b]Dazed Mod Suite Guide[/b] (the book button on the left sidebar) walks through the rest.
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-make.png[/img]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/sources.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-make.png?v=2[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/sources.png?v=2[/img]
 description=[list]
 description=[*][b]Solar arrays[/b], [b]tracking arrays[/b] that follow the sun (up to 15% more), and a 2x2 [b]Large Solar Array[/b]. Snow, dust and wear cut output.
 description=[*][b]Windmills[/b] that turn to follow the wind, plus a windsock and weather vane to read it.
@@ -38,18 +38,18 @@ description=[*][b]Propane, petrol and wood gas generators[/b] start and stop on 
 description=[*][b]Car alternator[/b]: a parked car with its engine running feeds up to 500 W.
 description=[/list]
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-store.png[/img]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/storage.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-store.png?v=2[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/storage.png?v=2[/img]
 description=[list]
 description=[*][b]Battery banks[/b]: floor racks hold 3, 6 or 8 car batteries, wall boxes 2, 3 or 4. Cold lowers capacity, cycles wear cells, and a low-voltage disconnect protects them.
 description=[*][b]Charge controllers[/b]: Makeshift manages 8 parts, Workshop 24.
 description=[*][b]Load priority[/b]: Essential, Normal or Low per machine. As the batteries run down, Low is cut first.
 description=[/list]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/board.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/board.png?v=2[/img]
 description=Right-click the controller, [b]System monitor[/b]: the analog charge board shows sources and load on two dials, every cell, today's harvest, every circuit, the main isolator and your generators.
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-gear.png[/img]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/gear.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-gear.png?v=2[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/gear.png?v=2[/img]
 description=[list]
 description=[*][b]Transformers[/b] carry power across town and wire whole buildings through Dazed Core's [b]Building Picker[/b]: lights and appliances inside work off your batteries.
 description=[*][b]Charger bench[/b] for loose batteries; any wired part charges a parked car within 10 tiles.
@@ -57,8 +57,8 @@ description=[*][b]Electric fence[/b] stuns zombies, never people. [b]Room cooler
 description=[*][b]Wall gauge[/b], [b]solar lamps[/b], and the [b]Knox County Almanac[/b]: read the sky for a month of weather.
 description=[/list]
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-hazard.png[/img]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/hazards.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-hazard.png?v=2[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/hazards.png?v=2[/img]
 description=[list]
 description=[*]Wiring a live system can burn your hand. Switch the controller off first.
 description=[*]Thunderstorms can trip the isolator or damage the controller. A [b]grounding rod[/b] near the controller takes the strike.
@@ -66,11 +66,11 @@ description=[*]A Makeshift bank charged hard in a closed room builds up hydrogen
 description=[*]A generator under a roof fills the building with fumes. Run it outside.
 description=[/list]
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-tiers.png[/img]
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/tiers.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-tiers.png?v=2[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/tiers.png?v=2[/img]
 description=Most parts come as [b]Makeshift[/b], [b]Salvaged[/b] or [b]Workshop[/b]. Learn them from the [i]Dazed Power Handbook[/i] and [i]Workshop Power Systems[/i], or find solar rigs on houses around Knox County. Electricians know every Makeshift build. Anything over 30 kg is carried as parts.
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-works.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-works.png?v=2[/img]
 description=[list]
 description=[*][b]Dazed Plumbing[/b]: generators and steam engines feed from piped tanks; pumps, purifier, fuel pump and drilled well run off your controller.
 description=[*][b]Dazed Climate[/b]: heater and cooler change room temperature; batteries and engines feel the cold.
@@ -79,10 +79,10 @@ description=[*][b]Dazed Essentials[/b]: bulk jobs leave powered machines alone.
 description=[*][b]Electric Vehicles[/b]: charge homemade EVs from your banks.
 description=[/list]
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-sandbox.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-sandbox.png?v=2[/img]
 description=14 options, from array output and battery wear to lightning, cable cost and found solar gear. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-compat.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-compat.png?v=2[/img]
 description=[list]
 description=[*]Build 42 only.
 description=[*]Do not run it alongside Off-Grid: Solar Power; Dazed Power replaces it.
@@ -90,7 +90,7 @@ description=[*][b]Dazed Dank[/b]: Dank gear works in a building Power has wired,
 description=[*]Multiplayer has not been tested on a dedicated server yet. If something desyncs, please tell me.
 description=[/list]
 description=
-description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-help.png[/img]
+description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-help.png?v=2[/img]
 description=Post in the Discussions tab or open an issue on [url=https://github.com/Dazedgenie/DazedPower]GitHub[/url]. Include your game version, the Dazed mods you run, and your console.txt if there is an error.
 description=
 description=[hr][/hr]
