@@ -86,7 +86,7 @@ description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/mai
 description=[list]
 description=[*]Build 42 only.
 description=[*]Do not run it alongside Off-Grid: Solar Power; Dazed Power replaces it.
-description=[*][b]Dazed Dank[/b]: Dank gear works in a building Power has wired, but Dank does not register it as Power loads, so load priority skips it.
+description=[*][b]Dazed Dank[/b] (0.57 and up, with Dazed Core 1.8.4): grow lights, grow room fans, heaters, ACs and humidifiers, hydro and drip pumps and the drying fan are Power loads. Cable one to a controller or transformer and it is billed on the LOADS page, shows in Load Priority (Grow lights, Fans, Hydro pumps, Grow climate) and goes dark when it is cut. Dank gear takes no controller slot. Gear you do not cable keeps running off a lit square, free, as before.
 description=[*]Multiplayer has not been tested on a dedicated server yet. If something desyncs, please tell me.
 description=[/list]
 description=
@@ -101,6 +101,6 @@ description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.8.4[/i]
+description=[i]Mod ID: DazedPower · Version 0.8.5[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=unlisted

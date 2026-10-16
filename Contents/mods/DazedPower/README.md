@@ -174,7 +174,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
     runs it feeds the system (up to 500 W, less with a worn engine). It unhooks itself if the car drives off.
   - **Fix:** items made before 0.3.1 (whose tile moved to `dazedpower_02`) showed in the inventory but the Place cursor
     found nothing to place. They are healed on their own within a minute of joining.
-  - **Dazed Dank:** default load priorities for its hydro pumps (Essential), grow lights (Normal) and drying fans (Low).
+  - **Dazed Dank:** grow lights, fans, climate gear (heater, AC, humidifiers) and hydro pumps register as loads through Dazed Core (Power 0.8.5, Core 1.8.4, Dank 0.57.0). They take no controller slots and follow load priority: pumps Essential, grow lights and climate Normal, fans Low. Dank gear that is not cabled keeps running off the square's power and is not billed.
   - **Electric fence** (Workshop Power Systems, Electricity 3, Welding 2). A zombie on or beside a live
     section is knocked down and stunned, with a little damage, 5 Wh from the racks a zap.
     5 W standing draw on the LOADS page; its menu shows On/Off with the reason and today's zaps.

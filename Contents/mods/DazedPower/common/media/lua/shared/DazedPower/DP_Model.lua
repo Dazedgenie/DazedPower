@@ -2287,6 +2287,8 @@ end
 --  (M.cableReach's default).
 M.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true }
 M.LOAD_KINDS = { waterpump = true, purifier = true }
+-- Load kinds whose registration says `slotless` (Dank's gear): they cable, bill and shed but use no controller slot.
+M.SLOTLESS_KINDS = {}
 M.INSTRUMENT_KINDS = { windsock = true, vane = true, rod = true }
 -- A wall gauge only reads a system: it lands on any wired part, nothing lands on it, and it takes no
 -- controller slot (M.countsAsNode).
@@ -2333,7 +2335,7 @@ end
 
 --- Whether a part of this kind uses one of the controller's managed slots (M.CTRL_SPEC nodes).
 function M.countsAsNode(kind)
-    return not M.METER_KINDS[kind]
+    return not M.METER_KINDS[kind] and not M.SLOTLESS_KINDS[kind]
 end
 
 --- Electric Wire a cable of `dist` tiles costs, one per `tilesPer` tiles and never under one; 0 tiles

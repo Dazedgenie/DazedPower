@@ -33,6 +33,7 @@ end
 function W.identify(obj)
     local l = W.loadOf(obj)
     if not l then return nil end
+    W.syncKinds()
     M.LOAD_KINDS[l.kind] = true
     return { kind = l.kind, mount = "ground", tier = "salvaged", state = "set", facing = "S", piece = 1, pieces = 1, master = true, load = l }
 end
@@ -58,13 +59,32 @@ function W.controllerOf(obj)
     return nil
 end
 
---- Is this machine wired to a controller whose output is live right now?
-function W.poweredByWire(obj)
+-- nil when the machine is not wired to a controller, else whether the wire feeds it right now.
+local function verdict(obj)
     local _, cd = W.controllerOf(obj)
-    if not (cd ~= nil and cd.powered == true and cd.online == true and not cd.trip and not cd.lvd) then return false end
+    if cd == nil then return nil end
+    if not (cd.powered == true and cd.online == true and not cd.trip and not cd.lvd) then return false end
     local l = W.loadOf(obj)
     local Pr = DazedPower.Priority
     return not (l and Pr and Pr.shed(cd, l.kind))
+end
+
+--- Is this machine wired to a controller whose output is live right now?
+function W.poweredByWire(obj)
+    return verdict(obj) == true
+end
+
+--- Make sure every registered load's kind is known to the model (the Load Priority menu and the wiring rules read
+--  LOAD_KINDS and SLOTLESS_KINDS on the client too, where a load may not have been identified yet).
+local synced = -1
+function W.syncKinds()
+    local n = #DW.order
+    if n == synced then return end
+    synced = n
+    for _, l in pairs(DW.loads) do
+        M.LOAD_KINDS[l.kind] = true
+        if l.slotless then M.SLOTLESS_KINDS[l.kind] = true end
+    end
 end
 
 --- The load kind, its rated watts and whether it is drawing them now.
@@ -78,9 +98,13 @@ end
 function W.install()
     DW.registerProvider({ id = "dazedpower_wire", isPowered = function(obj)
         if not W.loadOf(obj) then return nil end
-        return W.poweredByWire(obj)
+        return verdict(obj)     -- nil: not wired; false: wired but cut
     end })
 end
+
+-- Boot, and again at game start in case an add-on registers its loads later in the boot (syncKinds is cheap when nothing new).
+if Events and Events.OnGameBoot then Events.OnGameBoot.Add(W.syncKinds) end
+if Events and Events.OnGameStart then Events.OnGameStart.Add(W.syncKinds) end
 
 if not W.wrapped then
     W.wrapped = true

@@ -20,16 +20,16 @@
 World seeding (loot tables), charger bench, vehicle charging, battery ageing, load priority, micro-hydro, biogas
 digester (Plumbing 0.12), hydrogen risk, grounding rod and lightning, sandbox presets, and Plumbing's fuel pump.
 
-Still open: cross-mod loads for Dazed Dank (the registry is ready; Dank has to register), Blender art for the
+Still open: Blender art for the
 rod, bench and wheel, and the in-game and dedicated-server passes.
 
-## Next (agreed 2026-10-04) -- coded in Power 0.4.0, Plumbing 0.14.0, Core 1.2.0, Dank branch `dazedpower-loads`; not yet run in game
+## Next (agreed 2026-10-04) -- coded in Power 0.4.0, Plumbing 0.14.0, Core 1.2.0, Dank loads (done in Power 0.8.5, Core 1.8.4, Dank 0.57.0); not yet run in game
 
 Power
 - Car as a generator: a parked car with its engine running and a wired node within 10 tiles charges the bank from its
   alternator, burning petrol, with engine noise.
 - Electric fence: a wired fence section; a zombie touching it is knocked down and stunned, with small damage and watts per hit (coded, unreleased).
-- Dazed Dank loads: grow lights, fans and the reservoir pump register as loads and follow priority.
+- Dazed Dank loads: grow lights, fans, climate gear and pumps register as loads and follow priority (done 0.8.5, untested in game).
 - Cold room (with Dazed Butchery): a wall cooler unit; every container in its room keeps food like a fridge while
   powered; watts scale with room size (the Power side coded, unreleased: the room cooler).
 

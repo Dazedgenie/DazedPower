@@ -99,6 +99,35 @@ return function(check, E)
     local W = DazedPower.More.Water
     check(W and W.poweredByWire ~= nil, "the wired-machine power check exists")
 
+    -- an add-on's registered load (Dank's lamp): billed while working, cut by priority, slotless, tri-state provider
+    do
+        local DC = DazedCore.Power
+        local getSquare1 = getSquare
+        getSquare = function(x, y, z) return E.squares[x .. "," .. y .. "," .. (z or 0)] end
+        local working = true
+        DC.registerLoad({ id = "testlamp", kind = "growlight", slotless = true,
+            match = function(o) return o.sprite == "testlamp_1" end,
+            watts = function() return 300 end, working = function() return working end })
+        local ctrl = E.object(P.sprite("controller", "ground", "makeshift", "on", "S"), E.square(70, 70, 0))
+        local cdat = P.data(ctrl)
+        cdat.online, cdat.powered, cdat.trip, cdat.lvd = true, true, nil, nil
+        local lamp = E.object("testlamp_1", E.square(72, 70, 0))
+        check(DC.feeds(lamp) == nil and W.poweredByWire(lamp) == false, "an unwired load: the provider answers nil, not false")
+        local nk = M.nodeKey
+        cdat.wire = M.wireAdd("", nk(72, 70, 0, "growlight"), nk(70, 70, 0, "controller"))
+        lamp:getModData().dazedpower = { sys = nk(70, 70, 0, "controller") }
+        W.syncKinds()
+        check(M.LOAD_KINDS.growlight and M.SLOTLESS_KINDS.growlight and not M.countsAsNode("growlight"), "syncKinds files the kind, slotless")
+        check(DC.feeds(lamp) == true and DC.draw(lamp) == 300, "a wired load is fed and draws its rated watts while working")
+        Pr.update(cdat, 0.30, 0.2)
+        check(DC.feeds(lamp) == false and W.poweredByWire(lamp) == false, "shed by priority: the wire verdict is false (cut), not nil")
+        working = false
+        check(DC.draw(lamp) == 0, "a cut load is billed nothing once it stops working")
+        getSquare = getSquare1
+        DC.loads.testlamp, DC.order[#DC.order] = nil, nil
+        M.LOAD_KINDS.growlight, M.SLOTLESS_KINDS.growlight = nil, nil
+    end
+
     ------------------------------------------------------------ sandbox presets
     local sv0 = SandboxVars
     SandboxVars = { DazedPower = { OutputScale = 100, CableTilesPerWire = 4 }, DazedCore = { Preset = 1 } }

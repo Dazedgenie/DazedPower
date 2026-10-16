@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.5 (2026-10-16)
+- New: Dazed Dank gear (0.57+) can be a Power load through Dazed Core 1.8.4. Cabled grow lights, fans, pumps, heaters, ACs and humidifiers are billed on the LOADS page (GROW LIGHTS, FANS, HYDRO PUMPS, GROW CLIMATE), listed in Load Priority and cut by priority, LVD, trip or offline. Loads registered as slotless take no controller slot (Dank's do); they still cable to a controller or transformer.
+- Fixed: the Load Priority menu on a client missed load kinds from other mods (Dank, Plumbing's fuel pump and well) until the player had right-clicked one of their machines. Load kinds are now filed at boot and game start.
+- Changed: the wire verdict handed to Core is now three-way (fed, cut, not wired). Core's wired() treats cut and not wired alike, so Plumbing is unchanged.
+
 ## 0.8.4 (2026-10-16)
 - Battery racks take add-on batteries that are not car batteries. A cell now counts for its type's weight (Model.registerCellWeight, default 1), so a smaller or bigger battery takes its relative share of the rack (a makeshift cell is a third of a car battery). The rack keeps the battery's fill fraction and relative size, not an exact Wh figure; the printed Wh only holds in a salvaged-tier rack. The weight is saved on each cell, and a cell whose item type vanished is never swapped for a car battery. Wear and equalisation use the cells' summed weights. Dazed Power: Electric Vehicles registers its makeshift and deep-cycle batteries. Existing racks are unchanged.
 
