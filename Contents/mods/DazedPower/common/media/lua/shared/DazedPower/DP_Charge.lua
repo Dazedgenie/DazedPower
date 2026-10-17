@@ -6,6 +6,7 @@
 
 require "DazedPower/DP_Parts"
 require "DazedPower/DP_Model"
+require "DazedPower/DP_Anim"
 
 DazedPower = DazedPower or {}
 DazedPower.Charge = DazedPower.Charge or {}
@@ -139,8 +140,7 @@ if ISBaseTimedAction then
     end
     function DP_ChargeAction:update() self.character:faceThisObject(self.node) end
     function DP_ChargeAction:start()
-        self:setActionAnim("Loot")
-        self.character:reportEvent("EventLootItem")
+        DazedPower.Anim.play(self, "press", { event = true })
     end
     function DP_ChargeAction:stop() ISBaseTimedAction.stop(self) end
     function DP_ChargeAction:perform() ISBaseTimedAction.perform(self) end

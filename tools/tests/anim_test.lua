@@ -222,4 +222,119 @@ return function(check, E)
         DPM_Treadmill.setVar(c2, "DazedTreadmillSpeed", 1)
         check(c2.vars.DazedTreadmillSpeed == "1", "with no float setter the speed goes as text")
     end
+
+    -- Work clips (0.15.0): each machine job plays its own clip, and falls back to the vanilla animation it used before.
+    do
+        local An = DazedPower.Anim
+        check(An ~= nil and An.play ~= nil, "the work clip module loads")
+        local media = (arg and arg[1] or "../../Contents/mods/DazedPower/common/media/lua") .. "/../"
+        local function slurp(path)
+            local f = io.open(path, "rb")
+            local txt = f and f:read("*a")
+            if f then f:close() end
+            return txt
+        end
+        -- The pedal clip's animated bones, in order: every work clip must animate exactly these.
+        local function bones(txt)
+            local out = {}
+            for b in txt:gmatch("Animation {%s*{ (%S+) }") do out[#out + 1] = b end
+            return table.concat(out, " "), #out
+        end
+        local pedalBones, pedalN = bones(slurp(media .. "anims_X/Bob/Bob_DazedPedalSalvaged.X") or "")
+        local seen = {}
+        for name, node in pairs(An.NODES) do
+            local xml = slurp(media .. "AnimSets/player/actions/" .. node .. ".xml")
+            check(xml ~= nil, node .. ".xml exists")
+            if xml then
+                check(xml:match("^<%?xml") and select(2, xml:gsub("<animNode>", "")) == 1 and xml:find("</animNode>%s*$"), node .. ".xml is one animNode")
+                local g = xml:match('x_name="([%w%-]+)"')
+                check(g and not seen[g], node .. " has its own condition GUID")
+                seen[g or ""] = true
+                check(xml:find("<m_Name>" .. node .. "</m_Name>", 1, true) and xml:find("<m_AnimName>Bob_" .. node .. "</m_AnimName>", 1, true),
+                    node .. " plays Bob_" .. node)
+                check(xml:find("<m_Name>PerformingAction</m_Name>%s*<m_Type>STRING</m_Type>%s*<m_Value>" .. node .. "</m_Value>"),
+                    node .. " is chosen by setActionAnim(\"" .. node .. "\")")
+                check(xml:find("<boneName>Dummy01</boneName>", 1, true) and xml:find("<boneName>Translation_Data</boneName>", 1, true),
+                    node .. " keeps the pedal's bone weights")
+            end
+            local x = slurp(media .. "anims_X/Bob/Bob_" .. node .. ".X")
+            check(x ~= nil, "anims_X/Bob/Bob_" .. node .. ".X exists")
+            if x then
+                check(x:sub(1, 16) == "xof 0303txt 0032" and x:find("AnimationSet Bob_" .. node .. " {", 1, true), "Bob_" .. node .. ".X is a text .X naming its set")
+                local b, n = bones(x)
+                check(pedalN == 46 and n == pedalN and b == pedalBones, "Bob_" .. node .. ".X animates the pedal clip's " .. pedalN .. " bones in order (" .. n .. ")")
+            end
+        end
+
+        -- A stand-in action and character; `throws` makes setActionAnim fail for the custom nodes.
+        local function fake(throws)
+            local c = { vars = {}, events = {} }
+            function c:SetVariable(k, v) assert(type(v) == "string") self.vars[k] = v end
+            function c:reportEvent(e) self.events[#self.events + 1] = e end
+            local sd = { kind = "screwdriver" }
+            function c:getInventory()
+                return { getFirstTagRecurse = function(_, tag) return tag == "SD" and sd or nil end,
+                         getFirstTypeRecurse = function() return nil end }
+            end
+            local a = { character = c, sd = sd }
+            function a:setActionAnim(n)
+                if throws and n ~= "Loot" and n ~= "ExamineVehicle" then error("no node " .. n) end
+                self.anim = n
+            end
+            function a:setOverrideHandModels(r, l) self.right, self.left = r, l end
+            return a, c
+        end
+        local it0 = ItemTag
+        ItemTag = setmetatable({ SCREWDRIVER = "SD" }, { __index = it0 })
+        local cases = {
+            { "DPM_InstallGear", DPM_InstallGear, "DazedTinker", "Low", true },
+            { "DPM_Repair", DPM_Repair, "DazedTinker", "Low", true, true },
+            { "DP_RepairArray", DP_RepairArray, "DazedTinker", "Low", true, true },
+            { "DP_GenPanelAction", DP_GenPanelAction, "DazedTinker", "Mid", false },
+            { "DP_ChargeAction", DP_ChargeAction, "DazedPress", nil, true },
+            { "DP_HeaterSwitch", DP_HeaterSwitch, "DazedPress", "Low", false },
+            { "DP_ResetBreaker", DP_ResetBreaker, "DazedPress", nil, true },
+            { "DP_RunCable", DP_RunCable, "DazedRunCable", "Low", false },
+        }
+        local on0 = DazedCore.Options.on
+        for _, k in ipairs(cases) do
+            local label, cls, node, pos, event, tool = k[1], k[2], k[3], k[4], k[5], k[6]
+            check(cls ~= nil and cls.start ~= nil, label .. " exists")
+            if cls and cls.start then
+                local a = fake(false)
+                cls.start(a)
+                check(a.anim == node, label .. " plays " .. node .. " (got " .. tostring(a.anim) .. ")")
+                if tool then check(a.right == a.sd and a.left == nil, label .. " shows the screwdriver in the right hand") end
+                -- The setter throws: the vanilla animation, exactly as before 0.15.0.
+                local b, cb = fake(true)
+                cls.start(b)
+                check(b.anim == "Loot" and cb.vars.LootPosition == pos and ((#cb.events == 1) == event),
+                    label .. " falls back to Loot" .. (pos and (" " .. pos) or "") .. (event and " with the loot event" or ""))
+                -- The player unticked the work clips.
+                DazedCore.Options.on = function(mod, id) if mod == "DazedPower" and id == "WorkAnims" then return false end return on0(mod, id) end
+                local d, cd = fake(false)
+                cls.start(d)
+                DazedCore.Options.on = on0
+                check(d.anim == "Loot" and cd.vars.LootPosition == pos, label .. " plays Loot with the work clips turned off")
+            end
+        end
+        -- Reading the sky: own clip, ExamineVehicle as the fallback, hands always empty.
+        do
+            local a = fake(false); DP_ReadSky.start(a)
+            check(a.anim == "DazedReadSky" and a.right == nil and a.left == nil, "reading the sky plays DazedReadSky, hands empty")
+            local b, cb = fake(true); DP_ReadSky.start(b)
+            check(b.anim == "ExamineVehicle" and #cb.events == 0 and cb.vars.LootPosition == nil, "and falls back to ExamineVehicle")
+        end
+        -- No screwdriver carried: the repair still starts, with nothing forced into the hands.
+        do
+            local a, c = fake(false)
+            function c:getInventory() return { getFirstTagRecurse = function() return nil end, getFirstTypeRecurse = function() return nil end } end
+            DP_RepairArray.start(a)
+            check(a.anim == "DazedTinker" and a.right == nil, "without a screwdriver the repair keeps the game's own hand models")
+            local typed = { kind = "typed" }
+            function c:getInventory() return { getFirstTypeRecurse = function(_, t) return t == "Screwdriver" and typed or nil end } end
+            check(An.screwdriver(c) == typed, "a plain Screwdriver is found by type when the tag lookup is missing")
+        end
+        ItemTag = it0
+    end
 end

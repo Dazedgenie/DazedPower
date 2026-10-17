@@ -11,6 +11,7 @@ require "DazedPower/DP_Parts"
 require "DazedPower/DP_Model"
 require "DazedPower/DPM_Parts"
 require "DazedPower/DPM_Model"
+require "DazedPower/DP_Anim"
 
 DazedPower = DazedPower or {}
 DazedPower.GenPanel = DazedPower.GenPanel or {}
@@ -260,8 +261,7 @@ function DP_GenPanelAction:update()
 end
 
 function DP_GenPanelAction:start()
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Mid")
+    DazedPower.Anim.play(self, "tinker", { position = "Mid" })
 end
 
 function DP_GenPanelAction:stop()

@@ -32,6 +32,8 @@ local function register()
         function() if DazedPower.Sidebar and DazedPower.Sidebar.refresh then DazedPower.Sidebar.refresh() end end)
     -- Sit on a pedal generator and ride it (the seated animation), or pedal it by hand from beside it.
     DazedCore.Options.tick(O.MOD, "PedalRide", "IGUI_DazedPower_OptPedalRide", true, "IGUI_DazedPower_OptPedalRideTip")
+    -- The work clips at machines (DP_Anim): crouched tinkering, switches, laying cable, reading the sky.
+    DazedCore.Options.tick(O.MOD, "WorkAnims", "IGUI_DazedPower_OptWorkAnims", true, "IGUI_DazedPower_OptWorkAnimsTip")
 end
 
 --- Does this player want the almanac button on the sidebar? True unless the option exists and is unticked.

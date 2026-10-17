@@ -476,6 +476,8 @@
     "IGUI_DazedPower_OptWindSpinTip": "Turning windmills spin and broken ones rock in the wind. Only on your screen; untick it to save a little work on slow machines.",
     "IGUI_DazedPower_OptPedalRide": "Ride pedal generators",
     "IGUI_DazedPower_OptPedalRideTip": "Sit on the saddle and pedal. Untick to work the pedals from beside the machine instead.",
+    "IGUI_DazedPower_OptWorkAnims": "Work animations",
+    "IGUI_DazedPower_OptWorkAnimsTip": "Dazed Power's own animations for repairs, switches, laying cable and reading the sky. Untick to use the game's plain looting animation instead.",
     "IGUI_DazedPower_DebugBanks": "Spawn every battery rack fill level around me",
     "IGUI_DazedPower_WoodGasWarming": "warming up the gasifier, {1}%%",
     "IGUI_DazedPower_WoodGasChoked": "grate choked with ash",

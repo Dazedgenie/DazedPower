@@ -5,6 +5,7 @@ require "TimedActions/ISBaseTimedAction"
 require "DazedPower/DP_Parts"
 require "DazedPower/DP_Model"
 require "DazedPower/DP_Priority"
+require "DazedPower/DP_Anim"
 
 DazedPower = DazedPower or {}
 DazedPower.Appliances = DazedPower.Appliances or {}
@@ -306,8 +307,7 @@ function DP_HeaterSwitch:update()
 end
 
 function DP_HeaterSwitch:start()
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Low")
+    DazedPower.Anim.play(self, "press", { position = "Low" })
 end
 
 function DP_HeaterSwitch:stop()

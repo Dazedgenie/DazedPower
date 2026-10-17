@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.15.0 (2026-10-17)
+- Animations: **machine work has its own animations** instead of the generic looting one.
+  - **Tinkering** (crouched at the machine, one hand braced on it, the other turning a screwdriver at one spot and then the next): repairing a damaged part (solar arrays and every added machine), fitting a pedal gear set, and the generator controller's panel. Repairs show the screwdriver you carry in your hand.
+  - **Pressing a switch** (reach, press, hold, let go): the heater switch, charging a battery, and resetting a breaker.
+  - **Laying cable** (squatting, feeding the cable along the ground hand over hand): running and cutting cable.
+  - **Reading the sky** (head up, a hand shading the eyes, a slow look from one side to the other) for the weather almanac.
+- New client option **Work animations** (on the Dazed Core options page, on by default): untick it to go back to the game's own animations for all of these, exactly as in 0.14.0.
+- Four new clips in `anims_X/Bob` (`Bob_DazedTinker`, `Bob_DazedPress`, `Bob_DazedRunCable`, `Bob_DazedReadSky`) with their AnimSet nodes, built on the vanilla Bob skeleton like the pedal and pull-start clips.
+- Built and checked headless (contact sheets of every clip on the Bob mesh, a file checker, Lua tests); not yet run in game.
+
 ## 0.14.0 (2026-10-17)
 - Effects: **the turning machines move.** Near you (25 tiles) and on screen:
   - **Water wheel:** while it turns, the wheel is drawn sharp instead of as a blur and its paddles go round, with water tipping off the chute and spray below. A badly worn wheel turns slower.

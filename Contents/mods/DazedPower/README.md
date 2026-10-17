@@ -1,4 +1,4 @@
-# Dazed Power  (v0.14.0, Build 42)
+# Dazed Power  (v0.15.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
@@ -49,6 +49,21 @@ have a tracking array, and Workshop rigs a Workshop controller.
 
 Not included: the roof (flat) panel mount, the converted vanilla "backup" generator (the gas generators
 replace it), the Turkish translation.
+
+## Test in game (0.15.0, work animations)
+
+Built and checked headless only: `tools/blender/dp_work.py` writes the clips, `dp_xcheck.py` checks them against the
+pedal clip, `dp_clipsheet.py` draws them on the Bob mesh, `anim_test.lua` checks the hookup. Nobody has seen these
+clips in the game yet, so the first job is that nothing breaks. With a screwdriver, scrap and screws, a damaged part,
+a pedal gear set, a heater, a charging bench, a controller and cable: **repair** a damaged array and an added machine
+(crouched tinkering, screwdriver in the right hand), **fit a gear set** (tinkering, empty hands or whatever you hold),
+open the **generator controller's panel** (tinkering), flip a **heater switch**, **charge** a battery and **reset a
+breaker** (the press: reach, press, let go), **run and cut a cable** (squatting, hand over hand), and **read the sky**
+(head back, hand shading the eyes). For each: no T-pose, no hands-up "default" pose, no sliding or sinking feet,
+faces the machine, loops without a jump, and the action finishes and does its job. Watch the screwdriver: does it sit
+in the palm and point sensibly? Then untick **Work animations** (options, Dazed Core page) and every one of these goes
+back to the 0.14.0 looting animation (ExamineVehicle for the sky). With a skirt or dress on, laying cable: the hem
+stays off the floor. Multiplayer: a second player sees the same animations.
 
 ## Test in game (0.14.0, turning machines: windmill, water wheel, treadwheel, windsock)
 
@@ -142,12 +157,27 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   `python tools/import_art.py <out>/dp` and `python tools/make_depth.py`.
 - `tools/blender/dp_pedal.py` builds the seated pedalling animations (one per tier) (plain Python with numpy, or in Blender for a
   preview); `tools/blender/dp_pullstart.py` the pull-start one.
+- `tools/blender/dp_work.py` builds the work clips (tinker, press, run cable, read sky) and their AnimSet nodes, plain
+  Python with numpy: `python3 tools/blender/dp_work.py`. It takes the skeleton and mesh from `Bob_SquatLoop.X` when
+  `PZ_ANIMS` points at the game's `anims_X/Bob`, otherwise from the mod's own pull-start clip (same header). Check with
+  `python3 tools/blender/dp_xcheck.py <Bob_DazedPedalSalvaged.X> <clips...>` (header, bones, keys, loop) and look at
+  `python3 tools/blender/dp_clipsheet.py <out.png> <clips...> [--box x0,x1,z0,z1,h] [--frames N] [--big]` (contact
+  sheet on the skinned Bob mesh, no Blender needed).
 - `tools/tests/load_test.lua` (at the repo root, outside the uploaded mod) loads every file on a stand-in engine and
   runs smoke checks: `sh tools/tests/run_all.sh [<DazedCore lua root>]` from the repo root. The default core is the
   sibling `dazedcore` repo (`../dazedcore/Contents/mods/DazedCore/common/media/lua`); `DAZEDCORE_LUA` also sets it.
 
 ## Changes
 
+- **0.15.0 (work animations).** New `DP_Anim` (shared): `A.play(action, clip, how)` sets the clip's AnimSet node
+  (`tinker` DazedTinker, `press` DazedPress, `cable` DazedRunCable, `sky` DazedReadSky) and otherwise the vanilla
+  animation `how` describes (`anim`, default Loot; `position` for LootPosition; `event` for EventLootItem), the same
+  as each action did before; the fallback also covers the client tick box `WorkAnims` being off and a throwing
+  setter. `A.screwdriver` / `A.hold` put the carried screwdriver in the right hand for the two repairs. Users:
+  DPM_InstallGear, DPM_Repair, DP_RepairArray, DP_GenPanelAction (tinker); DP_HeaterSwitch, DP_ChargeAction,
+  DP_ResetBreaker (press); DP_RunCable (cable); DP_ReadSky (sky). Clips from `tools/blender/dp_work.py`: the
+  pull-start crouch (its frame 0) re-posed with two-bone IK, feet kept planted; Prop1/Prop2 follow the hands at the
+  standing rest pose's hand-to-prop offset; every clip loops (last key = first).
 - **0.14.0 (turning machines).** `DP_MachineFx` learned looks picked from more than the state (`spec.modeOf`), several
   cycling looks per kind (`spec.cycles`), a speed per machine (`spec.rate`, frames a second; its phase only advances
   while the game runs, at most `MAX_DT` a step; the frame job runs every `FAST_MS` = 40 ms while such a cycle is on

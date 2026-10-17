@@ -14,6 +14,7 @@ require "DazedPower/DP_Env"
 require "DazedPower/DPM_Stats"
 require "DazedPower/DPM_Parts"
 require "DazedPower/DPM_Model"
+require "DazedPower/DP_Anim"
 
 local P = DazedPower.Parts
 local R = DazedPower.More.Parts
@@ -264,9 +265,8 @@ function DPM_InstallGear:update()
 end
 
 function DPM_InstallGear:start()
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Low")
-    self.character:reportEvent("EventLootItem")
+    -- The work clip (DP_Anim); Loot low if the player turned the clips off.
+    DazedPower.Anim.play(self, "tinker", { position = "Low", event = true })
 end
 
 function DPM_InstallGear:stop()
@@ -900,9 +900,8 @@ end
 function DPM_Repair:update() self.character:faceThisObject(self.object) end
 
 function DPM_Repair:start()
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Low")
-    self.character:reportEvent("EventLootItem")
+    DazedPower.Anim.play(self, "tinker", { position = "Low", event = true })
+    DazedPower.Anim.hold(self, DazedPower.Anim.screwdriver(self.character))
 end
 
 function DPM_Repair:stop() ISBaseTimedAction.stop(self) end

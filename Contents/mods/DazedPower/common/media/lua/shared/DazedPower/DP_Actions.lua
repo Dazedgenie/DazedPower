@@ -12,6 +12,7 @@
 require "TimedActions/ISBaseTimedAction"
 require "DazedPower/DP_Parts"
 require "DazedPower/DP_Almanac"
+require "DazedPower/DP_Anim"
 
 local P = DazedPower.Parts
 local M = DazedPower.Model
@@ -363,8 +364,7 @@ function DP_ResetBreaker:update()
 end
 
 function DP_ResetBreaker:start()
-    self:setActionAnim("Loot")
-    self.character:reportEvent("EventLootItem")
+    DazedPower.Anim.play(self, "press", { event = true })
 end
 
 function DP_ResetBreaker:stop()
@@ -471,8 +471,7 @@ function DP_RunCable:update()
 end
 
 function DP_RunCable:start()
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Low")
+    DazedPower.Anim.play(self, "cable", { position = "Low" })
 end
 
 function DP_RunCable:stop()
@@ -549,9 +548,8 @@ function DP_RepairArray:update()
 end
 
 function DP_RepairArray:start()
-    self:setActionAnim("Loot")
-    self.character:SetVariable("LootPosition", "Low")
-    self.character:reportEvent("EventLootItem")
+    DazedPower.Anim.play(self, "tinker", { position = "Low", event = true })
+    DazedPower.Anim.hold(self, DazedPower.Anim.screwdriver(self.character))
 end
 
 function DP_RepairArray:stop()
@@ -651,7 +649,9 @@ function DP_ReadSky:start()
     -- ISOpenMechanicsUIAction. Never CharacterActionAnims.None: no node
     -- carries that value, so the actions state falls through to
     -- default-fallback.xml and the survivor stands there hands raised.
-    self:setActionAnim("ExamineVehicle")
+    -- Since 0.15.0 the own clip (head up, hand shading the eyes, DP_Anim) plays,
+    -- with ExamineVehicle kept as the fallback.
+    DazedPower.Anim.play(self, "sky", { anim = "ExamineVehicle" })
     self:setOverrideHandModels(nil, nil)
 end
 
