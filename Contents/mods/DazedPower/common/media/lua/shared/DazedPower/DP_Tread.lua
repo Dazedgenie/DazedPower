@@ -3,8 +3,8 @@
      1. Knock a zombie down (a shove, a hit, the electric fence) and, while it is on the floor, tie a rope
         round it (DP_TieZombie, a short timed action that fails if it gets up first). The rope is used up.
      2. Walk it home. The tied zombie is made "useless" (it does not attack) and follows the leader on the
-        rope: it is asked to path after them, and when the rope goes taut it is pulled along, never through a
-        wall or a fence. Running or sprinting with the rope taut can snap it, and so can the zombie being
+        rope: it is stood up, and stepped after them at a shamble each frame (a "useless" zombie may not walk on
+        its own), faster the further behind it falls, never through a wall or a fence. Running or sprinting with the rope taut can snap it, and so can the zombie being
         held back more than SNAP_DIST tiles (stuck behind a fence, a door shut on it). A snapped rope, or
         letting go, frees the zombie and it turns on whoever held it.
      3. Put it on a Zombie Treadwheel within LOAD_REACH tiles. The zombie leaves the world and becomes data on
@@ -46,6 +46,9 @@ T.TIE_TICKS = 150         -- about three seconds at 1x
 T.CHECK_MS = 250          -- the leader's rope check and the owner's nudge
 T.PATH_MS = 750           -- how often a following zombie is asked to path after its leader
 T.LOST_MS = 3000          -- a tied zombie nobody can find for this long has gone (killed, streamed out)
+T.WALK_SPEED = 1.6        -- tiles a second a tied zombie shambles after its leader when the rope is slack-ish
+T.CATCHUP = 3.0           -- and how hard it closes a longer gap (fraction of the excess per second)
+T.STEP_MAX_MS = 100       -- a frame longer than this (a hitch, a pause) steps no further than this one
 
 -- pid -> { pid, zid, rope, x, y, z }: the authority's truth, and each client's mirror of it.
 T.leashes = T.leashes or {}
@@ -54,6 +57,10 @@ T.leashes = T.leashes or {}
 
 local function mp() return (isClient and isClient()) or (isServer and isServer()) or false end
 local function nowMs() return getTimestampMs and getTimestampMs() or 0 end
+local function paused()
+    local ok, v = pcall(function() return isGamePaused and isGamePaused() end)
+    return ok and v == true
+end
 
 --- A zombie's key: its online ID on a server (the same on every machine), its object ID in single player.
 function T.zid(z)
@@ -145,6 +152,18 @@ function T.ropeVerdict(d, floors, running, roll, rope, snapOn)
     local spec = T.ROPES[rope] or T.ROPES["Base.Rope"]
     if running and roll < spec.snap then return "snap" end
     return "taut"
+end
+
+--- Where a tied zombie steps this frame: toward the leader, closing what lies beyond ROPE_LEN at walking pace,
+--  faster the longer the gap. nil while it is within the rope's slack. `dt` is in seconds.
+function T.followTo(zx, zy, lx, ly, dt)
+    local dx, dy = lx - zx, ly - zy
+    local d = math.sqrt(dx * dx + dy * dy)
+    local excess = d - T.ROPE_LEN
+    if excess <= 0.01 or not dt or dt <= 0 then return nil end
+    local move = math.max(T.WALK_SPEED * dt, excess * (1 - math.exp(-T.CATCHUP * dt)))
+    if move > excess then move = excess end
+    return zx + dx / d * move, zy + dy / d * move
 end
 
 --- Where a taut rope pulls the zombie: on the line to the leader, TAUT tiles short of them. nil when slack.
@@ -374,6 +393,7 @@ function T.free(zb, toward)
     if toward and not try(zb, "isRemoteZombie") then pcall(function() zb:setTarget(toward) end) end
 end
 
+T.logged = T.logged or {}     -- zid -> true once the follow loop has reported a leash to the console
 T.found = T.found or {}       -- zid -> { z, at }: the zombie object last found for a leash, and when it was last seen
 
 local function onLeash(args)
@@ -387,6 +407,7 @@ local function onLeashEnd(args)
     if l and l.zid == args.zid then T.leashes[args.pid] = nil end
     local zb = T.found[args.zid] and T.found[args.zid].z or T.findZombie(args.zid)
     T.found[args.zid] = nil
+    T.logged[args.zid] = nil
     local leader = T.playerFor(args.pid)
     if args.why == "loaded" then
         -- Gone on the authority already; this side's copy goes too, in case removal had not reached it.
@@ -446,22 +467,37 @@ local function zombieOf(l, now, leader)
     return nil
 end
 
---- Pull a zombie this machine owns toward its leader, onto a square it can reach from its own.
-local function pull(zb, leader)
-    local zx, zy, lx, ly = zb:getX(), zb:getY(), leader:getX(), leader:getY()
-    local nx, ny = T.pullTo(zx, zy, lx, ly)
-    if not nx then return end
+--- Move a zombie this machine owns to nx, ny, if the square there can be reached from its own.
+local function stepTo(zb, nx, ny)
+    if not nx then return false end
     local from = try(zb, "getCurrentSquare")
     local to = DazedCore.Util.squareAt(math.floor(nx), math.floor(ny), math.floor(zb:getZ()))
-    if not (from and to) then return end
+    if not (from and to) then return false end
     -- Never through a wall, a fence or a closed door: a rope caught on one holds the zombie back.
-    if from ~= to and (try(from, "isBlockedTo", to) or try(to, "isSolid") or try(to, "isSolidTrans")) then return end
+    if from ~= to and (try(from, "isBlockedTo", to) or try(to, "isSolid") or try(to, "isSolidTrans")) then return false end
     zb:setX(nx); zb:setY(ny)
     pcall(function() zb:setLastX(nx) zb:setLastY(ny) end)
     pcall(function() zb:setNextX(nx) zb:setNextY(ny) end)
+    return true
 end
 
-T.lastCheck, T.lastPath = T.lastCheck or {}, T.lastPath or {}
+--- Pull a zombie this machine owns toward its leader when the rope is taut.
+local function pull(zb, leader)
+    local nx, ny = T.pullTo(zb:getX(), zb:getY(), leader:getX(), leader:getY())
+    return stepTo(zb, nx, ny)
+end
+
+--- Get a tied zombie off the floor (it was down to be tied). A crawler stays a crawler, dragged along.
+function T.standUp(zb)
+    if try(zb, "isCrawling") == true then return end
+    pcall(function() zb:setOnFloor(false) end)
+    pcall(function() zb:setKnockedDown(false) end)
+    pcall(function() zb:setFallOnFront(false) end)
+    pcall(function() zb:setFakeDead(false) end)
+    pcall(function() zb:setSitAgainstWall(false) end)
+end
+
+T.lastCheck, T.lastPath, T.lastStep = T.lastCheck or {}, T.lastPath or {}, T.lastStep or {}
 
 --- One frame of every leash this machine can see.
 function T.follow()
@@ -474,15 +510,30 @@ function T.follow()
         local leader = T.playerFor(pid)
         local zb = zombieOf(l, now, leader)
         local owned = zb ~= nil and not try(zb, "isRemoteZombie")
+        if leader and zb and not T.logged[l.zid] then
+            T.logged[l.zid] = true
+            print(string.format("DazedPower: tread leash %s found, owned=%s down=%s floor=%s crawl=%s d=%.1f",
+                tostring(l.zid), tostring(owned), tostring(T.isDown(zb)), tostring(try(zb, "isOnFloor")),
+                tostring(try(zb, "isCrawling")), T.dist(zb, leader)))
+        end
         if leader and zb and owned then
             -- Tied: it does not bite, it does not choose its own target, and it walks after its leader.
             pcall(function() zb:setUseless(true) zb:setNoTeeth(true) zb:setTarget(nil) end)
+            if not l.stood then l.stood = true T.standUp(zb) end
             local d = T.dist(zb, leader)
             if d > T.ROPE_LEN and (not T.lastPath[pid] or now - T.lastPath[pid] >= T.PATH_MS) then
                 T.lastPath[pid] = now
                 pcall(function() zb:pathToLocationF(leader:getX(), leader:getY(), leader:getZ()) end)
             end
-            if d > T.TAUT then pcall(pull, zb, leader) end
+            -- A "useless" zombie may not walk on its own, so the rope walks it: a step a frame, never
+            -- through a wall. Nothing while single player is paused.
+            local dt = math.min(now - (T.lastStep[pid] or now), T.STEP_MAX_MS) / 1000
+            T.lastStep[pid] = now
+            if not paused() then
+                local nx, ny = T.followTo(zb:getX(), zb:getY(), leader:getX(), leader:getY(), dt)
+                if nx then pcall(stepTo, zb, nx, ny) end
+                if T.dist(zb, leader) > T.TAUT then pcall(pull, zb, leader) end
+            end
             pcall(function() zb:faceLocationF(leader:getX(), leader:getY()) end)
         end
         -- The leader's own client reads the rope and asks the authority to end the leash.

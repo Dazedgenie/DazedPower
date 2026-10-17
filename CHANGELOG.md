@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.15.1 (2026-10-17)
+- Fix: **a zombie tied with a rope now follows you.** It stood where it was tied: it was left lying down, and the "useless" flag that stops it biting also stops it walking on its own, so asking it to path after you did nothing.
+  - Once tied it gets up (a crawler stays a crawler and is dragged).
+  - The rope now walks it: each frame it shambles toward you once you are more than 2.5 tiles away, faster the further behind it is, and stops at the rope's length. A taut rope still pulls it as before, and it is still never moved through a wall, a fence or a closed door. Nothing moves while single player is paused.
+  - The console gets one line per tied zombie (`DazedPower: tread leash ...`) saying whether it was found and whether it was still down, to help if anything is still off.
+- Lua tests cover the follow step, standing up, the rope length and pause; not yet run in game.
+
 ## 0.15.0 (2026-10-17)
 - Animations: **machine work has its own animations** instead of the generic looting one.
   - **Tinkering** (crouched at the machine, one hand braced on it, the other turning a screwdriver at one spot and then the next): repairing a damaged part (solar arrays and every added machine), fitting a pedal gear set, and the generator controller's panel. Repairs show the screwdriver you carry in your hand.

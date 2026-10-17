@@ -67,6 +67,7 @@ return function(check, E)
     function Z:isFemale() return true end
     function Z:isRemoteZombie() return false end
     function Z:setUseless(b) self.useless = b end
+    function Z:setOnFloor(b) self.down = b end
     function Z:setNoTeeth(b) self.noTeeth = b end
     function Z:setTarget(t) self.target = t end
     function Z:pathToLocationF() self.pathed = (self.pathed or 0) + 1 end
@@ -139,6 +140,31 @@ return function(check, E)
     check(T.sweep() == 1 and T.leashes[3] == nil and T.leashOf(player) ~= nil, "the sweep drops a leash whose owner is offline, and only that")
 
     ------------------------------------------------------------ walking it
+    -- Pure: the step a frame toward the leader.
+    check(T.followTo(500, 500, 502, 500, 0.1) == nil, "within the rope's slack it stands still")
+    local fx = T.followTo(500, 500, 503, 500, 0.1)
+    check(fx and math.abs(fx - 500.16) < 0.001, "just past the slack it shambles at walking pace: " .. tostring(fx))
+    fx = T.followTo(500, 500, 502.6, 500, 1.0)
+    check(fx and math.abs(fx - 500.1) < 0.001, "and never closes past the rope's length")
+    local far = T.followTo(500, 500, 510, 500, 0.1)
+    check(far - 500 > 0.16, "further behind, it closes faster")
+
+    -- Tied lying down, it gets up and walks after its leader at a slack rope (no AI needed).
+    player.x, player.y = 505.0, 500.5
+    zb.x, zb.y = 501.5, 500.5
+    T.follow()
+    check(zb.down == false, "the tied zombie is stood up")
+    T.follow()
+    check(zb.x > 501.5 and T.dist(zb, player) >= T.ROPE_LEN - 0.001, "it steps toward its leader within the rope: " .. zb.x)
+    for _ = 1, 40 do T.follow() end
+    check(math.abs(T.dist(zb, player) - T.ROPE_LEN) < 0.01, "and stops at the rope's length: " .. T.dist(zb, player))
+    isGamePaused = function() return true end
+    player.x = player.x + 1
+    local px = zb.x
+    T.follow()
+    check(zb.x == px, "nothing steps while single player is paused")
+    isGamePaused = nil
+
     zb.down = false
     player.x, player.y = 510.5, 500.5
     T.follow()
@@ -151,10 +177,11 @@ return function(check, E)
     local from = zb:getCurrentSquare()
     player.x = player.x + 3
     local tx = math.floor(T.pullTo(zb.x, zb.y, player.x, player.y))
-    from.walls = { [tx .. "," .. math.floor(zb.y)] = true }
+    from.walls = {}
+    for wx = math.floor(zb.x) + 1, tx do from.walls[wx .. "," .. math.floor(zb.y)] = true end
     local x0 = zb.x
     T.follow()
-    check(zb.x == x0, "never pulled through a wall or a fence")
+    check(math.floor(zb.x) == math.floor(x0), "never pulled or stepped through a wall or a fence")
     from.walls = nil
 
     -- Running with it taut snaps the rope, and the zombie turns on its leader.
