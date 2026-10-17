@@ -50,7 +50,7 @@ Polish (all three mods)
 - Time-left estimate: a "runs out in about 2 d 6 h" line on the BATT and GEN pages and the wall gauge, from battery
   charge at the current load and fuel left per generator.
 
-## Zombie treadwheel (agreed 2026-10-17; coded in 0.10.0, stand-in art, untested in game)
+## Zombie treadwheel (agreed 2026-10-17; coded in 0.10.0, Blender art in 0.11.1, untested in game)
 
 - One grade for now; more grades later. A tied zombie is walked home on a rope (the leash), then lives on the wheel
   as data and walks it for ever. Release or put it down from the wheel. Rope snap is the hazard (sandbox).

@@ -828,6 +828,172 @@ def woodgas_part(tier, state):
                 p["steel_dark"], rot=(0, 0, rnd.uniform(0, 90)))
 
 
+# ------------------------------------------------------------------ zombie treadwheel
+def stained(col, rough=0.8, amt=0.35, blood="#4e1914", scale=6.0):
+    """A cloth or skin material with dark dried-blood blotches over the usual wear."""
+    key = ("stained", col, rough, amt, blood, scale)
+    if key in MATS: return MATS[key]
+    m = mat(col, rough, var=0.22, dirt=0.35).copy(); m.name = "stained%d" % len(MATS)
+    nt = m.node_tree; b = nt.nodes.get("Principled BSDF")
+    src = b.inputs["Base Color"].links[0].from_socket
+    blot = ramp(nt, noise(nt, scale, 8), 0.66 - amt * 0.25, 0.7 - amt * 0.25)
+    nt.links.new(mix(nt, blot, src, lin(blood)), b.inputs["Base Color"])
+    MATS[key] = m
+    return m
+
+
+TREAD_C = Vector((0.0, 0.0, 0.8))        # the drum's centre: no axle, it rides on four rollers
+TREAD_R = 0.69                           # the iron tyre the rollers bear on
+TREAD_W = 0.27                           # half the drum's width (the hoops), along X; R + W stays inside the cell
+
+
+def zombie_walker(floor, k=0.83):
+    """A shambling zombie mid-stride on the drum's floor (z `floor` at its middle), facing the model front (-Y):
+    grey-green skin, a torn blood-stained shirt and jeans, head lolling, arms reaching ahead. Modelled about 1.45
+    tall and drawn at `k` of that so it fits the drum. Returns its waist, for the rope."""
+    pv = Vector((0, 0, 0.17))
+    HEAD.append(HEAD[-1] @ Matrix.Translation((0, 0, floor)) @ Matrix.Scale(k, 4) @ Matrix.Translation(-pv))
+    skin = stained("#7c9468", 0.75, 0.1, "#5a2a22", 9.0)
+    shirt = stained("#8d9184", 0.85, 0.4, "#4e1914", 5.0)
+    jeans = stained("#3d475c", 0.9, 0.2, "#2a1512", 4.0)
+    shoe = mat("#2a2420", 0.7, dirt=0.3)
+    face = mat("#7c9468", 0.75, var=0.22, dirt=0.2)                       # no blotch, so the face reads grey-green
+    hair = mat("#4a4a44", 0.9, dirt=0.1)
+    # legs mid-stride: the left one planted ahead, the right pushing off behind with its heel up
+    for x, hip, knee, ankle, toe in ((-0.08, (-0.08, 0.0, 0.8), (-0.085, -0.13, 0.5), (-0.085, -0.19, 0.24), (-0.085, -0.3, 0.2)),
+                                     (0.08, (0.08, 0.0, 0.8), (0.085, 0.07, 0.49), (0.085, 0.2, 0.28), (0.085, 0.27, 0.205))):
+        tube(hip, knee, 0.058, jeans, 10, r2=0.05); ball(0.05, knee, jeans, segs=10)
+        tube(knee, ankle, 0.05, jeans, 10, r2=0.042)
+        a, t = Vector(ankle), Vector(toe)
+        tube(a, t, 0.036, shoe, 8, r2=0.03); ball(0.04, a, shoe, segs=10)
+    box((0.27, 0.17, 0.15), (0, 0.0, 0.83), jeans, bevel=0.03)                     # hips
+    # torso leaning into the walk, shoulders hunched forward
+    tube((0, 0.01, 0.84), (0, -0.1, 1.25), 0.13, shirt, 14, r2=0.15)
+    ball(0.15, (0, -0.1, 1.25), shirt, scale=(1.15, 0.8, 0.6), segs=14)
+    box((0.3, 0.03, 0.12), (0.02, -0.03, 0.9), shirt, rot=(18, 0, 6), bevel=0.01)  # a torn shirt-tail flap
+    tube((0, -0.12, 1.3), (0.01, -0.17, 1.38), 0.045, face, 10)                    # neck
+    ball(0.1, (0.025, -0.21, 1.43), face, scale=(0.9, 1.0, 1.08), segs=16)         # head, lolling to one side
+    ball(0.09, (0.03, -0.16, 1.47), hair, scale=(0.95, 0.85, 0.8), segs=14)    # thin hair on the back of the skull
+    for ex in (-0.03, 0.065):
+        ball(0.017, (ex, -0.295, 1.44), mat("#2b1c18", 0.6, dirt=0, wear=False), segs=8)  # sunken eyes
+    box((0.06, 0.01, 0.015), (0.025, -0.3, 1.37), mat("#3a1814", 0.7, dirt=0, wear=False))   # slack mouth
+    # arms out in front, the zombie's reach: torn short sleeves, bare grey forearms
+    for s, sh, el, wr in ((-1, (-0.19, -0.1, 1.26), (-0.2, -0.33, 1.19), (-0.15, -0.55, 1.17)),
+                          (1, (0.19, -0.1, 1.26), (0.21, -0.32, 1.13), (0.17, -0.53, 1.08))):
+        ball(0.065, sh, shirt, segs=12)
+        mid = Vector(sh).lerp(Vector(el), 0.5)
+        tube(sh, mid, 0.06, shirt, 10, r2=0.055)
+        tube(mid, el, 0.042, skin, 10); ball(0.042, el, skin, segs=10)
+        tube(el, wr, 0.038, skin, 10, r2=0.032)
+        w = Vector(wr); d = (w - Vector(el)).normalized()
+        ball(0.04, w + d * 0.03, skin, scale=(0.7, 1.3, 0.6), segs=10)                 # limp hand
+        for f in (-0.022, 0.0, 0.022):
+            tube(w + d * 0.05 + Vector((f, 0, 0)), w + d * 0.1 + Vector((f, 0, -0.03)), 0.009, skin, 6)
+    HEAD.pop()
+    return Vector((0, 0, floor)) + (Vector((0.0, -0.02, 0.86)) - pv) * k
+
+
+def treadwheel_part(state):
+    """A zombie treadwheel: an open slatted drum on two wooden hoops shod with iron tyres, riding on four rollers on
+    a timber base, held upright by guide posts with rollers at the hoops' sides. The back roller drives a car
+    alternator by a belt on the left. Empty, the tether rope hangs off the short post at the front right; walking,
+    a grey-green zombie strides in the drum, tied by the waist to that post."""
+    p = P(); walking = state == "walking"
+    wood = mat("#8b7155", 0.85, var=0.22, dirt=0.4)
+    weath = mat("#7e7262", 0.9, var=0.25, dirt=0.4)
+    dark = p["wood_dark"]
+    iron = mat("#3c3e40", 0.55, 0.45, rust=0.35, dirt=0.3)
+    rope = mat("#b39a6c", 0.9, var=0.15, dirt=0.25)
+    C, R, W = TREAD_C, TREAD_R, TREAD_W
+    # base: two skids along Y, cross ties, roller blocks
+    for x in (-0.4, 0.4): box((0.1, 0.96, 0.09), (x, 0, 0.045), dark, bevel=0.01)
+    for y in (-0.42, 0.42): box((0.9, 0.08, 0.05), (0, y, 0.115), weath, bevel=0.008)
+    rr = 0.05
+    rollers = []
+    for sy in (-1, 1):
+        a = math.radians(38)
+        rc = C + Vector((0, sy * math.sin(a), -math.cos(a))) * (R + rr + 0.012)
+        rollers.append(rc)
+        for x in (-0.4, 0.4): box((0.1, 0.12, rc.z - 0.07), (x, rc.y, 0.09 + (rc.z - 0.07) / 2), wood, bevel=0.01)
+        cyl(0.016, 0.9, rc, iron, axis="X", segs=10)
+        for x in (-W, W): cyl(rr, 0.06, (x, rc.y, rc.z), iron, axis="X", segs=16)
+    # guide posts at the drum's sides, each with a braced foot and a small roller bearing on the hoop
+    for x in (-0.4, 0.4):
+        box((0.07, 0.07, C.z + 0.02), (x, 0, 0.09 + (C.z - 0.07) / 2), wood, bevel=0.008)
+        for sy in (-1, 1): tube((x, sy * 0.3, 0.1), (x, sy * 0.03, 0.5), 0.024, wood, 6)
+        cyl(0.03, 0.06, (x - math.copysign(0.07, x), 0, C.z), iron, axis="X", segs=12)
+        box((0.1, 0.05, 0.05), (x - math.copysign(0.03, x), 0, C.z + 0.05), dark)
+    # the drum: two hoops with iron tyres, slats between them, corner blocks inside the open ends
+    for x in (-W, W):
+        torus(R - 0.032, 0.032, C + Vector((x, 0, 0)), wood, axis="X", seg=56, rseg=6)
+        torus(R - 0.004, 0.011, C + Vector((x, 0, 0)), iron, axis="X", seg=56, rseg=6)
+    n = 24
+    for i in range(n):
+        a = 2 * math.pi * (i + 0.5) / n
+        d = Vector((0, math.sin(a), -math.cos(a)))
+        box((2 * W + 0.05, 0.075, 0.028), C + d * (R - 0.078), weath if i % 3 else wood, rot=(math.degrees(a), 0, 0), bevel=0.006)
+    for x in (-W, W):
+        for k in range(4):
+            a = 2 * math.pi * k / 4 + math.pi / 4
+            d = Vector((0, math.sin(a), -math.cos(a)))
+            box((0.04, 0.045, 0.045), C + Vector((x, 0, 0)) + d * (R - 0.078), dark, rot=(math.degrees(a), 0, 0))
+    # drive: a pulley on the back roller's left end, a belt down to a car alternator on the left skid
+    back = rollers[1]
+    pul = Vector((-0.425, back.y, back.z))
+    cyl(0.055, 0.03, pul, mat("#5d5f61", 0.45, 0.6, rust=0.2), axis="X", segs=24)
+    alt = Vector((-0.4, 0.17, 0.155))
+    box((0.16, 0.18, 0.025), (-0.43, 0.17, 0.077), dark)
+    cyl(0.066, 0.11, alt, mat("#9a9a94", 0.45, 0.55, rust=0.15, dirt=0.35), axis="X", segs=20)
+    for k in range(6): box((0.09, 0.004, 0.02), alt + Vector((0, math.cos(k), math.sin(k))) * 0.064, p["steel_dark"], rot=(math.degrees(k), 0, 0), bevel=0)
+    ap = alt + Vector((-0.05, 0, 0))
+    cyl(0.033, 0.03, ap, p["steel_dark"], axis="X", segs=16)
+    for s in (-1, 1):
+        dd = (pul - ap); nrm = Vector((0, -dd.z, dd.y)).normalized()
+        tube(ap + nrm * 0.033 * s, pul + nrm * 0.055 * s, 0.008, p["rubber"], 6)
+    path([(-0.38, 0.24, 0.17), (-0.34, 0.34, 0.1), (-0.38, 0.46, 0.015), (-0.44, 0.52, 0.012)], 0.007, p["wire_r"])
+    path([(-0.39, 0.23, 0.13), (-0.36, 0.32, 0.06), (-0.41, 0.46, 0.012), (-0.47, 0.5, 0.01)], 0.007, p["wire_k"])
+    # the tether post at the front right, the rope knotted round its head
+    tp = Vector((0.4, -0.36, 0.0))
+    box((0.08, 0.08, 0.74), tp + Vector((0, 0, 0.42)), wood, bevel=0.01)
+    knot = tp + Vector((0, 0, 0.66))
+    torus(0.052, 0.014, knot, rope, seg=16, rseg=6); torus(0.052, 0.014, knot + Vector((0, 0, 0.03)), rope, seg=16, rseg=6)
+    if walking:
+        waist = zombie_walker(C.z - (R - 0.092))
+        torus(0.125, 0.014, waist, rope, seg=20, rseg=6, rot=(8, 0, 0))
+        mid = knot.lerp(waist, 0.5) + Vector((0, 0, -0.05))
+        path([knot + Vector((-0.04, 0.02, 0)), mid, waist + Vector((0.11, -0.02, 0.0))], 0.012, rope, segs=8)
+    else:
+        path([knot + Vector((-0.03, -0.04, -0.01)), knot + Vector((-0.06, -0.07, -0.2)), knot + Vector((-0.05, -0.08, -0.4)),
+              knot + Vector((-0.02, -0.07, -0.5))], 0.012, rope, segs=8)
+        torus(0.065, 0.012, knot + Vector((-0.02, -0.07, -0.56)), rope, seg=18, rseg=6, rot=(0, 75, 20))
+
+
+def treadmill_icon():
+    """The Treadmill Generator for its inventory icon: a gym treadmill (deck, belt, motor hood, uprights, console
+    and rails) with a car alternator bolted to the hood and red and black leads up to the console."""
+    p = P()
+    frame = mat("#3a3c40", 0.5, 0.3, dirt=0.2)
+    grey = mat("#8e9297", 0.4, 0.55, dirt=0.15)
+    box((0.42, 1.1, 0.09), (0, 0.05, 0.065), frame, bevel=0.015)
+    box((0.34, 1.0, 0.012), (0, 0.06, 0.114), mat("#1c1d1f", 0.85, dirt=0.05))
+    for x in (-0.195, 0.195): box((0.05, 1.04, 0.02), (x, 0.06, 0.118), grey, bevel=0.004)
+    for x in (-0.18, 0.18): cyl(0.022, 0.05, (x, 0.58, 0.03), p["rubber"], axis="X", segs=12)
+    box((0.46, 0.22, 0.17), (0, -0.55, 0.105), mat("#4a4d52", 0.45, 0.3, dirt=0.15), bevel=0.03)   # motor hood
+    for x in (-0.2, 0.2): tube((x, -0.52, 0.18), (x, -0.6, 0.95), 0.03, grey, 12)
+    con = Vector((0, -0.63, 1.0))
+    box((0.5, 0.16, 0.2), con, frame, rot=(-30, 0, 0), bevel=0.025)                               # console
+    box((0.22, 0.01, 0.09), con + Vector((0, 0.07, 0.035)), glow("#7fe08a", 4), rot=(-30, 0, 0), bevel=0)
+    for x in (-0.13, 0.15): cyl(0.016, 0.01, con + Vector((x, 0.075, -0.03)), mat("#c23a2e", 0.4), rot=(60, 0, 0), segs=12)
+    for x in (-0.24, 0.24):
+        path([(x * 0.85, -0.6, 0.93), (x, -0.45, 0.82), (x, 0.0, 0.8)], 0.018, grey, segs=10)
+        cyl(0.024, 0.14, (x, -0.12, 0.8), p["rubber"], axis="Y", segs=12)
+    alt = Vector((0.31, -0.58, 0.1))
+    cyl(0.075, 0.13, alt, mat("#9a9a94", 0.45, 0.55, rust=0.1, dirt=0.3), axis="X", segs=20)
+    cyl(0.04, 0.03, alt + Vector((0.08, 0, 0)), p["steel_dark"], axis="X", segs=16)
+    path([(0.3, -0.52, 0.17), (0.24, -0.5, 0.35), (0.23, -0.56, 0.7), (0.2, -0.6, 0.92)], 0.011, p["wire_r"])
+    path([(0.33, -0.52, 0.16), (0.27, -0.48, 0.34), (0.26, -0.55, 0.68), (0.23, -0.59, 0.9)], 0.011, p["wire_k"])
+
+
 def rod_icon():
     """The grounding rod laid down for its inventory icon: a thick copper rod with its clamp and a coil of ground wire."""
     p = P(); cu = mat("#b4703f", 0.35, 0.8, var=0.1, dirt=0.1)
@@ -888,7 +1054,8 @@ except Exception as _e:
 DP_FAMILY = {("array", "ground"): "arrays", ("array", "tracker"): "trackers", ("array", "xl"): "xl", ("bank", "ground"): "banks",
              ("bank", "wall"): "walls", ("controller", "ground"): "controllers", ("transformer", "ground"): "transformer",
              ("lamp", "garden"): "lamps", ("lamp", "street"): "lamps", ("gauge", "wall"): "gauges", ("rod", "ground"): "rod",
-             ("bench", "ground"): "bench", ("hydro", "ground"): "hydro", ("windspin", "ground"): "windspin"}
+             ("bench", "ground"): "bench", ("hydro", "ground"): "hydro", ("windspin", "ground"): "windspin",
+             ("treadwheel", "ground"): "treadwheel"}
 MP_TIER = {"makeshift": "makeshift", "salvaged": "salvaged", "workshop": "manufactured", "basic": "basic"}
 PIECE_OFFSET = {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
 
@@ -904,7 +1071,7 @@ def set_wear(state, kind):
 
 
 DP_BUILT_KINDS = {"array", "bank", "controller", "transformer", "lamp", "gauge", "rod", "bench", "hydro", "windspin",
-                  "fence", "cooler", "heater", "woodgas"}
+                  "fence", "cooler", "heater", "woodgas", "treadwheel"}
 
 
 def dp_build(kind, mount, tier, state):
@@ -924,6 +1091,7 @@ def dp_build(kind, mount, tier, state):
     if kind == "cooler": return cooler_part(state)
     if kind == "heater": return heater_part(state)
     if kind == "woodgas": return woodgas_part(tier, state)
+    if kind == "treadwheel": return treadwheel_part(state)
 
 
 def make_root(start):
@@ -1407,12 +1575,15 @@ DP_ITEMS = {("array", "ground"): "DazedArray%s", ("array", "tracker"): "DazedTra
             ("petrol", "ground"): "DazedPetrol%s", ("gauge", "wall"): "DazedPowerGauge", ("rod", "ground"): "DazedGroundingRod",
             ("bench", "ground"): "DazedChargerBench", ("hydro", "ground"): "DazedWaterWheel",
             ("fence", "ground"): "DazedElectricFence", ("cooler", "wall"): "DazedRoomCooler", ("heater", "ground"): "DazedSpaceHeater",
-            ("woodgas", "ground"): "DazedWoodGas%s"}
+            ("woodgas", "ground"): "DazedWoodGas%s", ("treadwheel", "ground"): "DazedTreadwheel"}
 ICON_STATE = {"array": "clear", "bank": None, "controller": "on", "transformer": "on", "lamp": "off", "pedal": "off", "windmill": "still",
               "steam": "cold", "windsock": "full", "vane": "set", "propane": "off", "petrol": "off", "gauge": "full", "rod": "set",
-              "bench": "off", "hydro": "still", "fence": "on", "cooler": "off", "heater": "on", "woodgas": "off"}
+              "bench": "off", "hydro": "still", "fence": "on", "cooler": "off", "heater": "on", "woodgas": "off",
+              "treadwheel": "empty"}
 # Parts whose world model makes a poor 32 px icon (too thin, or a long conduit) get a model of their own.
 ICON_MODEL = {"DazedGroundingRod": rod_icon, "DazedPowerGauge": gauge_icon_model}
+# Items with an icon but no sheet row of their own (the treadmill places vanilla's tile).
+EXTRA_ICONS = {"DazedTreadmill": treadmill_icon}
 
 
 def icon_shot(name, fn, folder, wall=False):
@@ -1433,6 +1604,9 @@ def dp_icons(only=None):
             fn = ICON_MODEL.get(name)
             if fn: WEAR.update(rust=0.0, dirt=0.0, scorch=0.0)
             icon_shot(name, fn or (lambda k=k, mo=mo, t=t, st=st: dp_build(k, mo, t, st)), folder, wall=(mo == "wall"))
+    for name, fn in EXTRA_ICONS.items():
+        if only and name not in only: continue
+        WEAR.update(rust=0.0, dirt=0.0, scorch=0.0); icon_shot(name, fn, folder)
     if only: log("dp icons done", sorted(only)); return
     WEAR.update(rust=0.0, dirt=0.0, scorch=0.0)
     for name, fn in (("DazedPowerManual", manual_basic), ("DazedPowerManualAdv", manual_adv), ("DazedAlmanac", almanac_book),

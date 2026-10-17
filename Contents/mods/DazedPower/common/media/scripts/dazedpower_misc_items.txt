@@ -96,15 +96,15 @@ module Base
         Tags                = base:hasmetal,
     }
 
-    /* The gym treadmill as a source (DP_Treadmill): placing it puts down vanilla's own tile, so it has no sheet row. The icon
-       is the treadwheel's until it has its own. */
+    /* The gym treadmill as a source (DP_Treadmill): placing it puts down vanilla's own tile, so it has no sheet row. Its icon
+       is rendered by tools/blender/dz2.py (icons:dp:DazedTreadmill). */
     item DazedTreadmill
     {
         DisplayName         = Treadmill Generator,
         DisplayCategory     = Electronics,
         ItemType            = base:moveable,
         Weight              = 40.0,
-        Icon                = DazedTreadwheel,
+        Icon                = DazedTreadmill,
         WorldObjectSprite   = recreational_sports_01_39,
         MetalValue          = 80.0,
         Tooltip             = Tooltip_DazedTreadmill,

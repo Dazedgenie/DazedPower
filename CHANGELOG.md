@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.1 (2026-10-17)
+- Art: the **Zombie Treadwheel** gets real Blender sprites in place of the stand-ins, in all four facings. An open slatted drum on two iron-shod wooden hoops rides on four rollers on a timber base, with guide posts, a car alternator belted to the back roller and a tether post at the front corner. Empty, the rope hangs slack off the post; with a zombie in it, a grey-green, blood-stained zombie strides inside with its arms out, roped by the waist to the post.
+- Art: a new icon for the **Treadmill Generator** (a gym treadmill with an alternator and leads; it used the treadwheel's icon) and a refreshed Zombie Treadwheel icon.
+- Tools: `tools/build_sheet.py --replace <first>-<last> [--icons ...]` re-packs only the named sprites and icons and leaves the rest of the pack byte for byte; `tools/import_art.py` passes its extra arguments through to it. The treadwheel now needs its rendered cells (`tools/blender/dz2.py dp:treadwheel`); the drawn stand-in is gone.
+
 ## 0.11.0 (2026-10-17)
 - New source: the **Treadmill Generator**. The gym treadmill ("Human Hamster Wheel", the tileset recreational_sports_01) becomes a power source: wire it to a controller like any source, then right-click it and **Walk**, **Run** or **Sprint** on the treadmill. You stand on the belt and the watts last only as long as you do. The output is a pedal rider's own (50 W at Fitness 0 to 150 W at Fitness 10) times 1 for a walk, 2 for a run and 3.5 for a sprint, scaled by its condition and the new sandbox option **Treadmill output** (default 100%). Everything tires you; a sprint also spends Endurance and drops to a run when you are winded (below 15%), and cannot be started when you are. One person at a time. It shows on the board as Treadmill, with its gait.
 - Build it from the Dazed Power Handbook (Electricity 3, Metal Welding 2): 4 Metal Pipe, 2 Sheet Metal, 4 Electronics Scrap, 2 Electric Wire, 8 Screws and a Rubber Hose, with a blowtorch and a screwdriver. The item places vanilla's own treadmill tile, so every treadmill already in the world can be wired too. A treadmill nobody wired or used carries nothing of ours.

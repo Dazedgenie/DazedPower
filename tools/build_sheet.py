@@ -3,6 +3,9 @@
     python3 tools/build_sheet.py            # writes dazedpower_tiles.tiles(.txt), texturepacks/dazedpower.pack,
                                             # scripts/dazedpower_items.txt, textures/Item_*.png, Moveables/ItemName keys
     python3 tools/build_sheet.py --append   # only adds the rows the committed pack and tiledef lack, on a new page
+    python3 tools/build_sheet.py --replace 776-783 [--icons DazedTreadwheel,DazedTreadmill]
+                                            # re-packs only those sprites from tools/art (and copies only those icons
+                                            # from tools/art/icons); every other page, tile and icon stays as it is
 
 Art comes from tools/art/<index>.png (128x256 cells named by NEW sprite index) when present, else from the
 stand-ins: the two source packs tools/art/src/offgrid.pack and offgridmore.pack (Off-Grid's and More Power's
@@ -145,38 +148,6 @@ def hydro_stand_in(state, facing):
     return tinted(src, (70, 120, 190), 0.4) if src.exists() else Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
 
 
-def tread_stand_in(state, facing):
-    """A stand-in zombie treadwheel: a plank wheel on an A-frame, with a grey-green figure inside while one walks it.
-    The same from every side until tools/blender renders the real one."""
-    from PIL import ImageDraw
-    out = Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
-    d = ImageDraw.Draw(out)
-    cx, base = CW // 2, 200
-    wood, dark, rope = (128, 92, 56, 255), (84, 60, 36, 255), (196, 170, 120, 255)
-    d.ellipse((cx - 46, base - 10, cx + 46, base + 10), fill=(60, 52, 44, 140))           # shadow
-    d.polygon([(cx - 40, base), (cx - 30, base), (cx - 4, base - 92), (cx - 10, base - 92)], fill=dark)   # A-frame
-    d.polygon([(cx + 40, base), (cx + 30, base), (cx + 4, base - 92), (cx + 10, base - 92)], fill=dark)
-    top, bot = base - 112, base - 8
-    d.ellipse((cx - 52, top, cx + 52, bot), outline=wood, width=9)                       # the wheel's rim
-    for k in range(8):                                                                    # tread slats
-        import math
-        a = k * math.pi / 4
-        x1, y1 = cx + 46 * math.cos(a), (top + bot) / 2 + 48 * math.sin(a)
-        d.line((cx, (top + bot) / 2, x1, y1), fill=dark, width=3)
-    d.ellipse((cx - 6, (top + bot) / 2 - 6, cx + 6, (top + bot) / 2 + 6), fill=(90, 90, 96, 255))  # axle
-    if state == "walking":
-        skin, cloth = (122, 140, 104, 255), (70, 74, 84, 255)
-        fx, fy = cx + 4, bot - 10
-        d.ellipse((fx - 8, fy - 74, fx + 8, fy - 58), fill=skin)                          # head
-        d.rectangle((fx - 9, fy - 58, fx + 9, fy - 30), fill=cloth)                       # body
-        d.line((fx + 8, fy - 52, fx + 26, fy - 50), fill=skin, width=4)                   # arms out, reaching
-        d.line((fx - 6, fy - 52, fx + 18, fy - 46), fill=skin, width=4)
-        d.line((fx - 4, fy - 30, fx - 12, fy), fill=cloth, width=5)                       # mid-stride
-        d.line((fx + 4, fy - 30, fx + 12, fy - 4), fill=cloth, width=5)
-        d.line((fx - 6, fy - 44, cx + 50, top + 30), fill=rope, width=2)                  # the rope to the rim
-    return out
-
-
 def new_icon(kind):
     """A stand-in 32x32 icon for the grounding rod, the charger bench and the water wheel."""
     from PIL import ImageDraw
@@ -188,10 +159,6 @@ def new_icon(kind):
     elif kind == "bench":
         d.rectangle((4, 14, 27, 20), fill=(120, 86, 52, 255)); d.rectangle((6, 20, 8, 28), fill=(80, 58, 36, 255)); d.rectangle((23, 20, 25, 28), fill=(80, 58, 36, 255))
         d.rectangle((9, 8, 16, 14), fill=(60, 64, 70, 255)); d.rectangle((19, 8, 24, 14), fill=(60, 64, 70, 255)); d.ellipse((12, 9, 14, 11), fill=(70, 210, 90, 255))
-    elif kind == "treadwheel":
-        d.ellipse((3, 2, 29, 28), outline=(128, 92, 56, 255), width=3); d.ellipse((14, 13, 18, 17), fill=(90, 90, 96, 255))
-        d.line((16, 4, 16, 26), fill=(84, 60, 36, 255), width=1); d.line((4, 15, 28, 15), fill=(84, 60, 36, 255), width=1)
-        d.ellipse((12, 7, 18, 13), fill=(122, 140, 104, 255)); d.rectangle((12, 13, 18, 21), fill=(70, 74, 84, 255))
     else:
         d.ellipse((5, 5, 27, 27), outline=(110, 120, 130, 255), width=3); d.ellipse((13, 13, 19, 19), fill=(70, 120, 190, 255))
         d.line((16, 5, 16, 27), fill=(110, 120, 130, 255), width=2); d.line((5, 16, 27, 16), fill=(110, 120, 130, 255), width=2)
@@ -203,7 +170,7 @@ def stand_in(kind, mount, tier, state, facing, piece):
     f = T.FACINGS.index(facing)
     if kind in RENDER_ONLY:
         sys.exit("no art for %s/%s %s: render it (tools/blender/dz2.py dp:%s) and import it" % (kind, state, facing, kind))
-    if kind in ("rod", "bench", "hydro", "treadwheel"):
+    if kind in ("rod", "bench", "hydro"):
         return "new", (kind, state, facing)
     if kind == "woodgas":
         return "new", (kind, state, facing, tier)
@@ -373,7 +340,7 @@ def build_pack(cells, out):
 
 
 # Kinds with no stand-in at all: their art is the Blender render in tools/art, and a missing cell is an error.
-RENDER_ONLY = ("fence", "cooler", "heater")
+RENDER_ONLY = ("fence", "cooler", "heater", "treadwheel")
 
 
 WOODGAS_LOOK = {"off": "off", "warming": "off", "running": "running", "broken": "broken"}
@@ -388,7 +355,6 @@ def woodgas_stand_in(state, facing, tier):
 
 def new_cell(kind, state, facing, tier=None):
     if kind == "woodgas": return woodgas_stand_in(state, facing, tier)
-    if kind == "treadwheel": return tread_stand_in(state, facing)
     return (rod_stand_in(facing) if kind == "rod" else bench_stand_in(state, facing) if kind == "bench"
             else hydro_stand_in(state, facing))
 
@@ -482,7 +448,7 @@ def write_icons(only_missing=False):
                     sys.exit("no icon for %s: render it (tools/blender/dz2.py icons:dp:%s) and import it" % (item, item))
                 if not own.exists() and kind == "gauge":
                     gauge_icon().save(dest); continue
-                if not own.exists() and kind in ("rod", "bench", "hydro", "treadwheel"):
+                if not own.exists() and kind in ("rod", "bench", "hydro"):
                     new_icon(kind).save(dest); continue
                 if not own.exists() and kind == "woodgas":
                     # stand-in: the propane generator's icon of the same grade, pulled toward rust brown
@@ -492,10 +458,13 @@ def write_icons(only_missing=False):
                 Image.open(src).convert("RGBA").save(dest)
     for new, old in (("DazedPowerManual", "OffGridManual"), ("DazedPowerManualAdv", "OffGridManualAdv"), ("DazedAlmanac", "OffGridAlmanac"),
                      ("DazedAmplifier", "OffGridAmplifier"), ("DazedGearKitLow", "OffGridGearKitLow"),
-                     ("DazedGearKitStock", "OffGridGearKitStock"), ("DazedGearKitRacing", "OffGridGearKitRacing")):
+                     ("DazedGearKitStock", "OffGridGearKitStock"), ("DazedGearKitRacing", "OffGridGearKitRacing"),
+                     ("DazedTreadmill", None)):
         own = ART / "icons" / (new + ".png")
         dest = MEDIA / "textures" / ("Item_%s.png" % new)
         if only_missing and dest.exists(): continue
+        if not own.exists() and old is None:
+            sys.exit("no icon for %s: render it (tools/blender/dz2.py icons:dp:%s) and import it" % (new, new))
         src = own if own.exists() else SRC / "icons" / ("Item_%s.png" % old)
         Image.open(src).convert("RGBA").save(dest)
 
@@ -569,5 +538,41 @@ def write_translations():
     (tr / "Moveables.json").write_text(json.dumps(moves, indent=4, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def replace_main(first, last, icons=()):
+    """Swap sprites first..last of the committed pack for their tools/art cells: they leave their pages (a page left
+    empty is dropped) and go on a new last page. The tiledef, items, translations and other icons are not touched;
+    only the named icons are copied in from tools/art/icons."""
+    pack_path = MEDIA / "texturepacks/dazedpower.pack"
+    pk = TexturePack.read(pack_path)
+    names = {T.sprite_name(n): n for n in range(first, last + 1)}
+    cells = {}
+    for n in names.values():
+        own = ART / ("%d.png" % n)
+        if not own.exists(): sys.exit("no art for sprite %d (%s)" % (n, T.sprite_name(n)))
+        im = Image.open(own).convert("RGBA")
+        cells[n] = im if im.size == (CW, CH) else im.resize((CW, CH), Image.LANCZOS)
+    kept = []
+    for pg in pk.pages:
+        left = [e for e in pg.entries if e.name not in names]
+        if len(left) == len(pg.entries): kept.append(pg); continue
+        if left: kept.append(PackPage(pg.name, pg.png, left, pg.has_alpha))
+    pk.pages = kept + shelf_pages(cells, len(kept))
+    pk.write(pack_path)
+    for item in icons:
+        own = ART / "icons" / (item + ".png")
+        if not own.exists(): sys.exit("no icon tools/art/icons/%s.png" % item)
+        Image.open(own).convert("RGBA").save(MEDIA / "textures" / ("Item_%s.png" % item))
+    print("replaced %d sprites (%s..%s); %d icons" % (len(cells), T.sprite_name(first), T.sprite_name(last), len(icons)))
+
+
+def cli(argv):
+    if "--append" in argv: return append_main()
+    if "--replace" in argv:
+        lo, hi = argv[argv.index("--replace") + 1].split("-")
+        icons = argv[argv.index("--icons") + 1].split(",") if "--icons" in argv else ()
+        return replace_main(int(lo), int(hi), icons)
+    main()
+
+
 if __name__ == "__main__":
-    append_main() if "--append" in sys.argv[1:] else main()
+    cli(sys.argv[1:])

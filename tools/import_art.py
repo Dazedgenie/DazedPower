@@ -1,7 +1,7 @@
 """Bring Blender renders (tools/blender/dp_render.py) into the mod: world cells into tools/art/<index>.png, icons
 into tools/art/icons/<Item>.png, then rebuild the sheet with tools/build_sheet.py.
 
-    python3 tools/import_art.py <dp_out folder>
+    python3 tools/import_art.py <dp_out folder> [build_sheet args, e.g. --replace 776-783 --icons DazedTreadwheel]
 A 2x render (256x512) is shrunk with premultiplied alpha and sharpened; a 2x2 piece is cut to its own square
 by its <index>_m.png mask. Icons are trimmed and fitted to 32x32.
 """
@@ -43,7 +43,7 @@ def icon(im):
     return out
 
 
-def main(src):
+def main(src, build_args=()):
     src = Path(src)
     ART.mkdir(exist_ok=True)
     (ART / "icons").mkdir(exist_ok=True)
@@ -59,8 +59,8 @@ def main(src):
                 cell(p).save(ART / p.name)
                 cells += 1
     print("%d cells, %d icons imported" % (cells, icons))
-    subprocess.run([sys.executable, str(HERE / "build_sheet.py")], check=True)
+    subprocess.run([sys.executable, str(HERE / "build_sheet.py")] + list(build_args), check=True)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2:])
