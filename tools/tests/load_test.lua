@@ -115,7 +115,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 196, "196 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 211, "211 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -126,7 +126,15 @@ check(P.spriteInfo("dazedpower_02_95").kind == "petrol", "last sprite is a petro
 check(P.spriteInfo("dazedpower_02_96").kind == "gauge" and P.spriteInfo("dazedpower_02_111").state == "full", "the wall gauge rows follow")
 check(P.spriteInfo("dazedpower_02_264").kind == "treadwheel" and P.spriteInfo("dazedpower_02_269").state == "walking",
       "the treadwheel rows close the sheet")
-check(P.spriteInfo("dazedpower_02_272") == nil and P.spriteInfo("dazedpower_02_271") ~= nil, "nothing past the sheet")
+-- The steam engine's fire frames (0.12.0) follow the treadwheel and read back as the steam engine they show.
+local sf = P.spriteInfo("dazedpower_02_272")
+check(sf and sf.kind == "steam" and sf.tier == "makeshift" and sf.frame == "fire1" and sf.state == "running" and sf.facing == "E",
+      "the steam fire frames follow the treadwheel")
+local se = P.spriteInfo("dazedpower_02_331")
+check(se and se.kind == "steam" and se.tier == "workshop" and se.frame == "embers" and se.state == "warming" and se.facing == "N",
+      "the workshop embers frame closes the sheet")
+check(P.sprite("steam", "ground", "salvaged", "running", "S") == "dazedpower_01_497", "fire frames don't shadow the real running sprite")
+check(P.spriteInfo("dazedpower_02_332") == nil and P.spriteInfo("dazedpower_02_331") ~= nil, "nothing past the sheet")
 -- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
 local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
 check(f2 and f2.kind == "windmill" and f2.state == "turning" and f2.frame == "spin2" and f2.tier == "salvaged" and f2.facing == "W",
@@ -268,6 +276,7 @@ dofile("anim_test.lua")(check, E)
 dofile("fixes_test.lua")(check, E)
 dofile("tread_test.lua")(check, E)
 dofile("treadmill_test.lua")(check, E)
+dofile("steamfx_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do

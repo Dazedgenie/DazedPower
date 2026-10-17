@@ -1055,7 +1055,7 @@ DP_FAMILY = {("array", "ground"): "arrays", ("array", "tracker"): "trackers", ("
              ("bank", "wall"): "walls", ("controller", "ground"): "controllers", ("transformer", "ground"): "transformer",
              ("lamp", "garden"): "lamps", ("lamp", "street"): "lamps", ("gauge", "wall"): "gauges", ("rod", "ground"): "rod",
              ("bench", "ground"): "bench", ("hydro", "ground"): "hydro", ("windspin", "ground"): "windspin",
-             ("treadwheel", "ground"): "treadwheel"}
+             ("treadwheel", "ground"): "treadwheel", ("steamfire", "ground"): "steamfire"}
 MP_TIER = {"makeshift": "makeshift", "salvaged": "salvaged", "workshop": "manufactured", "basic": "basic"}
 PIECE_OFFSET = {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
 
@@ -1071,12 +1071,13 @@ def set_wear(state, kind):
 
 
 DP_BUILT_KINDS = {"array", "bank", "controller", "transformer", "lamp", "gauge", "rod", "bench", "hydro", "windspin",
-                  "fence", "cooler", "heater", "woodgas", "treadwheel"}
+                  "fence", "cooler", "heater", "woodgas", "treadwheel", "steamfire"}
 
 
 def dp_build(kind, mount, tier, state):
     set_wear("broken" if state == "wobble" else state, kind)
     if kind == "windspin": return build_windmill(MP_TIER[tier], state)
+    if kind == "steamfire": return steamfire_part(tier, state)
     if kind in BUILDERS: return BUILDERS[kind](MP_TIER[tier], state)
     if kind == "array": return {"ground": array_static, "tracker": array_tracker, "xl": array_xl}[mount](tier, state)
     if kind == "bank": return (bank_ground if mount == "ground" else bank_wall)(tier, int(state[1:]))
@@ -1092,6 +1093,18 @@ def dp_build(kind, mount, tier, state):
     if kind == "heater": return heater_part(state)
     if kind == "woodgas": return woodgas_part(tier, state)
     if kind == "treadwheel": return treadwheel_part(state)
+
+
+def steamfire_part(tier, frame):
+    """A steam engine's fire frame (the client cycles these, DP_SteamFx): the running engine with its firebox door
+    open on flames, fire1..fire4, the smoke climbing a quarter puff a frame; or the idle engine (the warming sprite)
+    with the door open on banked embers. Everything but the firebox and the smoke is the plain sprite's model."""
+    global STEAM_FRAME
+    STEAM_FRAME = frame
+    try:
+        build_steam(MP_TIER[tier], "warming" if frame == "embers" else "running")
+    finally:
+        STEAM_FRAME = None
 
 
 def make_root(start):

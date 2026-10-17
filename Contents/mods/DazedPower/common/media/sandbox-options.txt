@@ -178,3 +178,13 @@ option DazedPower.TreadmillWatts
     page = DazedPower,
     translation = DazedPower_TreadmillWatts,
 }
+
+/* Machine effects (0.12.0). MachineEffects: on each player's own machine, steam engines near a player show their
+   firebox (flicker frames, smoke, a warm light at night). Visual only; off puts the plain sprites back. */
+option DazedPower.MachineEffects
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_MachineEffects,
+}

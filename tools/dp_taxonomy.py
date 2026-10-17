@@ -21,10 +21,12 @@ GROUP = "Dazed Power"
 PIECES_XL = 4                       # a 2x2 array: pieces 1..4 = NW, NE, SW, SE of its footprint
 
 KINDS = ["array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-         "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel"]
+         "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel",
+         "steamfire"]
 # Sprite-only rows that show another kind in motion: the client swaps a turning windmill through these frames.
 # They have no item of their own and a saved frame reads back as the kind it animates.
-ALIAS = {"windspin": "windmill"}
+# Likewise the steam engine's firebox: flame frames of a running engine and the banked embers of an idle one (DP_SteamFx).
+ALIAS = {"windspin": "windmill", "steamfire": "steam"}
 PART_KINDS = [k for k in KINDS if k not in ALIAS]
 MOUNTS = {
     "array": ["ground", "tracker", "xl"], "bank": ["ground", "wall"], "controller": ["ground"],
@@ -32,7 +34,7 @@ MOUNTS = {
     "steam": ["ground"], "windsock": ["ground"], "vane": ["ground"], "propane": ["ground"], "petrol": ["ground"],
     "gauge": ["wall"], "rod": ["ground"], "bench": ["ground"], "hydro": ["ground"],
     "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"], "windspin": ["ground"], "woodgas": ["ground"],
-    "treadwheel": ["ground"],
+    "treadwheel": ["ground"], "steamfire": ["ground"],
 }
 THREE = ["makeshift", "salvaged", "workshop"]
 TIERS = {
@@ -41,7 +43,7 @@ TIERS = {
     "windsock": ["basic"], "vane": ["basic"], "propane": THREE, "petrol": THREE,
     "gauge": ["standard"], "rod": ["standard"], "bench": ["standard"], "hydro": ["standard"],
     "fence": ["standard"], "cooler": ["standard"], "heater": ["standard"], "windspin": THREE, "woodgas": THREE,
-    "treadwheel": ["standard"],
+    "treadwheel": ["standard"], "steamfire": THREE,
 }
 STATES = {
     "array": ["clear", "snow", "cracked"], "controller": ["off", "on"], "transformer": ["off", "on"],
@@ -56,6 +58,8 @@ STATES = {
     "woodgas": ["off", "warming", "running", "broken"],
     # nobody in it, or a tied zombie walking it
     "treadwheel": ["empty", "walking"],
+    # the firebox door open on four flicker frames of a running engine, and on the banked embers of an idle (warming) one
+    "steamfire": ["fire1", "fire2", "fire3", "fire4", "embers"],
 }
 BANK_CELLS = {"ground": {"makeshift": 3, "salvaged": 6, "workshop": 8}, "wall": {"makeshift": 2, "salvaged": 3, "workshop": 4}}
 

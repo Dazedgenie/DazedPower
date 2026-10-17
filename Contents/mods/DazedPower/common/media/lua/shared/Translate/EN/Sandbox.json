@@ -34,5 +34,7 @@
     "Sandbox_DazedPower_TreadRopeSnap": "Treadwheel rope can snap",
     "Sandbox_DazedPower_TreadRopeSnap_tooltip": "Running with a tied zombie on a taut rope can snap it (a sheet rope sooner than a rope), and a zombie held back 8 tiles always breaks free. Off, the rope only lets go when the leader changes floor, gets in a car or goes far out of reach.",
     "Sandbox_DazedPower_TreadmillWatts": "Treadmill output (%%)",
-    "Sandbox_DazedPower_TreadmillWatts_tooltip": "Scales the power a person makes running on a treadmill. 100 is the default: walking makes 50 to 150 W, running 100 to 300 W and sprinting 175 to 525 W, from Fitness 0 to 10."
+    "Sandbox_DazedPower_TreadmillWatts_tooltip": "Scales the power a person makes running on a treadmill. 100 is the default: walking makes 50 to 150 W, running 100 to 300 W and sprinting 175 to 525 W, from Fitness 0 to 10.",
+    "Sandbox_DazedPower_MachineEffects": "Machine effects",
+    "Sandbox_DazedPower_MachineEffects_tooltip": "Steam engines within 25 tiles of you show their fire: flames flicker in the open firebox and smoke climbs from the chimney while one makes power, embers glow while it idles, and it casts a warm light at night that grows with its load. Visual only and on your own computer. Turn it off on a slow computer."
 }

@@ -341,9 +341,21 @@ def wheel(c, r, w, m_tire, m_rim, axis="X", spokes=0, m_spoke=None, blur=False, 
             tube(c, c + d * (r - 0.05), 0.0035, m_spoke or m_rim, 5)
 
 
-def puffs(at, n, size, col="#dcdcd8", a=0.4, rise=(0.0, 0.0, 1.0), seed=1):
-    """A short plume of soft translucent balls."""
+def puffs(at, n, size, col="#dcdcd8", a=0.4, rise=(0.0, 0.0, 1.0), seed=1, phase=None):
+    """A short plume of soft translucent balls. With `phase` (0..1) the plume is one frame of a loop: every puff
+    has climbed `phase` of the gap to the next, the lowest fades in and the highest fades out, so the frame after
+    phase 0.75 is phase 0 again without a jump (the steam engine's fire frames, dz2 steamfire)."""
     rnd = random.Random(seed); at = Vector(at); rise = Vector(rise)
+    if phase is not None:
+        for i in range(n):
+            k = (i + phase) / n
+            # The sideways drift is a function of height, not of the puff, so a puff keeps its path as it climbs.
+            drift = Vector((math.sin(k * 7.0 + seed), math.cos(k * 5.0 + seed * 2), 0)) * 0.03 * (1 + k)
+            p = at + rise * (0.08 + 0.36 * k) + drift
+            fade = min(1.0, (i + phase) * 1.2, (n - i - phase) * 1.1)
+            if fade <= 0.02: continue
+            ball(size * (0.5 + 0.8 * k), p, puff(col, round(a * 0.75 * (1 - 0.5 * k) * fade, 3)), segs=14)
+        return
     for i in range(n):
         k = i / max(1, n - 1)
         p = at + rise * (0.08 + 0.32 * k) + Vector((rnd.uniform(-1, 1), rnd.uniform(-1, 1), 0)) * 0.03 * (1 + k)
@@ -590,9 +602,49 @@ def build_windmill(tier, state):
 
 
 # ------------------------------------------------------------------ steam engines
+# dz2's steamfire rows (the client's fire frames, DP_SteamFx): "fire1".."fire4" or "embers" while one is built, else None.
+STEAM_FRAME = None
+FLAME_LIGHT = {1: 9.0, 2: 12.5, 3: 7.5, 4: 11.0}     # the firebox's own light per flame frame: the flicker
+
+
+def fire_open(o, w, h, frame):
+    """The firebox with its door swung open on the left hinge: four flame frames, or a bed of banked embers."""
+    p = P()
+    box((w * 0.98, 0.01, h * 0.98), o + Vector((0, 0.045, 0)), mat("#100d0b", 0.95, dirt=0, wear=False))
+    for x in (-1, 1): box((0.006, 0.05, h), o + Vector((x * w * 0.49, 0.02, 0)), mat("#1a1512", 0.9, dirt=0, wear=False))
+    box((w, 0.05, 0.006), o + Vector((0, 0.02, -h * 0.49)), mat("#1a1512", 0.9, dirt=0, wear=False))
+    hinge = o + Vector((-w / 2 - 0.004, -0.008, 0)); a = math.radians(-118)
+    door = hinge + Vector((math.cos(a), math.sin(a), 0)) * (w / 2)
+    box((w, 0.012, h * 1.04), door, p["iron"], rot=(0, 0, -118))
+    tip = hinge + Vector((math.cos(a), math.sin(a), 0)) * (w * 0.9)
+    box((0.012, 0.018, 0.012), tip + Vector((0, 0, 0)), p["steel"], rot=(0, 0, -118))
+    base = o.z - h / 2 + 0.006
+    bed = int(10 + 60 * w); rnd = random.Random(11)
+    hot = frame != "embers"
+    for i in range(bed):
+        c = rnd.choice(["#ff5a14", "#d23c0c", "#ff7c2a", "#9a2a08"])
+        ball(rnd.uniform(0.006, 0.012) * (0.6 + 2.4 * w), (o.x + rnd.uniform(-0.44, 0.44) * w, o.y + rnd.uniform(0.0, 0.038),
+             base + rnd.uniform(0.0, 0.012)), glow(c, rnd.uniform(5, 9) if hot else rnd.uniform(1.6, 3.4)), segs=8)
+    if hot:
+        n = int(frame[-1]); rnd = random.Random(100 + 17 * n)
+        tongues = 3 if w < 0.12 else (4 if w < 0.2 else 5)
+        for k in range(tongues):
+            x = o.x + ((k + 0.5) / tongues - 0.5) * w * 0.8 + rnd.uniform(-0.08, 0.08) * w
+            ht = h * rnd.uniform(0.55, 1.05); r = w * rnd.uniform(0.09, 0.13); lean = rnd.uniform(-0.25, 0.25) * r
+            ball(r, (x + lean, o.y + 0.012, base + ht * 0.45), glow("#ff6a16", 9), scale=(1, 0.75, ht * 0.5 / r))
+            ball(r * 0.55, (x + lean * 0.5, o.y + 0.006, base + ht * 0.32), glow("#ffd47a", 16), scale=(1, 0.7, ht * 0.32 / (r * 0.55)))
+        energy, col = FLAME_LIGHT[n], (1.0, 0.55, 0.2)
+    else:
+        energy, col = 2.2, (1.0, 0.32, 0.1)
+    ld = bpy.data.lights.new("f", "POINT"); ld.energy = energy; ld.color = col; ld.shadow_soft_size = 0.05
+    lo = bpy.data.objects.new("f", ld); MODEL.objects.link(lo); lo.location = HEAD[-1] @ (o + Vector((0, -0.09, 0.0))); BUILT.append(lo)
+
+
 def fire(opening, w, h, state, depth=0.04):
     """Firebox mouth at `opening` (front face centre, facing -Y)."""
     o = Vector(opening)
+    if STEAM_FRAME and state in ("running", "warming"):
+        return fire_open(o, w, h, STEAM_FRAME)
     if state == "running":
         box((w, depth, h), o + Vector((0, depth / 2 + 0.002, 0)), glow("#ff9a3c", 8))
         ld = bpy.data.lights.new("f", "POINT"); ld.energy = 9; ld.color = (1.0, 0.55, 0.2); ld.shadow_soft_size = 0.05
@@ -689,10 +741,13 @@ def build_steam(tier, state):
         tube((0.37, 0.02, 0.06), (0.36, 0.32, 0.06), 0.006, p["rubber"]); tube((0.37, 0.02, 0.48), (0.36, 0.32, 0.24), 0.006, p["rubber"])
         path([(0.34, 0.4, 0.12), (0.38, 0.45, 0.04)], 0.01, p["wire_k"])
         chimney = Vector(top) + Vector((0, 0, 0.1)); exh = Vector((0.22, -0.37, 0.26))
+    # A fire frame's smoke climbs a quarter of a puff per frame (STEAM_FRAME fire1..fire4); every other sprite's is still.
+    ph = (int(STEAM_FRAME[-1]) - 1) / 4.0 if (STEAM_FRAME or "").startswith("fire") else None
     if smoke_n:
-        puffs(chimney, smoke_n, 0.06 if run else 0.04, "#d7d6d2" if run else "#bfbebb", 0.42 if run else 0.25, (0.05, -0.08, 1.0), seed=3)
+        puffs(chimney, smoke_n, 0.06 if run else 0.04, "#d7d6d2" if run else "#bfbebb", 0.42 if run else 0.25, (0.05, -0.08, 1.0), seed=3,
+              phase=ph)
     if run:
-        puffs(exh, 3, 0.035, "#eeeeea", 0.4, (-0.05, -0.1, 0.4), seed=5)
+        puffs(exh, 3, 0.035, "#eeeeea", 0.4, (-0.05, -0.1, 0.4), seed=5, phase=ph)
     if brk:
         box((0.004, 0.08, 0.16), (-0.05 if tier == "makeshift" else -0.2, -0.09, 0.6), p["dark"], rot=(0, 0, 20))
         rnd = random.Random(7)

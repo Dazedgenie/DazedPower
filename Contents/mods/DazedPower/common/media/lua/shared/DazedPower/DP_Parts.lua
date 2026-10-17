@@ -48,6 +48,7 @@ P.SANDBOX_DEFAULTS = {
     ColdStarts = true,
     TreadRopeSnap = true,
     TreadmillWatts = 100,
+    MachineEffects = true,
 }
 
 -- The Dazed Core preset values for this page: { easy, standard, realistic, hardcore } per option.
@@ -187,7 +188,8 @@ P.FACING_INDEX = { E = 0, S = 1, W = 2, N = 3 }
 -- APPEND ONLY, and in the same order as tools/dp_taxonomy.py: a sprite index is row * COLS + facing, so a
 -- kind inserted anywhere but the end repoints every object already standing in a save.
 P.KINDS = { "array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel" }
+            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel",
+            "steamfire" }
 P.KIND_SET = {}
 for _, k in ipairs(P.KINDS) do P.KIND_SET[k] = true end
 -- The mount is the form factor: a static, tracking or 2x2 array; a floor or wall bank; a garden or street lamp.
@@ -202,7 +204,7 @@ P.MOUNTS = {
     propane = { "ground" }, petrol = { "ground" },
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
     fence = { "ground" }, cooler = { "wall" }, heater = { "ground" }, windspin = { "ground" }, woodgas = { "ground" },
-    treadwheel = { "ground" },
+    treadwheel = { "ground" }, steamfire = { "ground" },
 }
 local THREE = { "makeshift", "salvaged", "workshop" }
 P.TIERS = {
@@ -215,7 +217,7 @@ P.TIERS = {
     propane = THREE, petrol = THREE,
     gauge = { "standard" }, rod = { "standard" }, bench = { "standard" }, hydro = { "standard" },
     fence = { "standard" }, cooler = { "standard" }, heater = { "standard" }, windspin = THREE, woodgas = THREE,
-    treadwheel = { "standard" },
+    treadwheel = { "standard" }, steamfire = THREE,
 }
 P.STATES = {
     array = { "clear", "snow", "cracked" },
@@ -239,6 +241,7 @@ P.STATES = {
     windspin = { "spin1", "spin2", "spin3", "spin4", "wobble" }, -- blade positions of a turning windmill, and a broken one rocking
     woodgas = { "off", "warming", "running", "broken" },       -- the gasifier lit and making gas before the engine takes the load
     treadwheel = { "empty", "walking" },                       -- nobody in it, or a tied zombie walking it (DP_Tread)
+    steamfire = { "fire1", "fire2", "fire3", "fire4", "embers" }, -- firebox open on flames (running) or banked embers (warming), DP_SteamFx
     -- bank has no flat list: see P.statesFor.
 }
 -- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
@@ -280,6 +283,8 @@ end
 P.ALIAS = {
     windspin = { kind = "windmill", state = { spin1 = "turning", spin2 = "turning", spin3 = "turning",
                                               spin4 = "turning", wobble = "broken" } },
+    steamfire = { kind = "steam", state = { fire1 = "running", fire2 = "running", fire3 = "running", fire4 = "running",
+                                            embers = "warming" } },
 }
 
 --- Build the row table in exactly the order dp_taxonomy.py emits it.

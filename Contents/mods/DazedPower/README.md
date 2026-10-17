@@ -1,4 +1,4 @@
-# Dazed Power  (v0.11.0, Build 42)
+# Dazed Power  (v0.12.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
@@ -49,6 +49,17 @@ have a tracking array, and Workshop rigs a Workshop controller.
 
 Not included: the roof (flat) panel mount, the converted vanilla "backup" generator (the gas generators
 replace it), the Turkish translation.
+
+## Test in game (0.12.0, steam engine effects, a pilot)
+
+Coded and tested headless only (`tools/tests/steamfx_test.lua`); the art is rendered and packed. In game, check: a running
+steam engine within 25 tiles opens its firebox and the flames flicker (E and S facings show the mouth; W and N only the
+smoke and the light, the firebox is on the far side), the chimney smoke climbs without a jump at the loop; an idle
+governed engine (batteries full), one raising steam or one whose fuel ran out shows banked embers; at night the square
+gets a warm light that widens with load, and a dim red one for embers; picking the engine up, breaking it or walking
+out of range takes the light away at once (no light left floating); the sandbox *Machine effects* off puts the plain
+sprites back and removes every light; the FPS with five running engines on screen against the option off; single
+player pause freezes the flames; on a dedicated server, that the client's frames do not fight the server's sprite.
 
 ## Test in game (0.11.0, the treadmill generator)
 
@@ -109,6 +120,16 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.12.0 (steam engine effects, the pilot for machine effects).** `DP_SteamFx` (client only): a running steam engine
+  near a local player and on screen cycles four fire frames (the firebox door open on flames, the chimney smoke
+  climbing) and an idle one shows banked embers, with a warm `IsoLightSource` on its square at night (radius 3, 5 or 7
+  by load band, a dim radius-2 glow for embers). The frames are a sprite-only alias kind, `steamfire` (rows 196-210,
+  `dazedpower_02_272` to `_331`, appended with `build_sheet.py --append`), that reads back as the steam engine in the
+  state it shows, exactly like the windmill's `windspin`. Rendered by `tools/blender/dz2.py dp:steamfire` (the
+  `STEAM_FRAME` hook in `dz_render.py`'s firebox and a looping `puffs(phase=)`). Two Dazed Core Tick jobs, each
+  present only while it has work: `DazedPower.steamfx` (1 s: cull, look, lights) and `DazedPower.steamfxFrames`
+  (150 ms: one sprite swap per running engine on screen). New sandbox option *Machine effects* (MachineEffects, on).
+  Tests: `tools/tests/steamfx_test.lua`.
 - **0.11.0.** The player treadmill generator: the vanilla gym treadmill recognised by sprite name through guarded wraps
   of `P.describe`, `P.master`, `P.piecesAround` and `P.itemFor` (`DP_Treadmill`), with no new sheet rows and nothing wrapped
   on `P.spriteInfo`. Output model in `DPM_Model` (`treadmillOutput`, gait table), the timed action in `DP_TreadmillAction`

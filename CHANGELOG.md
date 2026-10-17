@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0 (2026-10-17)
+- Effects: **steam engines show their fire.** Near you (25 tiles) and on screen, a running steam engine opens its firebox door on flickering flames and its chimney smoke climbs; an idle one (batteries full, raising steam, or its fuel just ran out) shows banked embers. At night the engine lights its square with a warm glow that widens with its load, and a dim red one while it idles. Visual only, on your own computer: nothing is sent or saved, and engines far away or off screen cost nothing.
+- New sandbox option **Machine effects** (on). Turn it off on a slow computer; the plain sprites come back and every light goes.
+- Art: 60 new sprites (four flame frames and an embers frame for each grade and facing), Blender-rendered in the house style and appended on a new page; the existing pages and sprite ids are unchanged.
+- This is a pilot: the other generators keep their still sprites for now. Coded and tested headless; not yet run in game.
+
 ## 0.11.1 (2026-10-17)
 - Art: the **Zombie Treadwheel** gets real Blender sprites in place of the stand-ins, in all four facings. An open slatted drum on two iron-shod wooden hoops rides on four rollers on a timber base, with guide posts, a car alternator belted to the back roller and a tether post at the front corner. Empty, the rope hangs slack off the post; with a zombie in it, a grey-green, blood-stained zombie strides inside with its arms out, roped by the waist to the post.
 - Art: a new icon for the **Treadmill Generator** (a gym treadmill with an alternator and leads; it used the treadwheel's icon) and a refreshed Zombie Treadwheel icon.
