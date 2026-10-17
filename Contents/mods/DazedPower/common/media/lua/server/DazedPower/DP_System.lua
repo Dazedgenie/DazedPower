@@ -27,6 +27,7 @@
 if isClient() then return end
 
 require "DazedCore/DC_Boot"
+require "DazedCore/DC_Net"
 require "DazedPower/DP_Model"
 require "DazedPower/DP_Parts"
 require "DazedPower/DP_Env"
@@ -2451,8 +2452,8 @@ end
 --  count and health that only the server has been maintaining. The flag looks
 --  like it worked and a bank quietly loses its contents.
 --
---  In single player there is no client and no packet: DP_Context calls
---  S.onCommand directly. The same validation runs either way, because the
+--  In single player there is no client and no packet: DazedCore.Net.send
+--  runs the handler directly. The same validation runs either way, because the
 --  point of validating is not the network, it is that only one place should
 --  decide whether an action is legal.
 
@@ -2472,7 +2473,15 @@ local function commandTarget(playerObj, args, kind)
     return obj
 end
 
-local COMMANDS = {}
+-- Every command is filed with Dazed Core's Net as it is assigned (also by DPM_Bridge and DP_Alternator), so a
+-- client's request reaches it through the shared dispatcher with its guard and rate limit.
+local COMMAND_EVERY = { pedalBeat = 800 }     -- ms between one player's repeats; the rider sends about one a second
+local COMMANDS = setmetatable({}, { __newindex = function(t, command, fn)
+    rawset(t, command, fn)
+    if type(command) == "string" and type(fn) == "function" then
+        DazedCore.Net.on("DazedPower", command, function(playerObj, args) fn(playerObj, args) end, COMMAND_EVERY[command])
+    end
+end })
 -- Other server files add their own commands here (DP_Alternator).
 S.COMMANDS = COMMANDS
 
@@ -2605,11 +2614,6 @@ function S.onCommand(command, playerObj, args)
     return true
 end
 
-local function onClientCommand(module, command, playerObj, args)
-    if module ~= "DazedPower" then return end
-    S.onCommand(command, playerObj, args)
-end
-
 ------------------------------------------------------------------- events
 
 --- The engine re-asserts building-wide toxicity for ANY activated indoor
@@ -2703,7 +2707,6 @@ Events.OnGameStart.Add(registerSprites)
 Events.OnServerStarted.Add(registerSprites)
 -- Looked up on every call, so a wrapper put on S.tick later (DP_Stats) is the one that runs.
 Events.EveryOneMinute.Add(function() S.tick() end)
-Events.OnClientCommand.Add(onClientCommand)
 
 --- What DP_Distrib shares with this file. Its sweep and its commands must read
 --  and bill a square exactly as this file does, so they use the same

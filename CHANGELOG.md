@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.6 (2026-10-17)
+- Internal: Power's client requests (connect, disconnect, pedal heartbeat, Electrician grant and the rest) now travel through Dazed Core's Net layer instead of raw client commands. The pedal heartbeat is rate limited per player. No change to how anything plays.
+
 ## 0.8.5 (2026-10-16)
 - New: Dazed Dank gear (0.57+) can be a Power load through Dazed Core 1.8.4. Cabled grow lights, fans, pumps, heaters, ACs and humidifiers are billed on the LOADS page (GROW LIGHTS, FANS, HYDRO PUMPS, GROW CLIMATE), listed in Load Priority and cut by priority, LVD, trip or offline. Loads registered as slotless take no controller slot (Dank's do); they still cable to a controller or transformer.
 - Fixed: the Load Priority menu on a client missed load kinds from other mods (Dank, Plumbing's fuel pump and well) until the player had right-clicked one of their machines. Load kinds are now filed at boot and game start.

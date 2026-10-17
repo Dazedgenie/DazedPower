@@ -45,7 +45,7 @@ local function onCreatePlayer(_, playerObj)
     if not playerObj then return end
     E.grant(playerObj)
     if isClient() and E.isElectrician(playerObj) then
-        sendClientCommand(playerObj, "DazedPower", "electrician", {})
+        DazedCore.Net.send(playerObj, "DazedPower", "electrician", {})
     end
 end
 

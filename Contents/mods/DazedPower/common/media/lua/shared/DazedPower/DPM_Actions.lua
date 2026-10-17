@@ -162,8 +162,8 @@ function DPM_Pedal:update()
         if not self.beatAt or nowMs < self.beatAt or nowMs - self.beatAt >= MA.PEDAL_BEAT_MS then
             self.beatAt = nowMs
             local sq = self.object:getSquare()
-            if sq and sendClientCommand then
-                sendClientCommand(self.character, "DazedPower", "pedalBeat", { x = sq:getX(), y = sq:getY(), z = sq:getZ() })
+            if sq and DazedCore and DazedCore.Net then
+                DazedCore.Net.send(self.character, "DazedPower", "pedalBeat", { x = sq:getX(), y = sq:getY(), z = sq:getZ() })
             end
         end
     else

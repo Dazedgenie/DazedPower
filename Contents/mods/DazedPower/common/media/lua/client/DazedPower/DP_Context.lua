@@ -150,11 +150,7 @@ end
 --  packet; in single player the simulation is loaded in this process, so it is
 --  a direct call. Same validation runs at the far end either way.
 function C.send(playerObj, command, args)
-    if isClient() then
-        sendClientCommand(playerObj, "DazedPower", command, args)
-    elseif DazedPower.System and DazedPower.System.onCommand then
-        DazedPower.System.onCommand(command, playerObj, args)
-    end
+    DazedCore.Net.send(playerObj, "DazedPower", command, args)
 end
 
 --- Walk to a square NEXT TO an object, and say whether that is possible.
