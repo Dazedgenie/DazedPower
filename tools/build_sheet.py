@@ -145,6 +145,38 @@ def hydro_stand_in(state, facing):
     return tinted(src, (70, 120, 190), 0.4) if src.exists() else Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
 
 
+def tread_stand_in(state, facing):
+    """A stand-in zombie treadwheel: a plank wheel on an A-frame, with a grey-green figure inside while one walks it.
+    The same from every side until tools/blender renders the real one."""
+    from PIL import ImageDraw
+    out = Image.new("RGBA", (CW, CH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(out)
+    cx, base = CW // 2, 200
+    wood, dark, rope = (128, 92, 56, 255), (84, 60, 36, 255), (196, 170, 120, 255)
+    d.ellipse((cx - 46, base - 10, cx + 46, base + 10), fill=(60, 52, 44, 140))           # shadow
+    d.polygon([(cx - 40, base), (cx - 30, base), (cx - 4, base - 92), (cx - 10, base - 92)], fill=dark)   # A-frame
+    d.polygon([(cx + 40, base), (cx + 30, base), (cx + 4, base - 92), (cx + 10, base - 92)], fill=dark)
+    top, bot = base - 112, base - 8
+    d.ellipse((cx - 52, top, cx + 52, bot), outline=wood, width=9)                       # the wheel's rim
+    for k in range(8):                                                                    # tread slats
+        import math
+        a = k * math.pi / 4
+        x1, y1 = cx + 46 * math.cos(a), (top + bot) / 2 + 48 * math.sin(a)
+        d.line((cx, (top + bot) / 2, x1, y1), fill=dark, width=3)
+    d.ellipse((cx - 6, (top + bot) / 2 - 6, cx + 6, (top + bot) / 2 + 6), fill=(90, 90, 96, 255))  # axle
+    if state == "walking":
+        skin, cloth = (122, 140, 104, 255), (70, 74, 84, 255)
+        fx, fy = cx + 4, bot - 10
+        d.ellipse((fx - 8, fy - 74, fx + 8, fy - 58), fill=skin)                          # head
+        d.rectangle((fx - 9, fy - 58, fx + 9, fy - 30), fill=cloth)                       # body
+        d.line((fx + 8, fy - 52, fx + 26, fy - 50), fill=skin, width=4)                   # arms out, reaching
+        d.line((fx - 6, fy - 52, fx + 18, fy - 46), fill=skin, width=4)
+        d.line((fx - 4, fy - 30, fx - 12, fy), fill=cloth, width=5)                       # mid-stride
+        d.line((fx + 4, fy - 30, fx + 12, fy - 4), fill=cloth, width=5)
+        d.line((fx - 6, fy - 44, cx + 50, top + 30), fill=rope, width=2)                  # the rope to the rim
+    return out
+
+
 def new_icon(kind):
     """A stand-in 32x32 icon for the grounding rod, the charger bench and the water wheel."""
     from PIL import ImageDraw
@@ -156,6 +188,10 @@ def new_icon(kind):
     elif kind == "bench":
         d.rectangle((4, 14, 27, 20), fill=(120, 86, 52, 255)); d.rectangle((6, 20, 8, 28), fill=(80, 58, 36, 255)); d.rectangle((23, 20, 25, 28), fill=(80, 58, 36, 255))
         d.rectangle((9, 8, 16, 14), fill=(60, 64, 70, 255)); d.rectangle((19, 8, 24, 14), fill=(60, 64, 70, 255)); d.ellipse((12, 9, 14, 11), fill=(70, 210, 90, 255))
+    elif kind == "treadwheel":
+        d.ellipse((3, 2, 29, 28), outline=(128, 92, 56, 255), width=3); d.ellipse((14, 13, 18, 17), fill=(90, 90, 96, 255))
+        d.line((16, 4, 16, 26), fill=(84, 60, 36, 255), width=1); d.line((4, 15, 28, 15), fill=(84, 60, 36, 255), width=1)
+        d.ellipse((12, 7, 18, 13), fill=(122, 140, 104, 255)); d.rectangle((12, 13, 18, 21), fill=(70, 74, 84, 255))
     else:
         d.ellipse((5, 5, 27, 27), outline=(110, 120, 130, 255), width=3); d.ellipse((13, 13, 19, 19), fill=(70, 120, 190, 255))
         d.line((16, 5, 16, 27), fill=(110, 120, 130, 255), width=2); d.line((5, 16, 27, 16), fill=(110, 120, 130, 255), width=2)
@@ -167,7 +203,7 @@ def stand_in(kind, mount, tier, state, facing, piece):
     f = T.FACINGS.index(facing)
     if kind in RENDER_ONLY:
         sys.exit("no art for %s/%s %s: render it (tools/blender/dz2.py dp:%s) and import it" % (kind, state, facing, kind))
-    if kind in ("rod", "bench", "hydro"):
+    if kind in ("rod", "bench", "hydro", "treadwheel"):
         return "new", (kind, state, facing)
     if kind == "woodgas":
         return "new", (kind, state, facing, tier)
@@ -224,7 +260,7 @@ def tile_props(kind, mount, tier, state, facing, piece, index):
         return tile_props(T.ALIAS[kind], mount, tier, T.STATES[T.ALIAS[kind]][0], facing, piece, index)
     p = {"CustomName": T.display_name(kind, mount, tier), "GroupName": group_of(kind, mount, tier, state), "Facing": facing,
          "BlocksPlacement": ""}
-    wood = (tier == "makeshift" and kind in ("bank", "pedal", "windmill"))
+    wood = (tier == "makeshift" and kind in ("bank", "pedal", "windmill")) or kind == "treadwheel"
     p.update(WOOD if wood else METAL)
     p.update({"IsMoveAble": "", "CustomItem": "Base." + T.item_of(kind, mount, tier),
               "PickUpWeight": str(int(round(T.WEIGHT[(kind, mount)][tier] * 10))), "PickUpLevel": "0",
@@ -246,7 +282,7 @@ def tile_props(kind, mount, tier, state, facing, piece, index):
         p["solidtrans"] = ""; p["ItemHeight"] = "100"
     elif kind == "bench":
         p["solidtrans"] = ""; p["ItemHeight"] = "56"
-    elif kind == "hydro":
+    elif kind in ("hydro", "treadwheel"):
         p["solidtrans"] = ""; p["ItemHeight"] = "80"
     elif kind == "fence":
         p["solid"] = ""; p["ItemHeight"] = "70"
@@ -352,6 +388,7 @@ def woodgas_stand_in(state, facing, tier):
 
 def new_cell(kind, state, facing, tier=None):
     if kind == "woodgas": return woodgas_stand_in(state, facing, tier)
+    if kind == "treadwheel": return tread_stand_in(state, facing)
     return (rod_stand_in(facing) if kind == "rod" else bench_stand_in(state, facing) if kind == "bench"
             else hydro_stand_in(state, facing))
 
@@ -445,7 +482,7 @@ def write_icons(only_missing=False):
                     sys.exit("no icon for %s: render it (tools/blender/dz2.py icons:dp:%s) and import it" % (item, item))
                 if not own.exists() and kind == "gauge":
                     gauge_icon().save(dest); continue
-                if not own.exists() and kind in ("rod", "bench", "hydro"):
+                if not own.exists() and kind in ("rod", "bench", "hydro", "treadwheel"):
                     new_icon(kind).save(dest); continue
                 if not own.exists() and kind == "woodgas":
                     # stand-in: the propane generator's icon of the same grade, pulled toward rust brown

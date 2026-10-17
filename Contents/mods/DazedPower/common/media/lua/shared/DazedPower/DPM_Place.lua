@@ -46,6 +46,12 @@ if not H.placeWrapped then
                 if not quiet and character then note(character, "IGUI_DazedPower_GasRunning") end
                 return false
             end
+            -- A treadwheel with a zombie walking it: release it or put it down first (DP_Tread).
+            local Tr = DazedPower.Tread
+            if object and Tr and Tr.occupied(object) then
+                if not quiet and character then note(character, "IGUI_DazedPower_TreadOccupied") end
+                return false
+            end
             return mayTake0(character, square, object, quiet)
         end
     end

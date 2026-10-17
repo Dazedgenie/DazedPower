@@ -56,7 +56,7 @@ function R.describe(obj)
 end
 
 -- Dazed Power parts that wear but have no rows of their own, repaired with the same scrap and screws.
-R.REPAIR_ONLY = { hydro = true }
+R.REPAIR_ONLY = { hydro = true, treadwheel = true }
 
 --- A part the machine repair works on: one of these kinds, or a REPAIR_ONLY part. Returns its description.
 function R.repairable(obj)

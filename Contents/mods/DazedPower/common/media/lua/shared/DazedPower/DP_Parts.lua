@@ -46,6 +46,7 @@ P.SANDBOX_DEFAULTS = {
     CableTilesPerWire = 4,
     LiveShock = true,
     ColdStarts = true,
+    TreadRopeSnap = true,
 }
 
 -- The Dazed Core preset values for this page: { easy, standard, realistic, hardcore } per option.
@@ -59,6 +60,7 @@ P.PRESETS = {
     LiveShock = { false, true, true, true }, RigChance = { 5, 15, 20, 25 },
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
     ColdStarts = { false, true, true, true },
+    TreadRopeSnap = { false, true, true, true },
 }
 if DazedCore and DazedCore.Preset then DazedCore.Preset.register("DazedPower", P.PRESETS) end
 
@@ -183,7 +185,7 @@ P.FACING_INDEX = { E = 0, S = 1, W = 2, N = 3 }
 -- APPEND ONLY, and in the same order as tools/dp_taxonomy.py: a sprite index is row * COLS + facing, so a
 -- kind inserted anywhere but the end repoints every object already standing in a save.
 P.KINDS = { "array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
-            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas" }
+            "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel" }
 P.KIND_SET = {}
 for _, k in ipairs(P.KINDS) do P.KIND_SET[k] = true end
 -- The mount is the form factor: a static, tracking or 2x2 array; a floor or wall bank; a garden or street lamp.
@@ -198,6 +200,7 @@ P.MOUNTS = {
     propane = { "ground" }, petrol = { "ground" },
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
     fence = { "ground" }, cooler = { "wall" }, heater = { "ground" }, windspin = { "ground" }, woodgas = { "ground" },
+    treadwheel = { "ground" },
 }
 local THREE = { "makeshift", "salvaged", "workshop" }
 P.TIERS = {
@@ -210,6 +213,7 @@ P.TIERS = {
     propane = THREE, petrol = THREE,
     gauge = { "standard" }, rod = { "standard" }, bench = { "standard" }, hydro = { "standard" },
     fence = { "standard" }, cooler = { "standard" }, heater = { "standard" }, windspin = THREE, woodgas = THREE,
+    treadwheel = { "standard" },
 }
 P.STATES = {
     array = { "clear", "snow", "cracked" },
@@ -232,6 +236,7 @@ P.STATES = {
     heater = { "off", "on" },                                  -- switched on and powered
     windspin = { "spin1", "spin2", "spin3", "spin4", "wobble" }, -- blade positions of a turning windmill, and a broken one rocking
     woodgas = { "off", "warming", "running", "broken" },       -- the gasifier lit and making gas before the engine takes the load
+    treadwheel = { "empty", "walking" },                       -- nobody in it, or a tied zombie walking it (DP_Tread)
     -- bank has no flat list: see P.statesFor.
 }
 -- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
@@ -245,7 +250,8 @@ end
 P.PIECE_OFFSET = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } }
 
 -- The power sources Dazed Power brought, and the two wind instruments that are parts but never wire or tick.
-P.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true }
+P.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true,
+                   treadwheel = true }
 -- A grounding rod is never wired and never ticks; it only protects a controller from lightning by standing near it.
 P.PASSIVE = { rod = true }
 P.INSTRUMENT = { windsock = true, vane = true }
@@ -356,6 +362,7 @@ P.ITEM = {
     cooler = { wall = { standard = "Base.DazedRoomCooler" } },
     heater = { ground = { standard = "Base.DazedSpaceHeater" } },
     woodgas = { ground = { makeshift = "Base.DazedWoodGasMakeshift", salvaged = "Base.DazedWoodGasSalvaged", workshop = "Base.DazedWoodGasWorkshop" } },
+    treadwheel = { ground = { standard = "Base.DazedTreadwheel" } },
 }
 
 -- Items that are not world parts.

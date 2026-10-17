@@ -84,5 +84,10 @@
     "ContextMenu_DazedPower_FenceZaps": "Zaps today: {1}",
     "ContextMenu_DazedPower_CoolerCount": "Containers cooled: {1}",
     "ContextMenu_DazedPower_CoolerNoRoom": "Not inside a room, so it cools nothing",
-    "ContextMenu_DazedPower_WoodGasAsh": "Clean out the ash ({1}%% full)"
+    "ContextMenu_DazedPower_WoodGasAsh": "Clean out the ash ({1}%% full)",
+    "ContextMenu_DazedPower_TreadTie": "Tie up the zombie",
+    "ContextMenu_DazedPower_TreadLetGo": "Let go of the rope",
+    "ContextMenu_DazedPower_TreadLoad": "Put the zombie on the treadwheel",
+    "ContextMenu_DazedPower_TreadRelease": "Release the zombie",
+    "ContextMenu_DazedPower_TreadPutDown": "Put the zombie down"
 }

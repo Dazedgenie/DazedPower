@@ -2221,6 +2221,53 @@ module Base
         }
     }
 
+    craftRecipe MakeDazedTreadwheel
+    {
+        timedAction     = MakingElectrical,
+        time            = 800,
+        SkillRequired   = Electricity:2;Woodwork:3,
+        Tags            = AnySurfaceCraft,
+        category        = Electrical,
+        xpAward         = Electricity:20;Woodwork:30,
+        NeedToBeLearn   = true,
+        inputs
+        {
+            item 1 tags[base:hammer] mode:keep,
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
+            item 8 [Base.Plank],
+            item 16 [Base.Nails],
+            item 1 [Base.MetalPipe],
+            item 2 [Base.ElectronicsScrap],
+            item 2 [Base.ElectricWire],
+            item 4 [Base.Screws],
+        }
+        outputs
+        {
+            item 1 Base.DazedTreadwheel,
+        }
+    }
+
+    craftRecipe ScrapDazedTreadwheel
+    {
+        timedAction     = DismantleElectrical,
+        time            = 400,
+        Tags            = AnySurfaceCraft,
+        category        = Electrical,
+        xpAward         = Electricity:6;Woodwork:8,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
+            item 1 [Base.DazedTreadwheel] mode:destroy,
+        }
+        outputs
+        {
+            item 4 Base.Plank,
+            item 6 Base.Nails,
+            item 1 Base.MetalPipe,
+            item 1 Base.ElectronicsScrap,
+        }
+    }
+
     craftRecipe MakeDazedGearKitLow
     {
         timedAction     = MakingElectrical,

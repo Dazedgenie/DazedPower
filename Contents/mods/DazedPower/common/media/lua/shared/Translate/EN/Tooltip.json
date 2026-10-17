@@ -105,5 +105,14 @@
     "Tooltip_DazedPower_WoodGasAshClean": "The grate is already clean.",
     "Tooltip_DazedWoodGasMakeshift": "An oil drum gasifier, the wartime farm kind: wood smoulders short of air and the smoky gas runs a small scavenged engine. Pull-start only, needs a while to warm up before it makes anything, and the grate has to be raked clear of ash now and then. Fuel is counted in fire-hours: a log is 6, a plank 2, charcoal twice its weight in wood. Never under a roof.",
     "Tooltip_DazedWoodGasSalvaged": "A gasifier off an old farm truck, with a cooler and filter, on a standby engine. Set it to AUTO and it lights itself when the batteries run low. Warms up faster, burns wood further and holds more ash than the drum kind.",
-    "Tooltip_DazedWoodGasWorkshop": "A properly built gasifier with a cyclone, a cooler and a big hopper, on a muffled engine. The most power per log of anything in the shed, quick to warm up and slow to choke. AUTO starts and stops it around the batteries."
+    "Tooltip_DazedWoodGasWorkshop": "A properly built gasifier with a cyclone, a cooler and a big hopper, on a muffled engine. The most power per log of anything in the shed, quick to warm up and slow to choke. AUTO starts and stops it around the batteries.",
+    "Tooltip_DazedTreadwheel": "Knock a zombie down, tie it with a rope, walk it here and put it in the wheel. It walks for ever: about 80 W, up to 140 W while someone stands close. Wire it to a controller.",
+    "Tooltip_DazedPower_TreadNeedRope": "You need a rope or a sheet rope.",
+    "Tooltip_DazedPower_TreadTie": "Uses the rope. Be quick, it will get up. Walk it home: running with the rope taut can snap it, and a fence or a shut door holds it back.",
+    "Tooltip_DazedPower_TreadNeedZombie": "Knock a zombie down, tie it up and walk it here first.",
+    "Tooltip_DazedPower_TreadBringCloser": "Bring the zombie within 3 tiles of the wheel.",
+    "Tooltip_DazedPower_TreadWalkCloser": "Stand within 3 tiles of the wheel.",
+    "Tooltip_DazedPower_TreadLoad": "The zombie goes into the wheel and walks it for good.",
+    "Tooltip_DazedPower_TreadRelease": "Lets the zombie out beside the wheel. It will come for you.",
+    "Tooltip_DazedPower_TreadPutDown": "Kills the zombie in the wheel. You get the rope back."
 }

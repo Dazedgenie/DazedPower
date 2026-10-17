@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0 (2026-10-17)
+- New source: the **Zombie Treadwheel** (Dazed Power Handbook, Electricity 2, Carpentry 3). Knock a zombie down, right-click it with a Rope or Sheet Rope and **Tie up the zombie** before it gets up. Walk it home on the rope: it follows, is pulled along when the rope goes taut (never through a wall, fence or closed door) and does not attack while tied. Running with the rope taut can snap it, a sheet rope sooner, and a zombie held back 8 tiles always breaks free; a snapped rope, or **Let go of the rope**, frees it and it comes for you. Within 3 tiles of a wheel, **Put the zombie on the treadwheel**: it walks for ever, 80 W (a crawler 40%), 140 W while anyone stands within 8 tiles, scaled by the wheel's condition. From the wheel, **Release the zombie** (loose and hostile) or **Put the zombie down** (a corpse, and your rope back). A wheel with a zombie in it cannot be picked up. Wire it like any source; it shows on the board as Treadwheel.
+- New sandbox option **Treadwheel rope can snap** (on; off in the Easy preset).
+- Stand-in art until the Blender pass. Coded and tested headless; not yet run in game or on a dedicated server.
+
 ## 0.9.0 (2026-10-17)
 - Needs Dazed Core 1.9.0. Internal only, nothing changes in play: the world right-click menu, the fence zap check and the machine sweep now run on Core's shared Menu and Tick hooks, Power's guarded-call, text, count and world-clock helpers are Core's, and Power reports its Core requirement at boot (an older Core is named in the console).
 

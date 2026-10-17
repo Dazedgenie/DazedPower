@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,66
+    size = 4,68
     id = 2
     // dazedpower_02_0
     tile
@@ -17965,5 +17965,189 @@ tileset
         Woffset = -1
         Noffset = 0
         solidtrans = 
+    }
+    // dazedpower_02_264
+    tile
+    {
+        xy = 0,66
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_265
+    tile
+    {
+        xy = 1,66
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_266
+    tile
+    {
+        xy = 2,66
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_267
+    tile
+    {
+        xy = 3,66
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_268
+    tile
+    {
+        xy = 0,67
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_269
+    tile
+    {
+        xy = 1,67
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_270
+    tile
+    {
+        xy = 2,67
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_271
+    tile
+    {
+        xy = 3,67
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
     }
 }

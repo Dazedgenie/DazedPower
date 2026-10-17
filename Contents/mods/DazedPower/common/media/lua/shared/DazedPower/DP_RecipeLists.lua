@@ -30,6 +30,7 @@ DazedPower.RecipeLists = {
         "MakeDazedSpaceHeater",
         "MakeDazedWoodGasMakeshift",
         "MakeDazedWoodGasSalvaged",
+        "MakeDazedTreadwheel",
         "MakeDazedGearKitLow",
         "MakeDazedGearKitStock",
     },

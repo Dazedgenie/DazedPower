@@ -26,6 +26,7 @@ Board.COLORS = C
 local COMPRESSOR = { fridge = true, freezer = true, fridgefreezer = true }
 local SRC_KIND = { pedal = "IGUI_DazedPower_SrcPedal", windmill = "IGUI_DazedPower_SrcWind", steam = "IGUI_DazedPower_SrcSteam",
     propane = "IGUI_DazedPower_SrcPropane", petrol = "IGUI_DazedPower_SrcPetrol", woodgas = "IGUI_DazedPower_SrcWoodGas", hydro = "IGUI_DazedPower_SrcHydro",
+    treadwheel = "IGUI_DazedPower_SrcTread",
     car = "IGUI_DazedPower_SrcCar", solar = "IGUI_DazedPower_SrcSolar" }
 local GEN_STATE = { running = "IGUI_DazedPower_GenRun", standby = "IGUI_DazedPower_GenStandby", off = "IGUI_DazedPower_GenOff",
     nofuel = "IGUI_DazedPower_GenNoFuel", fault = "IGUI_DazedPower_GenFault", indoors = "IGUI_DazedPower_GenIndoors",

@@ -1,4 +1,4 @@
-# Dazed Power  (v0.9.0, Build 42)
+# Dazed Power  (v0.10.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
@@ -28,6 +28,7 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Wall power gauge | Hangs on a wall; cable it to any part of a system. Its lamp shows the charge band, and Read Gauge (or a click) opens that system's monitor, read only. Takes no controller slot. |
 | Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. |
 | Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. Dazed Climate's cold-storage rule is the unpowered cousin: in a room below 15 C (no cooler needed) ordinary containers (not fridges or freezers) age food slower, about 30% speed at 0-4 C like a fridge and almost not at all when frozen, back to normal at 15 C. A powered Power cooler owns its room and Climate checks for it and leaves that room alone, because both work by rewinding each item's age and must never both run on one container. Any other room-wide food system (a cellar, an ice house) must register with the same check Climate uses. |
+| Zombie treadwheel | One square, one grade for now (Dazed Power Handbook, Electricity 2, Carpentry 3). Knock a zombie down, right-click it with a Rope or Sheet Rope, **Tie up the zombie** (about 3 s; it fails if it gets up first). Walk it home: it follows on the rope, is pulled along when the rope goes taut, never through a wall or fence, and does not attack while tied. Running or sprinting with the rope taut can snap it (a sheet rope sooner), a zombie held back 8 tiles always breaks free, and a snapped rope or **Let go of the rope** frees it to come for you (sandbox *Treadwheel rope can snap*). Within 3 tiles of a wheel, **Put the zombie on the treadwheel**: the zombie leaves the world and walks the wheel for ever, 80 W (a crawler 40%), 140 W while anyone stands within 8 tiles, scaled by the wheel's condition; the slats wear 0.03 points an hour and are repaired like the water wheel. **Release the zombie** lets it out beside the wheel, hostile; **Put the zombie down** leaves a corpse and gives the rope back. A wheel with a zombie in it cannot be picked up. Stand-in art. |
 | Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate it warms its room. Dazed Power Handbook, Electricity 3. |
 
 **Wiring.** A cable costs Electric Wire by length: one per 4 tiles by default (sandbox *Tiles per Electric Wire*,
@@ -47,6 +48,14 @@ have a tracking array, and Workshop rigs a Workshop controller.
 
 Not included: the roof (flat) panel mount, the converted vanilla "backup" generator (the gas generators
 replace it), the Turkish translation.
+
+## Test in game (0.10.0, the zombie treadwheel)
+
+Coded and tested headless only (`tools/tests/tread_test.lua`). In game, check: a shoved zombie and a fence-zapped one
+can be tied before they stand; a tied zombie walks after you rather than sliding (if it only slides, B42 does not path
+"useless" zombies and the pull is doing all the work); it never bites while tied; it does not come through a wall,
+fence or closed door; running snaps the rope; loading removes it for every player; release and put down spawn the
+right outfit; and on a dedicated server, that the zombie owner's client moves it and the server can remove and spawn.
 
 ## Test in game (0.3.0)
 
@@ -87,6 +96,12 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   sibling `dazedcore` repo (`../dazedcore/Contents/mods/DazedCore/common/media/lua`); `DAZEDCORE_LUA` also sets it.
 
 ## Changes
+
+- **0.10.0.** The zombie treadwheel (see the parts table): a new part, `treadwheel`, appended to the sheet on a new
+  page (`dazedpower_02_264` to `_271`), with stand-in art. The rope and wheel live in `DP_Tread` (rules, leash
+  registry, authority commands, the follow loop), `DP_TreadActions` (tying) and `DP_TreadMenu` (rows); the bridge
+  counts the wheel like the water wheel. New sandbox option *Treadwheel rope can snap* (TreadRopeSnap, off on Easy).
+  Tests: `tools/tests/tread_test.lua`.
 
 - **0.8.0 (wood gas generator).** A new generator in three grades (Makeshift, Salvaged, Workshop) that runs an engine on gas from smouldering wood, the wartime farm kind. Feed its hopper logs, planks, branches or charcoal from the right-click menu, counted in fire-hours like the steam engine. From cold it needs a while to warm up (30, 21 or 15 minutes by grade) before it makes power, and every fire-hour burned leaves ash: when the grate is full it stalls until you **Clean out the ash** with it stopped. The Salvaged and Workshop grades take AUTO from the GEN page like the other engines. 700, 1600 and 3000 W; it fumes indoors like any engine. Built and scrapped from the handbooks (Makeshift and Salvaged basic, Workshop advanced). Stand-in sprites until its Blender renders land.
 - **0.7.5 (battery rack debug spawn).** With Dazed Core 1.6.1, **Dazed debug > Spawn every battery rack fill level around me** puts down every floor rack from empty to full in each grade, all facing south, then a full Workshop rack in each facing. They are real racks holding healthy car batteries, for checking the art and Dazed Viewpoint's 3D models.

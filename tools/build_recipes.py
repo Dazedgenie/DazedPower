@@ -180,6 +180,11 @@ make("cooler", "wall", "standard", 900, "Electricity:4", "Electricity:45",
 make("heater", "ground", "standard", 500, "Electricity:3", "Electricity:25",
      [SCREW, PLIERS, it(2, "ElectronicsScrap"), it(1, "SheetMetal"), it(2, "ElectricWire"), it(1, "SmallSheetMetal"), it(3, "Screws")],
      ["item 1 Base.ElectronicsScrap", "item 1 Base.SheetMetal"], "basic", scrapTime=300, scrapXp="Electricity:8")
+# ---- the zombie treadwheel: a plank wheel on an A-frame, a pipe axle and a small dynamo. Carpentry first.
+make("treadwheel", "ground", "standard", 800, "Electricity:2;Woodwork:3", "Electricity:20;Woodwork:30",
+     [HAMMER, SCREW, it(8, "Plank"), it(16, "Nails"), it(1, "MetalPipe"), it(2, "ElectronicsScrap"), it(2, "ElectricWire"), it(4, "Screws")],
+     ["item 4 Base.Plank", "item 6 Base.Nails", "item 1 Base.MetalPipe", "item 1 Base.ElectronicsScrap"], "basic",
+     scrapTime=400, scrapXp="Electricity:6;Woodwork:8")
 
 # Items that are not parts: (name, recipe lines) -- the gear kits and nothing else is crafted
 MISC_RECIPES = [

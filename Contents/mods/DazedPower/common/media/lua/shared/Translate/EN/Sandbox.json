@@ -30,5 +30,7 @@
     "Sandbox_DazedPower_LiveShock": "Shock when wiring a live system",
     "Sandbox_DazedPower_LiveShock_tooltip": "Running or cutting a cable while the controller is switched on can burn the player's hand. The chance grows with the system's load and falls with Electricity skill. Never lethal.",
     "Sandbox_DazedPower_ColdStarts": "Cold starts",
-    "Sandbox_DazedPower_ColdStarts_tooltip": "Below -5 C at the engine, a propane or petrol generator can fail to start, up to a 60%% chance at -25 C. Makeshift engines fail more often, Workshop ones less. Keep the engine warm or try again."
+    "Sandbox_DazedPower_ColdStarts_tooltip": "Below -5 C at the engine, a propane or petrol generator can fail to start, up to a 60%% chance at -25 C. Makeshift engines fail more often, Workshop ones less. Keep the engine warm or try again.",
+    "Sandbox_DazedPower_TreadRopeSnap": "Treadwheel rope can snap",
+    "Sandbox_DazedPower_TreadRopeSnap_tooltip": "Running with a tied zombie on a taut rope can snap it (a sheet rope sooner than a rope), and a zombie held back 8 tiles always breaks free. Off, the rope only lets go when the leader changes floor, gets in a car or goes far out of reach."
 }

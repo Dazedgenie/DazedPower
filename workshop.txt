@@ -36,6 +36,7 @@ description=[*]A [b]micro-hydro wheel[/b] beside water: a steady 350 W, slower i
 description=[*][b]Steam engines[/b] burn fuel and drink water.
 description=[*][b]Propane, petrol and wood gas generators[/b] start and stop on their own at the levels you set. Makeshift ones are pull-start. Wood gas runs on logs and planks, needs a few minutes to warm up and its grate cleaned of ash.
 description=[*][b]Car alternator[/b]: a parked car with its engine running feeds up to 500 W.
+description=[*][b]Zombie treadwheel[/b]: knock a zombie down, tie it up with a rope, walk it home and put it in the wheel. It walks for ever: about 80 W, up to 140 W while someone stands close. Run with it on a taut rope and the rope can snap.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-store.png?v=2[/img]
@@ -80,7 +81,7 @@ description=[*][b]Electric Vehicles[/b]: charge homemade EVs from your banks.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-sandbox.png?v=2[/img]
-description=14 options, from array output and battery wear to lightning, cable cost and found solar gear. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
+description=15 options, from array output and battery wear to lightning, cable cost and found solar gear. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-compat.png?v=2[/img]
 description=[list]
@@ -101,6 +102,6 @@ description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.9.0[/i]
+description=[i]Mod ID: DazedPower · Version 0.10.0[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=unlisted

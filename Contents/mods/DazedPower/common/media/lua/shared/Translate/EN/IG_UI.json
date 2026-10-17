@@ -490,5 +490,22 @@
     "IGUI_DazedPower_SrcWoodGas": "Wood gas",
     "IGUI_DazedPower_BrandWoodGasMakeshift": "WOODGAS MK",
     "IGUI_DazedPower_BrandWoodGasSalvaged": "WOODGAS SV",
-    "IGUI_DazedPower_BrandWoodGasWorkshop": "WOODGAS WS"
+    "IGUI_DazedPower_BrandWoodGasWorkshop": "WOODGAS WS",
+    "IGUI_DazedPower_SrcTread": "Treadwheel",
+    "IGUI_DazedPower_SrcState_walking": "walking",
+    "IGUI_DazedPower_SrcState_empty": "empty",
+    "IGUI_DazedPower_TreadEmpty": "No zombie in it",
+    "IGUI_DazedPower_TreadWalking": "A zombie is walking it",
+    "IGUI_DazedPower_TreadCrawling": "A crawler is dragging it round",
+    "IGUI_DazedPower_TreadSlipping": "Slats worn through, it slips",
+    "IGUI_DazedPower_TreadLured": "Straining toward you",
+    "IGUI_DazedPower_TreadGotUp": "It got up before I could tie it",
+    "IGUI_DazedPower_TreadSnapped": "The rope snapped!",
+    "IGUI_DazedPower_TreadLetGo": "I let go of the rope",
+    "IGUI_DazedPower_TreadLoaded": "It's on the wheel",
+    "IGUI_DazedPower_TreadLost": "The rope went slack. I lost it",
+    "IGUI_DazedPower_TreadNoZombie": "I can't see the zombie I tied",
+    "IGUI_DazedPower_TreadTooFar": "Bring the zombie closer to the wheel",
+    "IGUI_DazedPower_TreadReleased": "It's loose!",
+    "IGUI_DazedPower_TreadOccupied": "There's a zombie in it. Release it or put it down first"
 }

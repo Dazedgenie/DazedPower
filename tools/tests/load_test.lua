@@ -115,7 +115,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 194, "194 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 196, "196 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -124,7 +124,9 @@ local xl2 = P.spriteInfo(P.sprite("array", "xl", "workshop", "snow", "N", 3))
 check(xl2 and xl2.piece == 3 and not xl2.master and xl2.tier == "workshop" and xl2.state == "snow", "XL piece 3 decoded")
 check(P.spriteInfo("dazedpower_02_95").kind == "petrol", "last sprite is a petrol generator")
 check(P.spriteInfo("dazedpower_02_96").kind == "gauge" and P.spriteInfo("dazedpower_02_111").state == "full", "the wall gauge rows follow")
-check(P.spriteInfo("dazedpower_02_264") == nil and P.spriteInfo("dazedpower_02_263") ~= nil, "nothing past the sheet")
+check(P.spriteInfo("dazedpower_02_264").kind == "treadwheel" and P.spriteInfo("dazedpower_02_269").state == "walking",
+      "the treadwheel rows close the sheet")
+check(P.spriteInfo("dazedpower_02_272") == nil and P.spriteInfo("dazedpower_02_271") ~= nil, "nothing past the sheet")
 -- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
 local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
 check(f2 and f2.kind == "windmill" and f2.state == "turning" and f2.frame == "spin2" and f2.tier == "salvaged" and f2.facing == "W",
@@ -144,7 +146,7 @@ for n = 0, #P.ROWS * P.COLS - 1 do
     if P.indexOf(nm) ~= n or tonumber(string.match(nm, "_(%d+)$")) >= 512 then over = over + 1 end
 end
 check(over == 0, "every sprite round-trips and no tileset holds more than 512")
-check(#P.allItems() == 70, "70 items: " .. #P.allItems())
+check(#P.allItems() == 71, "71 items: " .. #P.allItems())
 check(M.wireLegal("windmill", "controller") and M.wireLegal("windmill", "windmill") and not M.wireLegal("windmill", "array"), "source wiring rules")
 check(M.wireLegal("waterpump", "transformer") and not M.wireLegal("array", "waterpump") and not M.wireLegal("vane", "controller"), "load and instrument rules")
 check(M.ctrlSpec("makeshift").nodes == 8 and M.ctrlSpec("workshop").nodes == 24, "controller node caps")
@@ -264,6 +266,7 @@ dofile("climate_power_test.lua")(check, E)
 dofile("board_test.lua")(check, E)
 dofile("anim_test.lua")(check, E)
 dofile("fixes_test.lua")(check, E)
+dofile("tread_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do

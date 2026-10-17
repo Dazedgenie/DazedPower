@@ -157,3 +157,13 @@ option DazedPower.ColdStarts
     page = DazedPower,
     translation = DazedPower_ColdStarts,
 }
+
+/* Zombie treadwheel (0.10.0). TreadRopeSnap: running with a tied zombie on a taut rope can snap it, and one held
+   back 8 tiles always breaks free. */
+option DazedPower.TreadRopeSnap
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_TreadRopeSnap,
+}

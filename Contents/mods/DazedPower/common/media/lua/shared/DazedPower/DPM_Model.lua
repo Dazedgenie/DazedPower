@@ -134,6 +134,27 @@ function M.hydroOutput(h, env)
     if env and (env.precipitation or 0) > 0 and not env.snowing then w = w * 1.15 end
     return w, "turning"
 end
+--- Zombie treadwheel: a tied zombie walks it for ever, day and night, in any weather (DP_Tread).
+--  It never tires, so the wheel is the only thing that wears. A zombie that can smell a living
+--  person close by strains toward them and walks faster: LURED_W while anyone stands within
+--  TREAD_LURE_TILES on its floor. A crawler drags itself round at a fraction of the pace.
+M.TREAD_W = 80
+M.TREAD_LURED_W = 140
+M.TREAD_LURE_TILES = 8
+M.TREAD_CRAWLER = 0.4
+M.TREAD_WEAR = 0.03      -- condition points per hour walking (a little more than the water wheel: a zombie is hard on slats)
+M.TREAD_STOP_BELOW = 35  -- condition at or below which the slats slip and it makes nothing
+
+--- Watts a treadwheel delivers: nothing empty or worn through, else the walking (or lured) figure
+--  scaled by its condition the way a pedal generator's is. `t` is { walking, crawler, lured, condition }.
+function M.treadOutput(t)
+    if not t or not t.walking then return 0, "empty" end
+    local c = t.condition or 100
+    if c <= M.TREAD_STOP_BELOW then return 0, "walking" end
+    local w = (t.lured and M.TREAD_LURED_W or M.TREAD_W) * (t.crawler and M.TREAD_CRAWLER or 1)
+    return w * (0.4 + 0.6 * math.min(1, c / 100)), "walking"
+end
+
 M.SOLAR_AMP_WEAR = 0.15
 M.AMP_NOISE = 12
 M.AMP_NOISE_LOUD = 1.5

@@ -132,7 +132,8 @@ end
 --  through the wrapped P.spriteInfo) and stamped their system claim; it just
 --  had no list to file them in.
 local function collect(rec)
-    local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {}, heater = {} }
+    local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {}, heater = {},
+                  treadwheel = {} }
     local root = UM.nodeKey(rec.x, rec.y, rec.z, "controller")
     for nk in pairs((S.claimed or {})[root] or {}) do
         local x, y, z, kind = UM.parseNodeKey(nk)
@@ -248,9 +249,24 @@ local function nearWater(sq)
     return false
 end
 
+--- Is anyone living within the treadwheel's lure range on its floor? Its zombie walks faster for them.
+local function lured(sq)
+    if not sq then return false end
+    local x, y, z, r = sq:getX(), sq:getY(), sq:getZ(), MM.TREAD_LURE_TILES
+    for _, pl in ipairs(DazedCore.Util.players()) do
+        local px, py, pz = try(pl, "getX"), try(pl, "getY"), try(pl, "getZ")
+        if px and py and pz and math.floor(pz) == z and not try(pl, "isDead")
+                and (px - x) * (px - x) + (py - y) * (py - y) <= r * r then
+            return true
+        end
+    end
+    return false
+end
+
 local function liveSources(rec)
     local o = rec.dpm or { pedal = {}, windmill = {}, steam = {}, propane = {}, hydro = {} }
     o.hydro = o.hydro or {}
+    o.treadwheel = o.treadwheel or {}
 
     -- Dazed Power's own solar arrays that carry an amplifier: copies of the
     -- entries its gather builds, so the model can price the extra half.
@@ -272,9 +288,9 @@ local function liveSources(rec)
     end
 
     local hooked = DazedPower.Alternator and DazedPower.Alternator.hasLinks(rec)
-    if (#o.pedal + #o.windmill + #o.steam + #(o.propane or {}) + #o.hydro + #solar) == 0 and not hooked then return nil end
+    if (#o.pedal + #o.windmill + #o.steam + #(o.propane or {}) + #o.hydro + #o.treadwheel + #solar) == 0 and not hooked then return nil end
     local src = { pedalW = 0, riding = 0, pedals = {}, turbines = {}, boilers = {},
-                  gens = {}, solar = solar, indoors = 0, hydros = {}, hydroW = 0 }
+                  gens = {}, solar = solar, indoors = 0, hydros = {}, hydroW = 0, treads = {}, treadW = 0 }
     local now = getTimestampMs and getTimestampMs() or 0
 
     for i = 1, #o.pedal do
@@ -304,6 +320,18 @@ local function liveSources(rec)
         if sq then
             local d = P.data(obj)
             src.hydros[#src.hydros + 1] = { obj = obj, condition = d.condition or 100, wet = nearWater(sq) }
+        end
+    end
+
+    -- Zombie treadwheels: walking whenever a zombie is tied in (DP_Tread), faster with someone in reach.
+    for i = 1, #o.treadwheel do
+        local obj = o.treadwheel[i]
+        local sq = alive(obj) and obj:getSquare()
+        if sq then
+            local d = P.data(obj)
+            local z = type(d.zombie) == "table" and d.zombie or nil
+            src.treads[#src.treads + 1] = { obj = obj, condition = d.condition or 100, walking = z ~= nil,
+                                            crawler = z ~= nil and z.crawler == true, lured = z ~= nil and lured(sq) }
         end
     end
 
@@ -415,7 +443,16 @@ local function stepSources(src, sys, dt, env, invEff, harvest)
     for i = 1, #(src.cars or {}) do carW = carW + (src.cars[i].watts or 0) end
     carW = carW * invEff
     src.carW = carW
-    hydroW = hydroW + carW
+    local treadW = 0
+    for i = 1, #(src.treads or {}) do
+        local t = src.treads[i]
+        local w, motion = MM.treadOutput(t)
+        t.watts, t.motion = w, motion
+        treadW = treadW + w
+    end
+    treadW = treadW * invEff
+    src.treadW = treadW
+    hydroW = hydroW + carW + treadW
     windW = windW + hydroW      -- sized into the boiler/generator "need" like wind
 
     local steamW = 0
@@ -835,6 +872,9 @@ local function sourceRows(rec, src)
     for _, h in ipairs(src.hydros or {}) do
         add(h.obj, "hydro", "standard", h.motion or "still", (h.watts or 0) * eff, h.condition)
     end
+    for _, t in ipairs(src.treads or {}) do
+        add(t.obj, "treadwheel", "standard", t.motion or "empty", (t.watts or 0) * eff, t.condition)
+    end
     for _, tb in ipairs(src.turbines or {}) do
         local r = add(tb.obj, "windmill", tb.tier, MM.turbineState(tb.motion, P.data(tb.obj).condition),
                       (tb.watts or 0) * eff, P.data(tb.obj).condition)
@@ -890,6 +930,18 @@ local function liveEffects(rec, src, dt)
             local d = P.data(h.obj)
             if h.motion == "turning" then d.condition = math.max(0, (d.condition or 100) - MM.HYDRO_WEAR * dt) end
             push(h.obj, R.setVariant(h.obj, h.motion == "turning" and "turning" or "still"))
+        end
+    end
+
+    -- Treadwheels: the slats wear while a zombie walks them; the sprite shows whether one is in.
+    -- P.setState, not R.setVariant: the wheel is a Dazed Power part, not one of the DPM kinds.
+    for i = 1, #(src.treads or {}) do
+        local t = src.treads[i]
+        if alive(t.obj) then
+            local d = P.data(t.obj)
+            if t.walking then d.condition = math.max(0, (d.condition or 100) - MM.TREAD_WEAR * dt) end
+            d.treadWatts, d.treadLured = t.watts or 0, t.lured or nil
+            push(t.obj, P.setState(t.obj, t.walking and "walking" or "empty"))
         end
     end
 
@@ -1048,7 +1100,14 @@ if not B.wrappedUpdate then
                 local h = src.hydros[i]
                 hydros[i] = { condition = h.condition, wet = h.wet }
             end
-            entry.dpm = { turbines = turbines, boilers = boilers, pedals = {}, gens = gens, solar = solar, hydros = hydros }
+            -- A zombie walks an unwatched wheel too, but nobody is there to lure it.
+            local treads = {}
+            for i = 1, #(src.treads or {}) do
+                local t = src.treads[i]
+                treads[i] = { condition = t.condition, walking = t.walking, crawler = t.crawler, lured = false }
+            end
+            entry.dpm = { turbines = turbines, boilers = boilers, pedals = {}, gens = gens, solar = solar, hydros = hydros,
+                          treads = treads }
         end
     end
 end

@@ -583,6 +583,12 @@ local function addRows(menu, wo, target, playerObj)
         -- Dazed Power's own solar array takes an amplifier too; nothing else of its.
         local theirs = P.describe(target)
         if R.canAmplify(theirs) then ampRows(menu, wo, target, playerObj, P.data(target)) end
+        -- A zombie treadwheel gets its own rows (DP_TreadMenu), and the repair row.
+        if theirs and theirs.kind == "treadwheel" and DazedPower.TreadMenu then
+            DazedPower.TreadMenu.wheelRows(menu, wo, target, playerObj, ICON)
+            addRepair(menu, wo, target, playerObj, P.data(target))
+            return
+        end
         -- A water wheel gets its condition line and the repair row.
         if theirs and R.REPAIR_ONLY[theirs.kind] then
             local line = menu:addOption(status(target, theirs), nil, nil)
