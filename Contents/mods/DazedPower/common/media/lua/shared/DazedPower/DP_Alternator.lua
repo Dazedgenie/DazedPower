@@ -33,6 +33,15 @@ function A.output(running, condition)
     return A.WATTS * (0.4 + 0.6 * c)
 end
 
+--- How much of its output an alternator gives, from Dazed Salvage's note on the engine part
+--  (modData.dazedSalvage.alt): false means the alternator was stripped, a number is its condition (0..100),
+--  anything else (no Salvage, never stripped) is the whole output. Read from modData so Power needs no Salvage.
+function A.altFactor(alt)
+    if alt == false then return 0 end
+    if type(alt) == "number" then return M.clamp(alt / 100, 0, 1) end
+    return 1
+end
+
 --- Parse a controller's link list into { {id, x, y, z}, ... }.
 function A.parse(str)
     local out = {}

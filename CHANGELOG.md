@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.7 (2026-10-17)
+- A hooked-up car whose alternator was stripped (Dazed Salvage marks the Engine part) gives no power; a salvaged one gives power in proportion to its condition. Works without Salvage installed.
+
 ## 0.8.6 (2026-10-17)
 - Internal: Power's client requests (connect, disconnect, pedal heartbeat, Electrician grant and the rest) now travel through Dazed Core's Net layer instead of raw client commands. The pedal heartbeat is rate limited per player. No change to how anything plays.
 

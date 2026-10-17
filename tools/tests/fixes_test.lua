@@ -178,4 +178,9 @@ return function(check, E)
         check(GP.applySettings(g, {}, 0.3, 0.9) == true and sent == 0 and g.startPct == 30,
             "generator settings are kept on the entry but not sent to an object whose index cannot be read")
     end
+
+    -- Dazed Salvage's note on the Engine part: a stripped alternator gives nothing, a number scales the output.
+    local Alt = DazedPower.Alternator
+    check(Alt.altFactor(nil) == 1 and Alt.altFactor(false) == 0 and Alt.altFactor(50) == 0.5
+          and Alt.altFactor(250) == 1 and Alt.altFactor("x") == 1, "alternator: altFactor handles false, numbers and missing")
 end

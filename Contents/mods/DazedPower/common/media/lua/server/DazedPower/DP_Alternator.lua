@@ -56,6 +56,14 @@ if not A.tickWrapped then
     end
 end
 
+--- The stripped-alternator factor from Dazed Salvage's modData on the Engine part (1 when it is absent).
+local function altFactor(v)
+    local part = v.getPartById and v:getPartById("Engine")
+    local md = part and part.getModData and part:getModData()
+    local salv = md and md.dazedSalvage
+    return A.altFactor(type(salv) == "table" and salv.alt or nil)
+end
+
 local function engineCondition(v)
     local part = v.getPartById and v:getPartById("Engine")
     return part and part:getCondition() or 0
@@ -80,7 +88,7 @@ function A.liveCars(rec)
             keep[#keep + 1] = l
             local running = v.isEngineRunning and v:isEngineRunning() or false
             local cond = engineCondition(v)
-            out[#out + 1] = { obj = v, watts = A.output(running, cond), condition = cond, x = sq:getX(), y = sq:getY() }
+            out[#out + 1] = { obj = v, watts = A.output(running, cond) * altFactor(v), condition = cond, x = sq:getX(), y = sq:getY() }
         elseif getSquare(l.x, l.y, l.z) then
             -- the hook-up square is loaded and the car is not there: it drove off
         else
