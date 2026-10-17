@@ -1165,8 +1165,9 @@ def woodgasfire_part(tier, frame):
 
 
 def gasfx_part(kind, tier, frame):
-    """A running petrol engine shaking with its thin exhaust puff (run1..run3), or a running propane engine's blue
-    burner flame and heat shimmer (flame1..flame3): dz_render's build_gas with GAS_FRAME set (DP_GenFx)."""
+    """A running petrol engine shaking on its mounts (only the engine moves, 2-3 sprite px a frame) under two rising
+    exhaust puffs (run1..run3), or a running propane engine's teardrop blue burner flame, ground glow and heat shimmer
+    (flame1..flame3): dz_render's build_gas with GAS_FRAME set (DP_GenFx)."""
     global GAS_FRAME
     GAS_FRAME = frame
     try:
@@ -1236,6 +1237,7 @@ def dp_render(families=None, only_rows=None):
         pieces = 4 if mo == "xl" else 1
         for col, (fname, deg) in enumerate(FACINGS):
             root.rotation_euler = fixed.rotation_euler = (0, 0, math.radians(deg))
+            for hook in FACING_HOOKS: hook(deg)
             for p in range(1, pieces + 1):
                 dx, dy = PIECE_OFFSET[p]
                 off = (0.5 - dx, dy - 0.5, 0) if pieces > 1 else (0, 0, 0)

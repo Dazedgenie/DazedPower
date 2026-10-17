@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.1 (2026-10-17)
+- Art: the **petrol** and **propane** running frames are stronger, so they read at game size (the 0.13.0 ones were hard to tell from the still sprite).
+  - **Petrol:** the engine now visibly shakes on its mounts, 2 to 3 pixels a frame in alternating directions, while the pallet, frame or base plate stays still; two larger grey-white exhaust puffs climb from the pipe.
+  - **Propane:** the burner flame is a proper flame, a blue tongue with a bright white-blue core, two to three times bigger, flickering in height and lean from frame to frame, with a slightly stronger blue glow on the ground under it.
+- Only those 72 sprites were re-rendered and re-packed (`build_sheet.py --replace`); sprite ids and every other sprite are unchanged, and the depth map changes only for those sprites. Nothing in the code changes.
+
 ## 0.13.0 (2026-10-17)
 - Effects: **every generator shows it is running**, like the steam engine since 0.12.0. Near you (25 tiles) and on screen:
   - **Wood gas:** the gasifier's ash door opens on flickering flames and the exhaust smoke climbs while it makes power; while it warms up, the door shows glowing embers. At night a warm orange light that widens with its load, and a dim red glow while it warms.

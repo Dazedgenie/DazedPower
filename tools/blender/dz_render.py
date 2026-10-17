@@ -234,6 +234,9 @@ AX = {"Z": (0, 0, 0), "X": (0, 90, 0), "Y": (90, 0, 0)}
 BUILT = []
 FIXED = set()            # objects that keep their place whatever the facing (vane compass letters)
 HEAD = [Matrix.Identity(4)]   # extra transform applied to everything built (for yawing a whole head)
+SHAKING = [False]        # while True, obj() also files each new part in SHAKERS (the petrol engine's moving parts)
+SHAKERS = []
+FACING_HOOKS = []        # callables(deg) a render loop runs after turning the model to each facing (dz2.dp_render)
 
 
 def M(loc=(0, 0, 0), rot=(0, 0, 0)):
@@ -254,6 +257,7 @@ def obj(bm, m, matrix=None, smooth=False, bevel=0.0, name="p"):
     if bevel > 0:
         md = ob.modifiers.new("b", "BEVEL"); md.width = bevel; md.segments = 2; md.limit_method = "ANGLE"
     BUILT.append(ob)
+    if SHAKING[0]: SHAKERS.append(ob)
     return ob
 
 
@@ -847,54 +851,128 @@ def jerry_can(c, rot=0):
 # dz2's petrolrun / propaneflame rows (the client's running frames, DP_GenFx): "run1".."run3" or "flame1".."flame3"
 # while one is built, else None.
 GAS_FRAME = None
-GAS_SHAKE = {1: (0.0, 0.0, 0.0), 2: (0.009, -0.006, 0.007), 3: (-0.007, 0.008, 0.004)}   # a petrol engine on its mounts
-BURNER = {1: (0.08, 0.0), 2: (0.105, 0.18), 3: (0.09, -0.15)}                          # blue flame height, lean
+# The petrol engine's shake on its mounts, run1..run3: (right, up) in sprite pixels at the game's 128 px scale, so it
+# reads the same in every facing (gas_shake turns it into model space per facing). Only the engine and what is bolted
+# to it move; the pallet, frame or base plate stays put. Consecutive frames jump 3-4 px, in alternating directions.
+GAS_SHAKE = {1: (-2.0, 1.0), 2: (2.0, 2.0), 3: (0.5, -1.0)}
+SPRITE_PX = 2 * math.sqrt(2) / 128          # metres per sprite pixel (tile_camera: a 2*sqrt(2) m ortho over 128 px)
+BURNER = {1: (0.27, 0.0), 2: (0.33, 0.3), 3: (0.23, -0.28)}                     # blue flame length (m), lean
+_GAS_SHAKE_ON = [False]
 
 
 def gas_frame_n():
     return int(GAS_FRAME[-1]) if GAS_FRAME else 0
 
 
+def _eng(on):
+    """Start (or end) the petrol engine's moving parts: while shaking, everything built goes in SHAKERS."""
+    SHAKING[0] = bool(on and _GAS_SHAKE_ON[0])
+
+
+def gas_shake(n):
+    """Move SHAKERS by GAS_SHAKE[n] on screen: a facing hook, as the model's yaw turns any model-space offset."""
+    r, u = GAS_SHAKE[n]
+    off = Vector((0.7071, 0.7071, 0)) * (r * SPRITE_PX) + Vector((0, 0, u * SPRITE_PX / math.sin(math.radians(60))))
+    obs = list(SHAKERS)
+
+    def hook(deg):
+        loc = Matrix.Rotation(math.radians(-deg), 3, "Z") @ off
+        for ob in obs: ob.location = loc
+    FACING_HOOKS.append(hook)
+
+
+def exhaust_puffs(at, rise, n, frames=3):
+    """A running petrol engine's exhaust: two soft grey-white puffs a frame, at different heights, each climbing half
+    the gap to the next over the loop, so frame 4 would be frame 1 again (the frames cycle without a jump)."""
+    at = Vector(at); rise = Vector(rise)
+    ph = (n - 1) / float(frames)
+    for i in range(2):
+        k = (i + ph) / 2.0                                   # 0 at the pipe .. 1 where a puff has faded away
+        drift = Vector((math.sin(k * 6.0), math.cos(k * 4.0), 0)) * 0.03 * k
+        c = at + rise * (0.07 + 0.62 * k) + drift
+        fade = min(1.0, 0.55 + (i + ph) * 0.9, (2 - i - ph) * 1.4)
+        size = 0.04 + 0.042 * k
+        a = round(0.5 * (1 - 0.35 * k) * fade, 3)
+        col = "#dddcd8" if k < 0.5 else "#cbc9c4"
+        # Some self-light flattens the shading, so it reads as soft smoke rather than a lit ball.
+        m = mat(col, 1.0, alpha=a, emit=0.45, emit_col=col, dirt=0, var=0.05, wear=False)
+        spec = bsdf_in(m.node_tree.nodes.get("Principled BSDF"), "Specular IOR Level", "Specular")
+        if spec: spec.default_value = 0.0                                           # no glassy rim
+        ball(size * 0.9, c, m, segs=16)
+        for dx, dz, sc in ((0.5, -0.2, 0.65), (-0.45, 0.15, 0.6)):                       # a lumpy, not round, puff
+            ball(size * sc, c + Vector((dx * size, -dx * size * 0.5, dz * size)), m, segs=12)
+
+
+def tongue(base, axis, side, L, R, lean, m, rings=16, segs=16):
+    """A teardrop flame: round at the root, widest a quarter up, drawn out to a point, the tip bending `lean` aside."""
+    up = Vector((0, 0, 1))
+    bm = bmesh.new(); prev = None
+    bottom = bm.verts.new(base - axis * (R * 0.25))
+    for j in range(1, rings):
+        t = j / float(rings)
+        r = R * (math.sin(t / 0.25 * math.pi / 2) if t < 0.25 else ((1 - t) / 0.75) ** 1.25)
+        c = base + axis * (L * t) + side * (lean * L * t * t)
+        tang = (axis + side * (2 * lean * t)).normalized()
+        u = tang.cross(up if abs(tang.z) < 0.95 else Vector((1, 0, 0))).normalized(); v = tang.cross(u)
+        ring = [bm.verts.new(c + (u * math.cos(2 * math.pi * i / segs) + v * math.sin(2 * math.pi * i / segs)) * r) for i in range(segs)]
+        if prev is None:
+            for i in range(segs): bm.faces.new((bottom, ring[(i + 1) % segs], ring[i]))
+        else:
+            for i in range(segs): bm.faces.new((prev[i], prev[(i + 1) % segs], ring[(i + 1) % segs], ring[i]))
+        prev = ring
+    top = bm.verts.new(base + axis * L + side * (lean * L))
+    for i in range(segs): bm.faces.new((prev[i], prev[(i + 1) % segs], top))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return obj(bm, m, smooth=True)
+
+
 def burner(tip, rise, n):
-    """A propane engine's small blue flame licking out of the exhaust tip, flame frame `n` (1..3)."""
-    tip = Vector(tip); up = Vector(rise).normalized()
-    ht, lean = BURNER[n]
-    side = Vector((1, 0, 0)) if abs(up.x) < 0.9 else Vector((0, 1, 0))
-    axis = (up + side * lean).normalized()
-    for r, k, col, e in ((0.03, 1.0, "#3f7cff", 9), (0.016, 0.62, "#bfe4ff", 16)):
-        c = tip + axis * (ht * k * 0.5)
-        q = Vector((0, 0, 1)).rotation_difference(axis)
-        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=12, v_segments=8, radius=r)
-        bmesh.ops.scale(bm, vec=Vector((1, 1, ht * k * 0.5 / r)), verts=bm.verts)
-        obj(bm, glow(col, e), Matrix.Translation(c) @ q.to_matrix().to_4x4(), smooth=True)
-    ld = bpy.data.lights.new("b", "POINT"); ld.energy = (1.6, 2.4, 1.9)[n - 1]; ld.color = (0.35, 0.55, 1.0); ld.shadow_soft_size = 0.03
-    lo = bpy.data.objects.new("b", ld); MODEL.objects.link(lo); lo.location = HEAD[-1] @ (tip + axis * 0.04); BUILT.append(lo)
+    """A propane engine's blue burner flame out of the exhaust tip, flame frame `n` (1..3): a teardrop tongue, a
+    see-through blue outer flame round a bright white-blue core, licking up and flickering in length and lean, with a
+    faint blue glow on the ground under it."""
+    tip = Vector(tip); out = Vector(rise).normalized()
+    L, lean = BURNER[n]
+    axis = (out + Vector((0, 0, 1)) * 0.7).normalized()                       # out of the pipe, licking upward
+    side = axis.cross(Vector((0, 0, 1)))
+    side = side.normalized() if side.length > 1e-3 else Vector((1, 0, 0))
+    outer = mat("#10205a", 1.0, emit=3.2, emit_col="#1e4cff", alpha=0.8, var=0.0, dirt=0, wear=False)
+    tongue(tip, axis, side, L, 0.055, lean, outer)
+    core = mat("#8fb8ff", 1.0, emit=9, emit_col="#d2e6ff", var=0.0, dirt=0, wear=False)
+    tongue(tip + axis * 0.004, axis, side, L * 0.48, 0.02, lean * 0.55, core)
+    # The baked ground glow: stacked faint light-blue discs, widest faintest, so the edge fades instead of ringing.
+    for i in range(6):
+        r = 0.2 - i * 0.03
+        g = mat("#5d8dff", 1.0, emit=1.2, emit_col="#6f9bff", alpha=0.045, var=0.0, dirt=0, wear=False)
+        cyl(r, 0.002, (tip.x + axis.x * 0.05, tip.y + axis.y * 0.05, 0.004 + i * 0.0005), g, segs=32)
+    ld = bpy.data.lights.new("b", "POINT"); ld.energy = (5.0, 6.5, 4.6)[n - 1]; ld.color = (0.33, 0.52, 1.0); ld.shadow_soft_size = 0.05
+    lo = bpy.data.objects.new("b", ld); MODEL.objects.link(lo); lo.location = HEAD[-1] @ (tip + axis * 0.08); BUILT.append(lo)
 
 
 def shimmer(at, rise, n, frames=3):
-    """Faint heat haze over a clean-burning exhaust: a few very thin, nearly clear wisps climbing a third a frame."""
+    """Faint heat haze over the flame: a few very thin, nearly clear wisps climbing a third a frame."""
     at = Vector(at); rise = Vector(rise)
     ph = (n - 1) / float(frames)
     for i in range(3):
         k = (i + ph) / 3.0
-        p = at + rise * (0.1 + 0.4 * k) + Vector((math.sin(k * 9.0) * 0.015, 0, 0))
+        p = at + Vector((0, 0, 1)) * (0.3 + 0.3 * k) + rise * 0.12 + Vector((math.sin(k * 9.0) * 0.015, 0, 0))
         fade = min(1.0, (i + ph) * 1.5, (3 - i - ph) * 1.2)
         if fade <= 0.02: continue
-        ball(0.03 * (0.8 + 0.6 * k), p, puff("#eef3f8", round(0.1 * fade, 3)), scale=(0.7, 0.7, 1.6), segs=12)
+        m = mat("#f2f6fb", 1.0, alpha=round(0.07 * fade, 3), emit=0.4, emit_col="#f2f6fb", dirt=0, var=0.05, wear=False)
+        ball(0.03 * (0.8 + 0.6 * k), p, m, scale=(0.7, 0.7, 1.6), segs=12)
 
 
 def build_gas(fuel, tier, state):
-    shake = GAS_FRAME and GAS_FRAME.startswith("run") and state == "running"
-    if shake: HEAD.append(HEAD[-1] @ Matrix.Translation(Vector(GAS_SHAKE[gas_frame_n()])))
+    shake = bool(GAS_FRAME and GAS_FRAME.startswith("run") and state == "running")
+    _GAS_SHAKE_ON[0] = shake
     try:
         exh, rise = _build_gas(fuel, tier, state)
     finally:
-        if shake: HEAD.pop()
+        _GAS_SHAKE_ON[0] = False; SHAKING[0] = False
+    if shake: gas_shake(gas_frame_n())
     if state != "running": return
     n = gas_frame_n()
     if GAS_FRAME and GAS_FRAME.startswith("run"):
-        # A thin puff climbing a third of a puff a frame; the frames loop without a jump (puffs(phase=)).
-        puffs(exh, 3, 0.032, "#a3a19c", 0.42, rise, seed=9, phase=(n - 1) / 3.0)
+        exhaust_puffs(exh, rise, n)
     elif GAS_FRAME and GAS_FRAME.startswith("flame"):
         burner(exh, rise, n)
         shimmer(exh, rise, n)
@@ -909,6 +987,7 @@ def _build_gas(fuel, tier, state):
         for x in (-0.33, 0, 0.33): box((0.06, 0.62, 0.08), (x, 0, 0.04), p["wood"])
         for i in range(5): box((0.78, 0.1, 0.022), (0, -0.26 + i * 0.13, 0.091), p["wood_grey"])
         eng = mat("#3a5a3c" if fuel == "propane" else "#8c2f28", 0.55, 0.2, rust=0.3, dirt=0.35)
+        _eng(True)
         box((0.2, 0.2, 0.16), (-0.12, -0.08, 0.19), mat("#7c7d7b", 0.55, 0.4, rust=0.25))
         for i in range(4): box((0.21, 0.04, 0.008), (-0.12, -0.2, 0.15 + i * 0.03), p["alu"])
         b = box((0.24, 0.24, 0.12), (-0.12, -0.06, 0.32), eng, bevel=0.04)
@@ -918,6 +997,7 @@ def _build_gas(fuel, tier, state):
         cyl(0.075, 0.13, (0.15, -0.08, 0.2), p["alu"], axis="X"); cyl(0.04, 0.03, (0.23, -0.08, 0.2), p["steel_dark"], axis="X")
         for x in (0.09, 0.2): tape((x, -0.08, 0.2), 0.08, "X", 0.02)
         box((0.18, 0.06, 0.08), (0.15, -0.08, 0.14), p["wood_dark"])
+        _eng(False)
         path([(0.2, -0.04, 0.25), (0.3, 0.05, 0.28), (0.4, 0.2, 0.1)], 0.007, p["wire_r"]); path([(0.2, -0.05, 0.22), (0.32, 0.0, 0.2), (0.42, 0.15, 0.1)], 0.007, p["wire_k"])
         if fuel == "propane":
             top = propane_tank((0.12, 0.2, 0.1), 0.12, 0.24, brk)
@@ -937,6 +1017,7 @@ def _build_gas(fuel, tier, state):
         for y in (-0.21, 0.21): cyl(0.022, 0.03, (-0.32, y, 0.02), p["rubber"])
         cyl(0.07, 0.04, (0.32, 0.25, 0.07), p["rubber"], axis="Y"); cyl(0.07, 0.04, (0.32, -0.25, 0.07), p["rubber"], axis="Y")
         box((0.24, 0.3, 0.06), (0.0, 0, 0.08), frame)
+        _eng(True)
         box((0.22, 0.24, 0.2), (-0.13, 0.0, 0.22), mat("#5d5e5c", 0.55, 0.4, rust=0.2))
         for i in range(5): box((0.23, 0.2, 0.008), (-0.13, 0.0, 0.33 + i * 0.016), p["alu"])
         cyl(0.09, 0.03, (-0.13, -0.135, 0.24), p["plastic"], axis="Y"); box((0.05, 0.02, 0.02), (-0.13, -0.16, 0.3), p["rubber"])
@@ -956,10 +1037,12 @@ def _build_gas(fuel, tier, state):
         gauge((0.14, -0.23, 0.25), (0, 0, 0), 0.022, 0.6 if run else 0.0)
         lamp((0.24, -0.228, 0.36), run, "#6fe07a", 0.009)
         cyl(0.04, 0.14, (-0.3, 0.07, 0.3), p["iron"], axis="Y")
+        _eng(False)
         exh = Vector((-0.3, -0.02, 0.3))
     else:
         body = mat(body_col, 0.5, 0.2, var=0.08, rust=0.0, dirt=0.15)
         box((0.82, 0.58, 0.05), (0, -0.03, 0.025), mat("#3a3c3e", 0.5, 0.3, dirt=0.25), bevel=0.01)
+        _eng(True)
         box((0.76, 0.48, 0.5), (0, -0.05, 0.3), body, bevel=0.025)
         box((0.78, 0.5, 0.012), (0, -0.05, 0.47), mat("#3a3c3e", 0.5, 0.3))
         for s in (1, -1):
@@ -980,6 +1063,7 @@ def _build_gas(fuel, tier, state):
         else:
             cyl(0.04, 0.025, (0.25, 0.05, 0.56), p["plastic"]); box((0.06, 0.03, 0.02), (0.25, -0.29, 0.43), mat("#d6d2c4", 0.5))
             cyl(0.025, 0.05, (-0.3, 0.19, 0.2), p["brass"], axis="Y")
+        _eng(False)
         exh = Vector((0.46, 0.1, 0.42))
     rise = (0.35, 0.0, 0.6) if tier != "salvaged" else (-0.4, 0, 0.5)
     if brk:
@@ -1003,7 +1087,7 @@ def clear():
     for coll in (bpy.data.meshes, bpy.data.curves, bpy.data.lights):
         for d in list(coll):
             if d.users == 0: coll.remove(d)
-    BUILT.clear(); FIXED.clear()
+    BUILT.clear(); FIXED.clear(); SHAKERS.clear(); FACING_HOOKS.clear(); SHAKING[0] = False
 
 
 def build(kind, tier, state, at=(0, 0, 0), yaw=0.0):
