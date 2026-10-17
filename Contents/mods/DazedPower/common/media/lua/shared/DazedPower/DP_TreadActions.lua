@@ -22,7 +22,7 @@ end
 function DP_TieZombie:isValid()
     local zb = self:target()
     if not (zb and T.isDown(zb)) then return false end
-    if T.leashOf(self.character) then return false end
+    if T.leashOf(self.character) or T.zombieHeld(self.zid) then return false end
     if not (self.rope and self.rope.getContainer and self.rope:getContainer()) then return false end
     return T.dist(self.character, zb) <= T.TIE_REACH + 0.5
 end
@@ -58,7 +58,7 @@ function DP_TieZombie:complete()
     local cont = item and item.getContainer and item:getContainer()
     if not cont or (item.getWorldItem and item:getWorldItem()) then return true end
     if not T.ROPES[item:getFullType()] then return true end
-    if T.leashOf(self.character) then return true end
+    if T.leashOf(self.character) or T.zombieHeld(self.zid) then return true end
     local zb = self:target()
     if not zb or T.dist(self.character, zb) > T.TIE_REACH + 1.0 then return true end
     cont:Remove(item)

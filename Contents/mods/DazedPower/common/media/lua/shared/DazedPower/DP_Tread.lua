@@ -198,10 +198,18 @@ T.wheelAt = wheelAt
 
 local function near(player, x, y, z, max) return DazedCore.Net.near(player, x, y, z, max) end
 
+--- Does any leash already hold this zombie? Authority only.
+function T.zombieHeld(zid)
+    for _, l in pairs(T.leashes) do
+        if l.zid == zid then return true end
+    end
+    return false
+end
+
 --- Start a leash: filed, and told to every client. Authority only.
 function T.startLeash(player, zid, rope)
     local pid = T.pid(player)
-    if pid == nil or zid == nil then return false end
+    if pid == nil or zid == nil or T.zombieHeld(zid) then return false end
     T.leashes[pid] = { pid = pid, zid = zid, rope = rope }
     DazedCore.Net.broadcast(T.MOD, "treadLeash", { pid = pid, zid = zid, rope = rope })
     return true
@@ -273,6 +281,7 @@ function T.COMMANDS.treadLoad(player, args)
     if not l then return end
     local zb = T.findZombie(l.zid)
     if not zb then note(player, "IGUI_DazedPower_TreadNoZombie", true) return end
+    if T.zid(zb) ~= l.zid then return end                 -- only the zombie this player's own leash holds
     local zx, zy = try(zb, "getX") or 1e9, try(zb, "getY") or 1e9
     local dx, dy = zx - (sq:getX() + 0.5), zy - (sq:getY() + 0.5)
     if dx * dx + dy * dy > (T.LOAD_REACH + 0.5) * (T.LOAD_REACH + 0.5) then
@@ -325,6 +334,21 @@ function T.COMMANDS.treadPutDown(player, args)
     end
 end
 
+--- Drop the leashes whose owner is no longer online (they left, or dropped), telling every client. Authority only.
+function T.sweep()
+    local gone = {}
+    for pid in pairs(T.leashes) do
+        if not T.playerFor(pid) then gone[#gone + 1] = pid end
+    end
+    for _, pid in ipairs(gone) do T.endLeash(pid, "lost") end
+    return #gone
+end
+
+if not T.sweepFiled and DazedCore.Tick and isServer and isServer() then
+    T.sweepFiled = true
+    DazedCore.Tick.every("DazedPower.treadSweep", 5000, function() pcall(T.sweep) end)
+end
+
 --- A client that joins (or a client that lost track) asks for every leash in play.
 function T.COMMANDS.treadSync(player)
     local list = {}
@@ -343,10 +367,11 @@ end
 
 --- Free a zombie this machine owns: it may attack again, and turns on `toward` when given.
 function T.free(zb, toward)
-    if not zb or try(zb, "isRemoteZombie") then return end
+    if not zb then return end
+    -- Clear the flags even on a remote zombie: this client may have set them while it owned it.
     pcall(function() zb:setUseless(false) end)
     pcall(function() zb:setNoTeeth(false) end)
-    if toward then pcall(function() zb:setTarget(toward) end) end
+    if toward and not try(zb, "isRemoteZombie") then pcall(function() zb:setTarget(toward) end) end
 end
 
 T.found = T.found or {}       -- zid -> { z, at }: the zombie object last found for a leash, and when it was last seen
@@ -394,10 +419,25 @@ T.onLeash, T.onLeashEnd, T.onLeashes = onLeash, onLeashEnd, onLeashes
 ---------------------------------------------------------------- every client: walking a zombie on a rope
 
 --- The tied zombie for a leash, cached, re-found when it went missing. Records when it was last seen.
-local function zombieOf(l, now)
+local SCAN_MS = 1000       -- a missing zombie is searched for at most this often per leash
+local SCAN_NEAR = 60.0        -- and only while a local player is this close to its leader
+
+local function localNear(leader)
+    if not leader then return false end
+    for _, p in ipairs(DazedCore.Util.players()) do
+        if try(p, "isLocalPlayer") and T.dist(p, leader) <= SCAN_NEAR then return true end
+    end
+    return false
+end
+
+local function zombieOf(l, now, leader)
     local f = T.found[l.zid]
     if f and T.zombieAlive(f.z) then f.at = now return f.z end
-    local zb = T.findZombie(l.zid)
+    local zb = nil
+    if (not l.tried or now - l.tried >= SCAN_MS) and localNear(leader) then
+        l.tried = now
+        zb = T.findZombie(l.zid)
+    end
     if zb then
         T.found[l.zid] = { z = zb, at = now }
         return zb
@@ -432,7 +472,7 @@ function T.follow()
     local now = nowMs()
     for pid, l in pairs(T.leashes) do
         local leader = T.playerFor(pid)
-        local zb = zombieOf(l, now)
+        local zb = zombieOf(l, now, leader)
         local owned = zb ~= nil and not try(zb, "isRemoteZombie")
         if leader and zb and owned then
             -- Tied: it does not bite, it does not choose its own target, and it walks after its leader.

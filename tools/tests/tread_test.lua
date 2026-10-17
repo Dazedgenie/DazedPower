@@ -132,6 +132,12 @@ return function(check, E)
     TM.worldRows(player, ctx, E.square(501, 500, 0))
     check(#rows == 1 and rows[1].text == "ContextMenu_DazedPower_TreadLetGo", "while leading, the world menu offers Let go")
 
+    -- A zombie already on a rope cannot be tied again, by anyone.
+    check(T.startLeash(player, 7, "Base.Rope") == false, "a leashed zombie cannot be leashed again")
+    check(T.zombieHeld(7) and not T.zombieHeld(99), "zombieHeld reports the held zombie")
+    T.leashes[3] = { pid = 3, zid = 77, rope = "Base.Rope" }
+    check(T.sweep() == 1 and T.leashes[3] == nil and T.leashOf(player) ~= nil, "the sweep drops a leash whose owner is offline, and only that")
+
     ------------------------------------------------------------ walking it
     zb.down = false
     player.x, player.y = 510.5, 500.5
