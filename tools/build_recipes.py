@@ -206,6 +206,29 @@ RECIPE = """    craftRecipe {name}
 """
 
 
+# ---- Dazed Salvage parts, as alternatives. A missing item id in a list is skipped, so with no Salvage installed these
+# read exactly as before. (Never a dazedcore:* tag here: a tag that matches no item stops the world loading.)
+# A stripped car alternator stands in for one electronics scrap, and copper wire for the wire, in the pedal and wind rigs.
+import re
+for (kind, mount, tier), r in R.items():
+    if kind not in ("pedal", "windmill"):
+        continue
+    out = []
+    swapped = False
+    for line in r["inputs"]:
+        m = re.match(r"item (\d+) \[Base\.(ElectronicsScrap)\]$", line)
+        w = re.match(r"item (\d+) \[Base\.(Wire|ElectricWire)\]$", line)
+        if m and not swapped and int(m.group(1)) >= 2:
+            out.append("item %d [Base.ElectronicsScrap]" % (int(m.group(1)) - 1))
+            out.append("item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap]")
+            swapped = True
+        elif w:
+            out.append("item %s [Base.%s;Base.DazedPartCopperWire]" % (w.group(1), w.group(2)))
+        else:
+            out.append(line)
+    r["inputs"] = out
+
+
 def recipe(name, action, time, skill, xp, inputs, outputs, learn, category="Electrical"):
     return RECIPE.format(name=name, action=action, time=time,
                          skill=("\n        SkillRequired   = %s," % skill) if skill else "",

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.8 (2026-10-17)
+- With Dazed Salvage installed, the pedal and wind generator recipes accept a stripped car Alternator in place of one electronics scrap, and Copper Wire in place of the wire. Without Salvage nothing changes.
+
 ## 0.8.7 (2026-10-17)
 - A hooked-up car whose alternator was stripped (Dazed Salvage marks the Engine part) gives no power; a salvaged one gives power in proportion to its condition. Works without Salvage installed.
 

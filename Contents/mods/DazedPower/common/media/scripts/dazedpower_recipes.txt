@@ -1027,10 +1027,11 @@ module Base
         {
             item 1 tags[base:screwdriver] mode:keep flags[Prop1],
             item 1 tags[base:pliers] mode:keep flags[MayDegradeVeryLight],
-            item 2 [Base.ElectronicsScrap],
+            item 1 [Base.ElectronicsScrap],
+            item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap],
             item 4 [Base.SmallSheetMetal],
             item 2 [Base.MetalBar],
-            item 2 [Base.Wire],
+            item 2 [Base.Wire;Base.DazedPartCopperWire],
             item 4 [Base.Screws],
             item 2 [Base.DuctTape],
         }
@@ -1074,10 +1075,11 @@ module Base
             item 1 tags[base:screwdriver] mode:keep flags[Prop1],
             item 2 [Base.BlowTorch],
             item 1 tags[base:weldingmask] mode:keep,
-            item 4 [Base.ElectronicsScrap],
+            item 3 [Base.ElectronicsScrap],
+            item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap],
             item 2 [Base.SheetMetal],
             item 3 [Base.MetalBar],
-            item 3 [Base.ElectricWire],
+            item 3 [Base.ElectricWire;Base.DazedPartCopperWire],
             item 4 [Base.Screws],
         }
         outputs
@@ -1121,9 +1123,10 @@ module Base
             item 2 [Base.BlowTorch],
             item 1 tags[base:weldingmask] mode:keep,
             item 1 [Base.DazedPedalSalvaged] mode:destroy,
-            item 6 [Base.ElectronicsScrap],
+            item 5 [Base.ElectronicsScrap],
+            item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap],
             item 2 [Base.Aluminum],
-            item 4 [Base.ElectricWire],
+            item 4 [Base.ElectricWire;Base.DazedPartCopperWire],
             item 6 [Base.Screws],
         }
         outputs
@@ -1164,10 +1167,11 @@ module Base
         {
             item 1 tags[base:screwdriver] mode:keep flags[Prop1],
             item 1 tags[base:pliers] mode:keep flags[MayDegradeVeryLight],
-            item 3 [Base.ElectronicsScrap],
+            item 2 [Base.ElectronicsScrap],
+            item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap],
             item 3 [Base.SmallSheetMetal],
             item 3 [Base.MetalBar],
-            item 3 [Base.Wire],
+            item 3 [Base.Wire;Base.DazedPartCopperWire],
             item 6 [Base.Screws],
             item 2 [Base.DuctTape],
         }
@@ -1211,10 +1215,11 @@ module Base
             item 1 tags[base:screwdriver] mode:keep flags[Prop1],
             item 2 [Base.BlowTorch],
             item 1 tags[base:weldingmask] mode:keep,
-            item 5 [Base.ElectronicsScrap],
+            item 4 [Base.ElectronicsScrap],
+            item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap],
             item 3 [Base.SheetMetal],
             item 4 [Base.MetalBar],
-            item 4 [Base.ElectricWire],
+            item 4 [Base.ElectricWire;Base.DazedPartCopperWire],
             item 6 [Base.Screws],
         }
         outputs
@@ -1258,10 +1263,11 @@ module Base
             item 3 [Base.BlowTorch],
             item 1 tags[base:weldingmask] mode:keep,
             item 1 [Base.DazedWindSalvaged] mode:destroy,
-            item 8 [Base.ElectronicsScrap],
+            item 7 [Base.ElectronicsScrap],
+            item 1 [Base.DazedPartAlternator;Base.ElectronicsScrap],
             item 4 [Base.Aluminum],
             item 4 [Base.MetalBar],
-            item 6 [Base.ElectricWire],
+            item 6 [Base.ElectricWire;Base.DazedPartCopperWire],
             item 8 [Base.Screws],
         }
         outputs
