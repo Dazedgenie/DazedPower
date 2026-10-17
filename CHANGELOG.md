@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0 (2026-10-17)
+- Effects: **every generator shows it is running**, like the steam engine since 0.12.0. Near you (25 tiles) and on screen:
+  - **Wood gas:** the gasifier's ash door opens on flickering flames and the exhaust smoke climbs while it makes power; while it warms up, the door shows glowing embers. At night a warm orange light that widens with its load, and a dim red glow while it warms.
+  - **Petrol:** the engine shakes on its mounts and a thin puff of exhaust rises. No light.
+  - **Propane:** a small blue flame flickers at the exhaust with a faint heat shimmer above it, no smoke, and a faint blue glow at night.
+- Off, broken or out of range, they keep their still sprites. Visual only, on your own computer: nothing is sent or saved, and the steam engine works exactly as before. At most 8 effect lights at once across every generator.
+- The sandbox option **Machine effects** now covers every generator (off: plain sprites, no lights).
+- Art: 132 new sprites (wood gas: four flame frames and an embers frame; petrol: three running frames; propane: three flame frames; each for every grade and facing), Blender-rendered in the house style and appended on a new page; the existing pages and sprite ids are unchanged.
+- Coded and tested headless; not yet run in game.
+
 ## 0.12.0 (2026-10-17)
 - Effects: **steam engines show their fire.** Near you (25 tiles) and on screen, a running steam engine opens its firebox door on flickering flames and its chimney smoke climbs; an idle one (batteries full, raising steam, or its fuel just ran out) shows banked embers. At night the engine lights its square with a warm glow that widens with its load, and a dim red one while it idles. Visual only, on your own computer: nothing is sent or saved, and engines far away or off screen cost nothing.
 - New sandbox option **Machine effects** (on). Turn it off on a slow computer; the plain sprites come back and every light goes.

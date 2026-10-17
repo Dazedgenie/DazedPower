@@ -115,7 +115,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 211, "211 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 244, "244 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -134,7 +134,22 @@ local se = P.spriteInfo("dazedpower_02_331")
 check(se and se.kind == "steam" and se.tier == "workshop" and se.frame == "embers" and se.state == "warming" and se.facing == "N",
       "the workshop embers frame closes the sheet")
 check(P.sprite("steam", "ground", "salvaged", "running", "S") == "dazedpower_01_497", "fire frames don't shadow the real running sprite")
-check(P.spriteInfo("dazedpower_02_332") == nil and P.spriteInfo("dazedpower_02_331") ~= nil, "nothing past the sheet")
+-- The other engines' frames (0.13.0) follow: wood gas fire, petrol run, propane flame, each reading back as its engine.
+local wf = P.spriteInfo("dazedpower_02_332")
+check(wf and wf.kind == "woodgas" and wf.tier == "makeshift" and wf.frame == "fire1" and wf.state == "running" and wf.facing == "E",
+      "the wood gas fire frames follow the steam embers")
+local we = P.spriteInfo(P.sprite("woodgas", "ground", "workshop", "embers", "N"))
+check(we and we.kind == "woodgas" and we.state == "warming" and we.frame == "embers", "wood gas embers read back as warming")
+local pr = P.spriteInfo("dazedpower_02_392")
+check(pr and pr.kind == "petrol" and pr.tier == "makeshift" and pr.frame == "run1" and pr.state == "running", "the petrol run frames follow")
+local pf = P.spriteInfo("dazedpower_02_463")
+check(pf and pf.kind == "propane" and pf.tier == "workshop" and pf.frame == "flame3" and pf.state == "running" and pf.facing == "N",
+      "the workshop propane flame3 closes the sheet")
+check(P.sprite("woodgas", "ground", "salvaged", "running", "S") == P.sprite("woodgas", "ground", "salvaged", "running", "S")
+      and P.spriteInfo(P.sprite("woodgas", "ground", "salvaged", "running", "S")).frame == nil
+      and P.spriteInfo(P.sprite("petrol", "ground", "salvaged", "running", "S")).frame == nil
+      and P.spriteInfo(P.sprite("propane", "ground", "salvaged", "running", "S")).frame == nil, "frames don't shadow the real running sprites")
+check(P.spriteInfo("dazedpower_02_464") == nil and P.spriteInfo("dazedpower_02_463") ~= nil, "nothing past the sheet")
 -- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
 local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
 check(f2 and f2.kind == "windmill" and f2.state == "turning" and f2.frame == "spin2" and f2.tier == "salvaged" and f2.facing == "W",
@@ -277,6 +292,7 @@ dofile("fixes_test.lua")(check, E)
 dofile("tread_test.lua")(check, E)
 dofile("treadmill_test.lua")(check, E)
 dofile("steamfx_test.lua")(check, E)
+dofile("genfx_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do

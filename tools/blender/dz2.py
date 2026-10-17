@@ -626,6 +626,47 @@ def wg_glow(at, state, w=0.1, h=0.05):
         box((w, 0.01, h), at, mat("#161412", 0.95, dirt=0, wear=False))
 
 
+# dz2's woodgasfire rows (the client's fire frames, DP_GenFx): "fire1".."fire4" or "embers" while one is built, else None.
+WG_FRAME = None
+WG_FLICKER = {1: 7.0, 2: 10.5, 3: 6.0, 4: 9.0}     # the open ash door's own light per flame frame
+
+
+def wg_door(size, loc, m, slit, state, sw, sh):
+    """The gasifier's ash door: shut, with the glowing slit under it (the plain sprites), or, on a fire frame, swung
+    open on the left hinge over a mouth of flames (fire1..fire4) or of embers (the warming gasifier)."""
+    if not (WG_FRAME and state in ("running", "warming")):
+        box(size, loc, m, bevel=0.008); wg_glow(slit, state, sw, sh)
+        return
+    p = P(); w, d, h = size; o = Vector(loc) - Vector((0, d / 2, 0))
+    # The mouth: an iron frame standing off the shell, the glowing bed inside it.
+    for x in (-1, 1): box((0.012, d + 0.01, h + 0.012), o + Vector((x * (w / 2 + 0.004), d / 2, 0)), p["iron"], bevel=0.003)
+    for z in (-1, 1): box((w + 0.02, d + 0.01, 0.012), o + Vector((0, d / 2, z * (h / 2 + 0.004))), p["iron"], bevel=0.003)
+    hot = WG_FRAME != "embers"
+    n = int(WG_FRAME[-1]) if hot else 0
+    back = (glow("#ff7a26", (4.0, 6.5, 3.6, 5.5)[n - 1]) if hot else glow("#a8381a", 2.2))
+    box((w, 0.006, h), o + Vector((0, 0.008, 0)), back, bevel=0)
+    rnd = random.Random(23)
+    base = o.z - h / 2 + 0.006
+    for i in range(int(8 + 50 * w)):
+        c = rnd.choice(["#ff5a14", "#d23c0c", "#ff7c2a", "#9a2a08"])
+        ball(rnd.uniform(0.006, 0.011), (o.x + rnd.uniform(-0.44, 0.44) * w, o.y + rnd.uniform(-0.004, 0.008), base + rnd.uniform(0, 0.014)),
+             glow(c, rnd.uniform(5, 9) if hot else rnd.uniform(1.6, 3.2)), segs=8)
+    if hot:
+        rnd = random.Random(200 + 17 * n)
+        for k in range(3):
+            x = o.x + ((k + 0.5) / 3 - 0.5) * w * 0.8 + rnd.uniform(-0.08, 0.08) * w
+            ht = h * rnd.uniform(0.5, 0.92); r = w * rnd.uniform(0.09, 0.13); lean = rnd.uniform(-0.25, 0.25) * r
+            ball(r, (x + lean, o.y + 0.002, base + ht * 0.45), glow("#ff6a16", 9), scale=(1, 0.6, ht * 0.5 / r))
+            ball(r * 0.55, (x + lean * 0.5, o.y - 0.002, base + ht * 0.32), glow("#ffd47a", 16), scale=(1, 0.6, ht * 0.32 / (r * 0.55)))
+        energy, col = WG_FLICKER[n], (1.0, 0.55, 0.2)
+    else:
+        energy, col = 2.0, (1.0, 0.32, 0.1)
+    # The door, swung open on its left hinge.
+    hinge = o + Vector((-w / 2 - 0.008, -0.004, 0)); a = math.radians(-118)
+    box((w, 0.014, h * 1.04), hinge + Vector((math.cos(a), math.sin(a), 0)) * (w / 2), m, rot=(0, 0, -118), bevel=0.004)
+    point_light(o + Vector((0, -0.1, 0)), energy, col)
+
+
 def wg_flare(tip, state):
     """The flare stack's mouth: a lick of flame and thick smoke while the gasifier warms (the gas is burnt off
     until it is clean enough for the engine), nothing once the valve turns it to the engine."""
@@ -708,8 +749,7 @@ def woodgas_part(tier, state):
         fb = mat("#4f6a7a", 0.6, 0.3, var=0.22, rust=0.5, dirt=0.4)
         cyl(0.2, 0.56, (gx, gy, 0.19 + 0.28), fb, segs=32)
         for zz in (0.37, 0.56): torus(0.202, 0.01, (gx, gy, zz), fb, seg=40)
-        box((0.14, 0.03, 0.1), (gx, gy - 0.195, 0.3), p["iron"], bevel=0.008)
-        wg_glow((gx, gy - 0.212, 0.3), "off" if brk else state, 0.09, 0.03)
+        wg_door((0.14, 0.03, 0.1), (gx, gy - 0.195, 0.3), p["iron"], (gx, gy - 0.212, 0.3), "off" if brk else state, 0.09, 0.03)
         tube((gx - 0.12, gy - 0.12, 0.62), (gx - 0.2, gy - 0.26, 0.62), 0.022, p["iron"]); cyl(0.03, 0.03, (gx - 0.2, gy - 0.26, 0.62), p["steel_dark"], axis="Y")
         if brk: tilt_head((gx + 0.2, gy, 0.75), (0, 14, -8))
         hp = mat("#7a3b2e", 0.6, 0.3, var=0.22, rust=0.5, dirt=0.35)
@@ -752,9 +792,9 @@ def woodgas_part(tier, state):
             box((0.03, 0.2, 0.025), (gx, gy - 0.02, 1.335), p["iron"], rot=(-10, 0, 0))
         else:
             box((0.004, 0.08, 0.24), (gx - 0.03, gy - 0.188, 0.72), p["dark"], rot=(0, 20, 0))
-        box((0.15, 0.03, 0.13), (gx, gy - 0.19, 0.36), p["iron"], bevel=0.01)
-        for x in (-0.06, 0.06): ball(0.01, (gx + x, gy - 0.208, 0.41), p["steel_dark"], segs=6)
-        wg_glow((gx, gy - 0.21, 0.33), "off" if brk else state, 0.08, 0.02)
+        wg_door((0.15, 0.03, 0.13), (gx, gy - 0.19, 0.36), p["iron"], (gx, gy - 0.21, 0.33), "off" if brk else state, 0.08, 0.02)
+        if not (WG_FRAME and state in ("running", "warming")):
+            for x in (-0.06, 0.06): ball(0.01, (gx + x, gy - 0.208, 0.41), p["steel_dark"], segs=6)
         for a in (200, 250, 290):
             d = Vector((math.cos(math.radians(a)), math.sin(math.radians(a)), 0))
             tube((gx + d.x * 0.18, gy + d.y * 0.18, 0.5), (gx + d.x * 0.26, gy + d.y * 0.26, 0.5), 0.016, p["iron"])
@@ -788,9 +828,9 @@ def woodgas_part(tier, state):
         else:
             box((0.004, 0.08, 0.26), (gx - 0.02, gy - 0.188, 0.66), p["dark"], rot=(0, 18, 0))
             box((0.004, 0.06, 0.12), (gx + 0.06, gy - 0.188, 0.8), p["dark"], rot=(0, -30, 0))
-        box((0.15, 0.025, 0.12), (gx, gy - 0.19, 0.24), mat("#3f4734", 0.45, 0.25), bevel=0.01)
-        cyl(0.014, 0.04, (gx + 0.06, gy - 0.21, 0.26), p["brass"], axis="Y")
-        wg_glow((gx, gy - 0.205, 0.22), "off" if brk else state, 0.07, 0.02)
+        wg_door((0.15, 0.025, 0.12), (gx, gy - 0.19, 0.24), mat("#3f4734", 0.45, 0.25), (gx, gy - 0.205, 0.22), "off" if brk else state, 0.07, 0.02)
+        if not (WG_FRAME and state in ("running", "warming")):
+            cyl(0.014, 0.04, (gx + 0.06, gy - 0.21, 0.26), p["brass"], axis="Y")
         gauge((gx + 0.1, gy - 0.17, 0.78), (0, 0, 25), 0.035, {"running": 0.7, "warming": 0.35}.get(state, 0.0), rim="#b08c4a")
         if brk:
             HEAD.pop()
@@ -816,7 +856,10 @@ def woodgas_part(tier, state):
     path([start, Vector((start.x, -0.02, start.z)), Vector((intake.x, -0.02, intake.z + 0.05)), intake], 0.014 if tier == "makeshift" else 0.018, hose)
     wg_flare(flare, "off" if brk else state)
     if state == "running":
-        puffs(exhaust, 3, 0.03, "#9a9894", 0.3, (-0.3, -0.05, 0.6) if tier == "makeshift" else (0.05, -0.05, 0.8), seed=37)
+        # A fire frame's smoke climbs a quarter of a puff per frame (WG_FRAME fire1..fire4); the plain sprite's is still.
+        ph = (int(WG_FRAME[-1]) - 1) / 4.0 if (WG_FRAME or "").startswith("fire") else None
+        puffs(exhaust, 4 if ph is not None else 3, 0.034 if ph is not None else 0.03, "#9a9894", 0.36 if ph is not None else 0.3,
+              (-0.3, -0.05, 0.6) if tier == "makeshift" else (0.05, -0.05, 0.8), seed=37, phase=ph)
     if brk:
         cyl(0.18, 0.003, (0.05, -0.05, 0.002), mat("#0f0e0d", 0.15, alpha=0.7, dirt=0, wear=False), segs=24)
         ash = mat("#5e5b57", 0.95, var=0.3, dirt=0, wear=False)
@@ -1055,7 +1098,8 @@ DP_FAMILY = {("array", "ground"): "arrays", ("array", "tracker"): "trackers", ("
              ("bank", "wall"): "walls", ("controller", "ground"): "controllers", ("transformer", "ground"): "transformer",
              ("lamp", "garden"): "lamps", ("lamp", "street"): "lamps", ("gauge", "wall"): "gauges", ("rod", "ground"): "rod",
              ("bench", "ground"): "bench", ("hydro", "ground"): "hydro", ("windspin", "ground"): "windspin",
-             ("treadwheel", "ground"): "treadwheel", ("steamfire", "ground"): "steamfire"}
+             ("treadwheel", "ground"): "treadwheel", ("steamfire", "ground"): "steamfire",
+             ("woodgasfire", "ground"): "woodgasfire", ("petrolrun", "ground"): "petrolrun", ("propaneflame", "ground"): "propaneflame"}
 MP_TIER = {"makeshift": "makeshift", "salvaged": "salvaged", "workshop": "manufactured", "basic": "basic"}
 PIECE_OFFSET = {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
 
@@ -1071,13 +1115,15 @@ def set_wear(state, kind):
 
 
 DP_BUILT_KINDS = {"array", "bank", "controller", "transformer", "lamp", "gauge", "rod", "bench", "hydro", "windspin",
-                  "fence", "cooler", "heater", "woodgas", "treadwheel", "steamfire"}
+                  "fence", "cooler", "heater", "woodgas", "treadwheel", "steamfire", "woodgasfire", "petrolrun", "propaneflame"}
 
 
 def dp_build(kind, mount, tier, state):
     set_wear("broken" if state == "wobble" else state, kind)
     if kind == "windspin": return build_windmill(MP_TIER[tier], state)
     if kind == "steamfire": return steamfire_part(tier, state)
+    if kind == "woodgasfire": return woodgasfire_part(tier, state)
+    if kind in ("petrolrun", "propaneflame"): return gasfx_part(kind, tier, state)
     if kind in BUILDERS: return BUILDERS[kind](MP_TIER[tier], state)
     if kind == "array": return {"ground": array_static, "tracker": array_tracker, "xl": array_xl}[mount](tier, state)
     if kind == "bank": return (bank_ground if mount == "ground" else bank_wall)(tier, int(state[1:]))
@@ -1105,6 +1151,28 @@ def steamfire_part(tier, frame):
         build_steam(MP_TIER[tier], "warming" if frame == "embers" else "running")
     finally:
         STEAM_FRAME = None
+
+
+def woodgasfire_part(tier, frame):
+    """A wood gas generator's fire frame (DP_GenFx): the running set with the gasifier's ash door open on flames,
+    fire1..fire4, its exhaust smoke climbing a quarter puff a frame; or the warming set with the door open on embers."""
+    global WG_FRAME
+    WG_FRAME = frame
+    try:
+        woodgas_part(tier, "warming" if frame == "embers" else "running")
+    finally:
+        WG_FRAME = None
+
+
+def gasfx_part(kind, tier, frame):
+    """A running petrol engine shaking with its thin exhaust puff (run1..run3), or a running propane engine's blue
+    burner flame and heat shimmer (flame1..flame3): dz_render's build_gas with GAS_FRAME set (DP_GenFx)."""
+    global GAS_FRAME
+    GAS_FRAME = frame
+    try:
+        build_gas("petrol" if kind == "petrolrun" else "propane", MP_TIER[tier], "running")
+    finally:
+        GAS_FRAME = None
 
 
 def make_root(start):

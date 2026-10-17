@@ -1,4 +1,4 @@
-# Dazed Power  (v0.12.0, Build 42)
+# Dazed Power  (v0.13.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
@@ -49,6 +49,18 @@ have a tracking array, and Workshop rigs a Workshop controller.
 
 Not included: the roof (flat) panel mount, the converted vanilla "backup" generator (the gas generators
 replace it), the Turkish translation.
+
+## Test in game (0.13.0, generator effects: wood gas, petrol, propane)
+
+Coded and tested headless only (`tools/tests/genfx_test.lua`, and `steamfx_test.lua` still passes unchanged); the art is
+rendered and packed. Console at start: `DazedPower: ready -- 976/976 tiles`. In game, check each grade in all four facings:
+a running wood gas generator opens its ash door on flickering flames (the door faces the front; from behind only the
+smoke and the light show) and its exhaust smoke climbs without a jump at the loop, a warming one shows embers; a running
+petrol generator shakes slightly and puffs thin exhaust, with no light; a running propane generator shows a small blue
+flame at its exhaust and a faint shimmer, no smoke, and a faint blue glow at night. Off, broken, out of range or the
+sandbox *Machine effects* off: plain sprites and no light. With steam and gas engines together at night, never more
+than 8 effect lights; picking one up takes its light away at once. FPS with five of each running on screen against the
+option off.
 
 ## Test in game (0.12.0, steam engine effects, a pilot)
 
@@ -120,6 +132,18 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.13.0 (generator effects).** The steam pilot's tracking, cull, lights, pause, cleanup and option moved into a shared
+  `DP_MachineFx` (client only) that every kind registers with (`M.register`: its looks per state, its frame cycle, its
+  one-frame looks, its light); `DP_SteamFx` is now a thin registration that keeps its 0.12.0 calls, and `DP_GenFx`
+  registers wood gas (four fire frames while running, embers while warming, a warm light by `genWatts` against the
+  grade's rating, radius 3 to 5), petrol (three shake-and-exhaust frames while running, no light) and propane (three
+  blue-flame frames while running, a faint blue radius-2 light). Still the same two Dazed Core Tick jobs
+  (`DazedPower.steamfx`, `DazedPower.steamfxFrames`) and one cap of 8 lights across every kind. New sprite-only alias
+  kinds `woodgasfire` (rows 211-225, `dazedpower_02_332` to `_391`), `petrolrun` (rows 226-234, `_392` to `_427`) and
+  `propaneflame` (rows 235-243, `_428` to `_463`): 132 tiles, so tileset 02 now holds 464 of its 512. Rendered by
+  `tools/blender/dz2.py dp:woodgasfire,petrolrun,propaneflame` (the `WG_FRAME` hook on the gasifier's ash door in
+  `dz2.py`, the `GAS_FRAME` hook on `build_gas` in `dz_render.py`), appended with `build_sheet.py --append`.
+  Tests: `tools/tests/genfx_test.lua`.
 - **0.12.0 (steam engine effects, the pilot for machine effects).** `DP_SteamFx` (client only): a running steam engine
   near a local player and on screen cycles four fire frames (the firebox door open on flames, the chimney smoke
   climbing) and an idle one shows banked embers, with a warm `IsoLightSource` on its square at night (radius 3, 5 or 7

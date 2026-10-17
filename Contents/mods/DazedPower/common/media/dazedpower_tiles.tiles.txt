@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,83
+    size = 4,116
     id = 2
     // dazedpower_02_0
     tile
@@ -19462,6 +19462,2910 @@ tileset
         IsMoveAble = 
         CustomItem = Base.DazedSteamWorkshop
         PickUpWeight = 500
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_332
+    tile
+    {
+        xy = 0,83
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_333
+    tile
+    {
+        xy = 1,83
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_334
+    tile
+    {
+        xy = 2,83
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_335
+    tile
+    {
+        xy = 3,83
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_336
+    tile
+    {
+        xy = 0,84
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_337
+    tile
+    {
+        xy = 1,84
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_338
+    tile
+    {
+        xy = 2,84
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_339
+    tile
+    {
+        xy = 3,84
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_340
+    tile
+    {
+        xy = 0,85
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_341
+    tile
+    {
+        xy = 1,85
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_342
+    tile
+    {
+        xy = 2,85
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_343
+    tile
+    {
+        xy = 3,85
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_344
+    tile
+    {
+        xy = 0,86
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_345
+    tile
+    {
+        xy = 1,86
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_346
+    tile
+    {
+        xy = 2,86
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_347
+    tile
+    {
+        xy = 3,86
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_348
+    tile
+    {
+        xy = 0,87
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_349
+    tile
+    {
+        xy = 1,87
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_350
+    tile
+    {
+        xy = 2,87
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_351
+    tile
+    {
+        xy = 3,87
+        CustomName = Makeshift Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasMakeshift
+        PickUpWeight = 340
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_352
+    tile
+    {
+        xy = 0,88
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_353
+    tile
+    {
+        xy = 1,88
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_354
+    tile
+    {
+        xy = 2,88
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_355
+    tile
+    {
+        xy = 3,88
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_356
+    tile
+    {
+        xy = 0,89
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_357
+    tile
+    {
+        xy = 1,89
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_358
+    tile
+    {
+        xy = 2,89
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_359
+    tile
+    {
+        xy = 3,89
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_360
+    tile
+    {
+        xy = 0,90
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_361
+    tile
+    {
+        xy = 1,90
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_362
+    tile
+    {
+        xy = 2,90
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_363
+    tile
+    {
+        xy = 3,90
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_364
+    tile
+    {
+        xy = 0,91
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_365
+    tile
+    {
+        xy = 1,91
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_366
+    tile
+    {
+        xy = 2,91
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_367
+    tile
+    {
+        xy = 3,91
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_368
+    tile
+    {
+        xy = 0,92
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_369
+    tile
+    {
+        xy = 1,92
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_370
+    tile
+    {
+        xy = 2,92
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_371
+    tile
+    {
+        xy = 3,92
+        CustomName = Salvaged Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasSalvaged
+        PickUpWeight = 480
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_372
+    tile
+    {
+        xy = 0,93
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_373
+    tile
+    {
+        xy = 1,93
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_374
+    tile
+    {
+        xy = 2,93
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_375
+    tile
+    {
+        xy = 3,93
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_376
+    tile
+    {
+        xy = 0,94
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_377
+    tile
+    {
+        xy = 1,94
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_378
+    tile
+    {
+        xy = 2,94
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_379
+    tile
+    {
+        xy = 3,94
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_380
+    tile
+    {
+        xy = 0,95
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_381
+    tile
+    {
+        xy = 1,95
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_382
+    tile
+    {
+        xy = 2,95
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_383
+    tile
+    {
+        xy = 3,95
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_384
+    tile
+    {
+        xy = 0,96
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_385
+    tile
+    {
+        xy = 1,96
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_386
+    tile
+    {
+        xy = 2,96
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_387
+    tile
+    {
+        xy = 3,96
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_388
+    tile
+    {
+        xy = 0,97
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_389
+    tile
+    {
+        xy = 1,97
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_390
+    tile
+    {
+        xy = 2,97
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_391
+    tile
+    {
+        xy = 3,97
+        CustomName = Workshop Wood Gas Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWoodGasWorkshop
+        PickUpWeight = 620
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_392
+    tile
+    {
+        xy = 0,98
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_393
+    tile
+    {
+        xy = 1,98
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_394
+    tile
+    {
+        xy = 2,98
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_395
+    tile
+    {
+        xy = 3,98
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_396
+    tile
+    {
+        xy = 0,99
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_397
+    tile
+    {
+        xy = 1,99
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_398
+    tile
+    {
+        xy = 2,99
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_399
+    tile
+    {
+        xy = 3,99
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_400
+    tile
+    {
+        xy = 0,100
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_401
+    tile
+    {
+        xy = 1,100
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_402
+    tile
+    {
+        xy = 2,100
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_403
+    tile
+    {
+        xy = 3,100
+        CustomName = Makeshift Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_404
+    tile
+    {
+        xy = 0,101
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_405
+    tile
+    {
+        xy = 1,101
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_406
+    tile
+    {
+        xy = 2,101
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_407
+    tile
+    {
+        xy = 3,101
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_408
+    tile
+    {
+        xy = 0,102
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_409
+    tile
+    {
+        xy = 1,102
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_410
+    tile
+    {
+        xy = 2,102
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_411
+    tile
+    {
+        xy = 3,102
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_412
+    tile
+    {
+        xy = 0,103
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_413
+    tile
+    {
+        xy = 1,103
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_414
+    tile
+    {
+        xy = 2,103
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_415
+    tile
+    {
+        xy = 3,103
+        CustomName = Salvaged Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_416
+    tile
+    {
+        xy = 0,104
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_417
+    tile
+    {
+        xy = 1,104
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_418
+    tile
+    {
+        xy = 2,104
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_419
+    tile
+    {
+        xy = 3,104
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_420
+    tile
+    {
+        xy = 0,105
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_421
+    tile
+    {
+        xy = 1,105
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_422
+    tile
+    {
+        xy = 2,105
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_423
+    tile
+    {
+        xy = 3,105
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_424
+    tile
+    {
+        xy = 0,106
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_425
+    tile
+    {
+        xy = 1,106
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_426
+    tile
+    {
+        xy = 2,106
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_427
+    tile
+    {
+        xy = 3,106
+        CustomName = Workshop Petrol Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPetrolWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_428
+    tile
+    {
+        xy = 0,107
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_429
+    tile
+    {
+        xy = 1,107
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_430
+    tile
+    {
+        xy = 2,107
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_431
+    tile
+    {
+        xy = 3,107
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_432
+    tile
+    {
+        xy = 0,108
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_433
+    tile
+    {
+        xy = 1,108
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_434
+    tile
+    {
+        xy = 2,108
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_435
+    tile
+    {
+        xy = 3,108
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_436
+    tile
+    {
+        xy = 0,109
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_437
+    tile
+    {
+        xy = 1,109
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_438
+    tile
+    {
+        xy = 2,109
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_439
+    tile
+    {
+        xy = 3,109
+        CustomName = Makeshift Propane Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneMakeshift
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_440
+    tile
+    {
+        xy = 0,110
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_441
+    tile
+    {
+        xy = 1,110
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_442
+    tile
+    {
+        xy = 2,110
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_443
+    tile
+    {
+        xy = 3,110
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_444
+    tile
+    {
+        xy = 0,111
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_445
+    tile
+    {
+        xy = 1,111
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_446
+    tile
+    {
+        xy = 2,111
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_447
+    tile
+    {
+        xy = 3,111
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_448
+    tile
+    {
+        xy = 0,112
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_449
+    tile
+    {
+        xy = 1,112
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_450
+    tile
+    {
+        xy = 2,112
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_451
+    tile
+    {
+        xy = 3,112
+        CustomName = Salvaged Standby Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneSalvaged
+        PickUpWeight = 450
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_452
+    tile
+    {
+        xy = 0,113
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_453
+    tile
+    {
+        xy = 1,113
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_454
+    tile
+    {
+        xy = 2,113
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_455
+    tile
+    {
+        xy = 3,113
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_456
+    tile
+    {
+        xy = 0,114
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_457
+    tile
+    {
+        xy = 1,114
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_458
+    tile
+    {
+        xy = 2,114
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_459
+    tile
+    {
+        xy = 3,114
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_460
+    tile
+    {
+        xy = 0,115
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_461
+    tile
+    {
+        xy = 1,115
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_462
+    tile
+    {
+        xy = 2,115
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_463
+    tile
+    {
+        xy = 3,115
+        CustomName = Workshop Standby Generator
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedPropaneWorkshop
+        PickUpWeight = 600
         PickUpLevel = 0
         MoveType = Object
         Eoffset = -3

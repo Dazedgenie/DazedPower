@@ -844,7 +844,65 @@ def jerry_can(c, rot=0):
     return c + Vector((0.0, 0, 0.27))
 
 
+# dz2's petrolrun / propaneflame rows (the client's running frames, DP_GenFx): "run1".."run3" or "flame1".."flame3"
+# while one is built, else None.
+GAS_FRAME = None
+GAS_SHAKE = {1: (0.0, 0.0, 0.0), 2: (0.009, -0.006, 0.007), 3: (-0.007, 0.008, 0.004)}   # a petrol engine on its mounts
+BURNER = {1: (0.08, 0.0), 2: (0.105, 0.18), 3: (0.09, -0.15)}                          # blue flame height, lean
+
+
+def gas_frame_n():
+    return int(GAS_FRAME[-1]) if GAS_FRAME else 0
+
+
+def burner(tip, rise, n):
+    """A propane engine's small blue flame licking out of the exhaust tip, flame frame `n` (1..3)."""
+    tip = Vector(tip); up = Vector(rise).normalized()
+    ht, lean = BURNER[n]
+    side = Vector((1, 0, 0)) if abs(up.x) < 0.9 else Vector((0, 1, 0))
+    axis = (up + side * lean).normalized()
+    for r, k, col, e in ((0.03, 1.0, "#3f7cff", 9), (0.016, 0.62, "#bfe4ff", 16)):
+        c = tip + axis * (ht * k * 0.5)
+        q = Vector((0, 0, 1)).rotation_difference(axis)
+        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=12, v_segments=8, radius=r)
+        bmesh.ops.scale(bm, vec=Vector((1, 1, ht * k * 0.5 / r)), verts=bm.verts)
+        obj(bm, glow(col, e), Matrix.Translation(c) @ q.to_matrix().to_4x4(), smooth=True)
+    ld = bpy.data.lights.new("b", "POINT"); ld.energy = (1.6, 2.4, 1.9)[n - 1]; ld.color = (0.35, 0.55, 1.0); ld.shadow_soft_size = 0.03
+    lo = bpy.data.objects.new("b", ld); MODEL.objects.link(lo); lo.location = HEAD[-1] @ (tip + axis * 0.04); BUILT.append(lo)
+
+
+def shimmer(at, rise, n, frames=3):
+    """Faint heat haze over a clean-burning exhaust: a few very thin, nearly clear wisps climbing a third a frame."""
+    at = Vector(at); rise = Vector(rise)
+    ph = (n - 1) / float(frames)
+    for i in range(3):
+        k = (i + ph) / 3.0
+        p = at + rise * (0.1 + 0.4 * k) + Vector((math.sin(k * 9.0) * 0.015, 0, 0))
+        fade = min(1.0, (i + ph) * 1.5, (3 - i - ph) * 1.2)
+        if fade <= 0.02: continue
+        ball(0.03 * (0.8 + 0.6 * k), p, puff("#eef3f8", round(0.1 * fade, 3)), scale=(0.7, 0.7, 1.6), segs=12)
+
+
 def build_gas(fuel, tier, state):
+    shake = GAS_FRAME and GAS_FRAME.startswith("run") and state == "running"
+    if shake: HEAD.append(HEAD[-1] @ Matrix.Translation(Vector(GAS_SHAKE[gas_frame_n()])))
+    try:
+        exh, rise = _build_gas(fuel, tier, state)
+    finally:
+        if shake: HEAD.pop()
+    if state != "running": return
+    n = gas_frame_n()
+    if GAS_FRAME and GAS_FRAME.startswith("run"):
+        # A thin puff climbing a third of a puff a frame; the frames loop without a jump (puffs(phase=)).
+        puffs(exh, 3, 0.032, "#a3a19c", 0.42, rise, seed=9, phase=(n - 1) / 3.0)
+    elif GAS_FRAME and GAS_FRAME.startswith("flame"):
+        burner(exh, rise, n)
+        shimmer(exh, rise, n)
+    else:
+        puffs(exh, 4, 0.035, "#8a8884", 0.38, rise, seed=9)
+
+
+def _build_gas(fuel, tier, state):
     p = P(); run = state == "running"; brk = state == "broken"
     body_col = "#c4bca6" if fuel == "propane" else "#a6352c"
     if tier == "makeshift":
@@ -923,8 +981,7 @@ def build_gas(fuel, tier, state):
             cyl(0.04, 0.025, (0.25, 0.05, 0.56), p["plastic"]); box((0.06, 0.03, 0.02), (0.25, -0.29, 0.43), mat("#d6d2c4", 0.5))
             cyl(0.025, 0.05, (-0.3, 0.19, 0.2), p["brass"], axis="Y")
         exh = Vector((0.46, 0.1, 0.42))
-    if run:
-        puffs(exh, 4, 0.035, "#8a8884", 0.38, (0.35, 0.0, 0.6) if tier != "salvaged" else (-0.4, 0, 0.5), seed=9)
+    rise = (0.35, 0.0, 0.6) if tier != "salvaged" else (-0.4, 0, 0.5)
     if brk:
         cyl(0.2, 0.003, (0.05, -0.05, 0.002), mat("#0f0e0d", 0.15, alpha=0.75, dirt=0, wear=False), segs=24)
         if tier == "manufactured":
@@ -933,6 +990,7 @@ def build_gas(fuel, tier, state):
         rnd = random.Random(11)
         for i in range(3):
             box((0.05, 0.03, 0.01), (rnd.uniform(-0.35, 0.35), rnd.uniform(-0.45, -0.32), 0.006), p["steel_dark"], rot=(0, 0, rnd.uniform(0, 90)))
+    return exh, rise
 
 
 # ------------------------------------------------------------------ build & render

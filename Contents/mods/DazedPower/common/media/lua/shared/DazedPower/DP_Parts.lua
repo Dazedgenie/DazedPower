@@ -189,7 +189,7 @@ P.FACING_INDEX = { E = 0, S = 1, W = 2, N = 3 }
 -- kind inserted anywhere but the end repoints every object already standing in a save.
 P.KINDS = { "array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
             "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel",
-            "steamfire" }
+            "steamfire", "woodgasfire", "petrolrun", "propaneflame" }
 P.KIND_SET = {}
 for _, k in ipairs(P.KINDS) do P.KIND_SET[k] = true end
 -- The mount is the form factor: a static, tracking or 2x2 array; a floor or wall bank; a garden or street lamp.
@@ -205,6 +205,7 @@ P.MOUNTS = {
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
     fence = { "ground" }, cooler = { "wall" }, heater = { "ground" }, windspin = { "ground" }, woodgas = { "ground" },
     treadwheel = { "ground" }, steamfire = { "ground" },
+    woodgasfire = { "ground" }, petrolrun = { "ground" }, propaneflame = { "ground" },
 }
 local THREE = { "makeshift", "salvaged", "workshop" }
 P.TIERS = {
@@ -218,6 +219,7 @@ P.TIERS = {
     gauge = { "standard" }, rod = { "standard" }, bench = { "standard" }, hydro = { "standard" },
     fence = { "standard" }, cooler = { "standard" }, heater = { "standard" }, windspin = THREE, woodgas = THREE,
     treadwheel = { "standard" }, steamfire = THREE,
+    woodgasfire = THREE, petrolrun = THREE, propaneflame = THREE,
 }
 P.STATES = {
     array = { "clear", "snow", "cracked" },
@@ -242,6 +244,9 @@ P.STATES = {
     woodgas = { "off", "warming", "running", "broken" },       -- the gasifier lit and making gas before the engine takes the load
     treadwheel = { "empty", "walking" },                       -- nobody in it, or a tied zombie walking it (DP_Tread)
     steamfire = { "fire1", "fire2", "fire3", "fire4", "embers" }, -- firebox open on flames (running) or banked embers (warming), DP_SteamFx
+    woodgasfire = { "fire1", "fire2", "fire3", "fire4", "embers" }, -- the gasifier's ash door on flames (running) or embers (warming), DP_GenFx
+    petrolrun = { "run1", "run2", "run3" },                     -- a running petrol engine shaking, its exhaust puff climbing, DP_GenFx
+    propaneflame = { "flame1", "flame2", "flame3" },            -- a running propane engine's blue burner flame and heat shimmer, DP_GenFx
     -- bank has no flat list: see P.statesFor.
 }
 -- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
@@ -285,6 +290,10 @@ P.ALIAS = {
                                               spin4 = "turning", wobble = "broken" } },
     steamfire = { kind = "steam", state = { fire1 = "running", fire2 = "running", fire3 = "running", fire4 = "running",
                                             embers = "warming" } },
+    woodgasfire = { kind = "woodgas", state = { fire1 = "running", fire2 = "running", fire3 = "running", fire4 = "running",
+                                                embers = "warming" } },
+    petrolrun = { kind = "petrol", state = { run1 = "running", run2 = "running", run3 = "running" } },
+    propaneflame = { kind = "propane", state = { flame1 = "running", flame2 = "running", flame3 = "running" } },
 }
 
 --- Build the row table in exactly the order dp_taxonomy.py emits it.

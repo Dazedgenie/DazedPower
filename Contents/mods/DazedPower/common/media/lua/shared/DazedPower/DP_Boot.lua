@@ -19,7 +19,7 @@ require "DazedCore/DC_Boot"
 require "DazedPower/DP_Parts"
 
 DazedPower = DazedPower or {}
-DazedPower.VERSION = "0.12.0"
+DazedPower.VERSION = "0.13.0"
 DazedPower.Boot = DazedPower.Boot or {}
 local B = DazedPower.Boot
 local P = DazedPower.Parts
