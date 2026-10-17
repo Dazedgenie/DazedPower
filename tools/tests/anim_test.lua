@@ -26,10 +26,36 @@ return function(check, E)
     check(W.fps("makeshift", 3.5) == W.MIN_FPS and W.fps("makeshift", 8) > W.fps("makeshift", 5) and W.fps("workshop", 40) == W.MAX_FPS,
         "frame rate rises with the wind up to a cap")
 
-    -- One windmill near a player, ticked for a second of game time: it changes frames and goes back when turned off.
+    -- The look registered on DP_MachineFx (0.14.0) is the same as W.pick, state by state and frame by frame.
     do
+        local M = DazedPower.MachineFx
+        local same, n = true, 0
+        for _, tier in ipairs({ "makeshift", "salvaged", "workshop" }) do
+            for _, st in ipairs({ "still", "turning", "furled", "broken" }) do
+                for _, ms in ipairs({ 0, 1, 2.5, 6, 14.9, 15, 30 }) do
+                    for k = 0, 7 do
+                        local d = { state = st, facing = "W", windMs = ms }
+                        local i = P.spriteInfo(P.sprite("windmill", "ground", tier, st, "W"))
+                        local a = W.pick(i, d, k)
+                        local b = M.pick("windmill", tier, st, "W", k, d)
+                        n = n + 1
+                        if a ~= b or a == nil then same = false end
+                    end
+                end
+            end
+        end
+        check(same and n == 672, "the shared module shows exactly what W.pick picks (" .. n .. " cases)")
+        check(W.rate("spin", "salvaged", { windMs = 9 }) == W.fps("salvaged", 9, "turning")
+              and W.rate("rock", "salvaged", { windMs = 9 }) == W.fps("salvaged", 9, "broken"), "the frame rate is W.fps")
+    end
+
+    -- One windmill near a player, ticked for a second of game time through the shared module: it changes frames at
+    -- the wind's rate, holds while paused, and goes back when the tick box is turned off.
+    do
+        local M, T = DazedPower.MachineFx, DazedCore.Tick
         local function spr(name) return { getName = function() return name end } end
-        local sq = { getX = function() return 10 end, getY = function() return 10 end, getZ = function() return 0 end }
+        local sq = { getX = function() return 10 end, getY = function() return 10 end, getZ = function() return 0 end,
+                     IsOnScreen = function() return true end }
         local obj = { sprite = spr(P.sprite("windmill", "ground", "salvaged", "turning", "S")), md = { dazedpower = { state = "turning", facing = "S", windMs = 7 } } }
         function obj:getSprite() return self.sprite end
         function obj:setSprite(s) self.sprite = s; self.swaps = (self.swaps or 0) + 1 end
@@ -39,26 +65,64 @@ return function(check, E)
         function obj:hasModData() return true end
         function obj:getModData() return self.md end
         local pl = { getX = function() return 12 end, getY = function() return 11 end, getZ = function() return 0 end, isDead = function() return false end }
-        local g0, n0, s0, t0, c0 = getSprite, getNumActivePlayers, getSpecificPlayer, getTimestampMs, getCell
-        local now = 0
+        local g0, n0, s0, t0, c0, p0 = getSprite, getNumActivePlayers, getSpecificPlayer, getTimestampMs, getCell, isGamePaused
+        local now, paused = 0, false
         getSprite = function(name) return spr(name) end
         getNumActivePlayers = function() return 1 end
         getSpecificPlayer = function() return pl end
         getTimestampMs = function() return now end
+        isGamePaused = function() return paused end
         getCell = function() return { getGridSquare = function(_, x, y) return (x == 10 and y == 10) and sq or nil end } end
-        W.tracked, W.count = {}, 0
-        W.consider(obj)
-        check(W.count == 1, "a windmill on screen is tracked")
-        for _ = 1, 30 do now = now + 33; W.tick() end
+        M.reset()
+        M.consider(obj)
+        check(M.count == 1 and M.tracked[obj] and M.tracked[obj].spec.kind == "windmill", "a windmill is followed by the shared module")
+        local function run(ms) local stop = now + ms while now < stop do now = now + 16; T.onTick() end end
+        run(1100)
+        local s0w = obj.swaps or 0
+        run(2000)
         local f = P.spriteInfo(obj.sprite:getName())
-        check(f.kind == "windmill" and f.frame ~= nil and (obj.swaps or 0) >= 3, "it steps through frames: " .. tostring(obj.swaps))
+        local want = W.fps("salvaged", 7, "turning") * 2
+        check(f.kind == "windmill" and f.frame ~= nil, "it shows blade frames")
+        local slow = obj.swaps - s0w
+        check(math.abs(slow - want) <= 2, "two seconds at 7 m/s: about " .. want .. " frames, got " .. (obj.swaps - s0w))
+        check(M.frameMs == M.FAST_MS, "a spinning windmill runs the frame job at the fast period")
+        obj.md.dazedpower.windMs = 13
+        run(1100)
+        local s1 = obj.swaps
+        run(2000)
+        check(obj.swaps - s1 > slow + 4, "a stronger wind spins it faster: " .. slow .. " -> " .. (obj.swaps - s1))
+        paused = true
+        s1 = obj.swaps
+        run(2000)
+        check(obj.swaps == s1, "paused, the blades hold (they used to keep turning)")
+        paused = false
+        run(500)
+        check(obj.swaps > s1 and obj.swaps - s1 <= 12, "unpaused, they carry on without a jump")
         local on0 = DazedCore.Options.on
         DazedCore.Options.on = function() return false end
-        -- The tick box is read at most once per W.OPTION_MS, so the change shows within that.
-        now = now + W.OPTION_MS; W.tick()
-        check(P.spriteInfo(obj.sprite:getName()).frame == nil and W.count == 0, "turning the option off puts the plain sprite back")
+        run(1100)
+        check(P.spriteInfo(obj.sprite:getName()).frame == nil and not T.has(M.FRAME_ID), "turning the tick box off puts the plain sprite back")
+        s1 = obj.swaps
+        run(1500)
+        check(obj.swaps == s1, "and it stays plain")
         DazedCore.Options.on = on0
-        getSprite, getNumActivePlayers, getSpecificPlayer, getTimestampMs, getCell = g0, n0, s0, t0, c0
+        run(1100)
+        check(P.spriteInfo(obj.sprite:getName()).frame ~= nil, "on again, it spins again")
+        -- A gale: the plain motion-blur sprite, no frame job for it.
+        obj.md.dazedpower.windMs = 20
+        run(1300)
+        check(obj.sprite:getName() == P.sprite("windmill", "ground", "salvaged", "turning", "S") and not T.has(M.FRAME_ID), "a gale shows the blur sprite")
+        -- The server yaws it into the wind (a plain sprite facing E): the frames follow the new facing at once.
+        obj.md.dazedpower.windMs = 7
+        run(1300)
+        obj.sprite = spr(P.sprite("windmill", "ground", "salvaged", "turning", "E")); obj.md.dazedpower.facing = "E"
+        run(300)
+        check(P.spriteInfo(obj.sprite:getName()).facing == "E" and P.spriteInfo(obj.sprite:getName()).frame ~= nil, "a yaw is followed before the next scan")
+        M.onRemoved(obj)
+        run(1100)
+        check(M.count == 0 and not T.has(M.SCAN_ID) and not T.has(M.FRAME_ID), "gone: no jobs left")
+        M.reset()
+        getSprite, getNumActivePlayers, getSpecificPlayer, getTimestampMs, getCell, isGamePaused = g0, n0, s0, t0, c0, p0
     end
 
     -- Pedalling: the animation node and the action that plays it.

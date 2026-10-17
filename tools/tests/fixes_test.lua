@@ -69,8 +69,8 @@ return function(check, E)
         DPM_Pedal.keepSolid()
         check(DPM_Pedal.solid[ghost] == nil, "a streamed-out bike stops being held solid")
 
-        -- A ghost left on a spin frame is not re-sprited when the option goes off; a live one is.
-        local W = DazedPower.WindSpin
+        -- A ghost left on a spin frame is not re-sprited when the option goes off; a live one is (DP_MachineFx since 0.14.0).
+        local W, MF = DazedPower.WindSpin, DazedPower.MachineFx
         local frame = P.sprite("windmill", "ground", "salvaged", "spin2", "S")
         local live = E.object(frame, E.square(911, 911, 0))
         ghost.sprite = frame
@@ -80,8 +80,11 @@ return function(check, E)
         getSprite = function(name) return { getName = function() return name end } end
         live.setSprite = function(self, s) self.sprite = s:getName() end
         ghost.setSprite = live.setSprite
-        W.tracked, W.count = { [ghost] = { phase = 0 }, [live] = { phase = 0 } }, 2
+        local spec = MF.kinds.windmill
+        local tr0 = MF.tracked
+        MF.tracked = { [ghost] = { obj = ghost, spec = spec }, [live] = { obj = live, spec = spec } }
         W.restoreAll()
+        MF.tracked = tr0
         getSprite = gs0
         check(live.sprite == windmill and ghost.sprite == frame, "turning the spin off restores live windmills and leaves ghosts alone")
     end

@@ -21,7 +21,16 @@
      the scan's alive check within a second), when the sandbox option goes off, and at the next game start.
 
      Sandbox: Machine effects (MachineEffects, on) governs every kind. Off puts every plain sprite back and removes
-     every light.
+     every light. A kind may add its own switch on top (spec.enabled: the windmill keeps its 0.4 "spinning blades"
+     tick box); off, that kind's machines go back to their plain sprites.
+
+     Turning machines (0.14.0): a kind may pick its look from more than its state (spec.modeOf: the windmill's gale
+     blur and broken rocking follow the wind), cycle more than one look (spec.cycles: spin and rock), and walk its
+     frames at a speed of its own (spec.rate, frames a second: the windmill with the wind, the treadwheel with its
+     zombie, the water wheel with its condition). Rated cycles keep a phase per machine that only advances while the
+     game runs, and while any is on screen the frame job runs every FAST_MS instead of FRAME_MS (still one job). The
+     windmill's spinning blades (DP_WindSpin, its own per-frame tick until 0.13) and the water wheel, treadwheel and
+     windsock (DP_TurnFx) register here.
 ]]
 
 require "DazedCore/DC_Tick"
@@ -38,7 +47,9 @@ M.OPTION = "MachineEffects"
 M.RANGE = 25                 -- squares from a local player (either axis) within which an engine shows its effects
 M.FLOORS = 2                 -- and floors above or below
 M.SCAN_MS = 1000
-M.FRAME_MS = 150             -- one frame of any cycle
+M.FRAME_MS = 150             -- one frame of any fixed-speed cycle
+M.FAST_MS = 40               -- the frame job's period while a rated cycle (a speed of its own) is on screen
+M.MAX_DT = 0.25              -- seconds a rated cycle may advance in one step (a hitch does not spin it on)
 M.MAX_LIGHTS = 8             -- at most this many effect lights at once, of every kind together, the first found
 M.DARK_BELOW = 0.6           -- ClimateManager day light strength under which an engine casts light
 M.SCAN_ID, M.FRAME_ID = "DazedPower.steamfx", "DazedPower.steamfxFrames"
@@ -49,6 +60,8 @@ M.count = M.count or 0       -- entries in tracked (Kahlua has no next)
 M.active = M.active or {}    -- entries cycling frames now (near, on screen, in their cycling look)
 M.lights = M.lights or 0     -- light sources this file has in the cell
 M.scanJob, M.frameJob = M.scanJob or false, M.frameJob or false
+M.frameMs = M.frameMs or nil -- the period the frame job was registered with
+M.lastFrameT = nil           -- when the frame job last stepped the rated cycles (nil: paused or just started)
 
 local spriteNames = {}       -- kind -> tier -> frame or state -> facing -> sprite name (false: none)
 local spriteObjs = {}        -- sprite name -> registered IsoSprite (false: none)
@@ -60,14 +73,41 @@ local spriteObjs = {}        -- sprite name -> registered IsoSprite (false: none
 --    modes  = { running = "fire", warming = "embers" },   logical state -> look; a state not listed shows plain
 --    cycle  = "fire",                          the look that walks `frames` (nil: none)
 --    frames = { "fire1", ... },                the frame names of that cycle (the alias rows' states)
---    still  = { embers = "embers" },           one-frame looks -> their frame name
+--    still  = { embers = "embers" },           one-frame looks -> their frame name (or a plain state's name)
 --    light  = function(mode, tier, d) -> { radius, r, g, b, band } or nil   (d: the synced ModData, may be nil)
+--   optional, for the turning machines (0.14.0):
+--    modeOf  = function(state, tier, d) -> look or nil   replaces `modes` when the look needs more than the state
+--    cycles  = { spin = { "spin1", ... }, rock = { "broken", "broken", "wobble" } }   more looks that walk frames
+--              (a frame may name a plain state); `cycle`/`frames` is folded in
+--    rate    = function(mode, tier, d) -> frames a second   the cycle's own speed (nil: one frame per FRAME_MS)
+--    enabled = function() -> bool              a switch of the kind's own on top of Machine effects
 --  }
 function M.register(spec)
     spec.still = spec.still or {}
     spec.frames = spec.frames or {}
+    spec.cycles = spec.cycles or {}
+    if spec.cycle then spec.cycles[spec.cycle] = spec.frames end
+    local longest = 1
+    for _, fr in pairs(spec.cycles) do longest = math.max(longest, #fr) end
+    spec.longest = longest
     M.kinds[spec.kind] = spec
     return spec
+end
+
+--- The look for a machine of a registered spec, from its logical state, tier and synced ModData; nil: plain.
+function M.lookOf(spec, state, tier, d)
+    if spec.modeOf then return spec.modeOf(state, tier, d) end
+    return spec.modes and spec.modes[state] or nil
+end
+
+--- The sprite a kind shows in `look` at frame step `step` (any number; it wraps), or nil when the look is unknown.
+function M.pickLook(kind, tier, look, facing, step)
+    local spec = M.kinds[kind]
+    if not spec or not look then return nil end
+    local fr = spec.cycles[look]
+    if fr then return M.spriteName(kind, tier, fr[(math.floor(step or 0) % #fr) + 1], facing) end
+    if spec.still[look] then return M.spriteName(kind, tier, spec.still[look], facing) end
+    return nil
 end
 
 --- The sandbox option; on unless switched off.
@@ -104,15 +144,12 @@ function M.spriteName(kind, tier, frame, facing)
     return n or nil
 end
 
---- Which sprite an engine of `kind` shows for `state` at frame step `step` (any integer; it wraps).
-function M.pick(kind, tier, state, facing, step)
+--- Which sprite an engine of `kind` shows for `state` at frame step `step` (any integer; it wraps). `d`, the synced
+--  ModData, only matters to a kind whose look needs more than its state (spec.modeOf).
+function M.pick(kind, tier, state, facing, step, d)
     local spec = M.kinds[kind]
-    local m = spec and spec.modes[state]
-    if m and m == spec.cycle then
-        return M.spriteName(kind, tier, spec.frames[(math.floor(step or 0) % #spec.frames) + 1], facing)
-    end
-    if m and spec.still[m] then return M.spriteName(kind, tier, spec.still[m], facing) end
-    return M.spriteName(kind, tier, state, facing)
+    local m = spec and M.lookOf(spec, state, tier, d)
+    return M.pickLook(kind, tier, m, facing, step) or M.spriteName(kind, tier, state, facing)
 end
 
 --- A light that follows the load: `watts` against `rated`, in three bands so a wavering load does not rebuild it.
@@ -196,10 +233,12 @@ end
 
 local frameTick -- forward
 
-local function setFrameJob(on)
-    if on == M.frameJob then return end
-    M.frameJob = on
-    if on then DazedCore.Tick.every(M.FRAME_ID, M.FRAME_MS, frameTick) else DazedCore.Tick.remove(M.FRAME_ID) end
+-- The frame job on or off; `fast` (a rated cycle on screen) runs it every FAST_MS instead of FRAME_MS.
+local function setFrameJob(on, fast)
+    local ms = on and (fast and M.FAST_MS or M.FRAME_MS) or nil
+    if on == M.frameJob and ms == M.frameMs then return end
+    M.frameJob, M.frameMs = on, ms
+    if on then DazedCore.Tick.every(M.FRAME_ID, ms, frameTick) else DazedCore.Tick.remove(M.FRAME_ID); M.lastFrameT = nil end
 end
 
 local function forget(obj)
@@ -210,19 +249,26 @@ local function forget(obj)
     M.count = M.count - 1
 end
 
+-- Put the plain sprite back on one machine if it shows one of our frames (a machine gone from the cell is left alone).
+local function restoreOne(obj, e)
+    if P.alive(obj) then
+        local spr = P.try(obj, "getSprite")
+        local info = spr and P.spriteInfo(spr:getName())
+        if info and info.kind == e.spec.kind and info.frame ~= nil then
+            local md = obj:hasModData() and obj:getModData()
+            show(obj, M.spriteName(info.kind, info.tier, M.stateOf(info, md and md.dazedpower), info.facing))
+        end
+    end
+    e.mode, e.f, e.spr, e.cyc = nil, nil, nil, nil
+end
+M.restoreOne = restoreOne
+
 --- Put a plain sprite back on everything showing our frame, and take every light out (option off, or a reset).
+--  Since 0.14.0 that includes a machine culled while it showed a frame (it kept the frame, see the scan).
 function M.restoreAll()
     for obj, e in pairs(M.tracked) do
         dropLight(e)
-        if e.mode and P.alive(obj) then
-            local spr = P.try(obj, "getSprite")
-            local info = spr and P.spriteInfo(spr:getName())
-            if info and info.kind == e.spec.kind and info.frame ~= nil then
-                local md = obj:hasModData() and obj:getModData()
-                show(obj, M.spriteName(info.kind, info.tier, M.stateOf(info, md and md.dazedpower), info.facing))
-            end
-        end
-        e.mode, e.f, e.spr = nil, nil, nil
+        restoreOne(obj, e)
     end
     M.active = {}
     setFrameJob(false)
@@ -273,7 +319,8 @@ function M.scan()
     if paused() then return end
     local players, np = localPlayers()
     local isDark = dark()
-    local active, na = M.active, 0
+    local active, na, fast = M.active, 0, false
+    local kindOn = {}            -- a kind's own switch, asked once a scan
     for obj, e in pairs(M.tracked) do
         if not P.alive(obj) then
             forget(obj)
@@ -284,19 +331,31 @@ function M.scan()
             if not info or info.kind ~= spec.kind then
                 forget(obj)
             else
-                local near = np > 0 and nearAny(e, players, np)
+                local on = kindOn[spec.kind]
+                if on == nil then
+                    on = spec.enabled == nil or spec.enabled() ~= false
+                    kindOn[spec.kind] = on
+                end
+                local near = on and np > 0 and nearAny(e, players, np)
                 local md = obj:hasModData() and obj:getModData()
                 local d = md and md.dazedpower
-                local mode = near and spec.modes[M.stateOf(info, d)] or nil
+                local mode = near and M.lookOf(spec, M.stateOf(info, d), info.tier, d) or nil
                 setLight(e, (mode and isDark and spec.light) and spec.light(mode, info.tier, d) or nil)
-                if mode and onScreen(obj:getSquare()) then
+                if not on then
+                    -- The kind's own switch is off: its plain sprite, whatever it showed.
+                    if info.frame ~= nil or e.mode then restoreOne(obj, e) end
+                elseif mode and onScreen(obj:getSquare()) then
                     M.shown = true
                     if e.mode ~= mode or e.facing ~= info.facing then e.f, e.spr = nil, nil end
                     e.mode, e.tier, e.facing = mode, info.tier, info.facing
-                    if mode ~= spec.cycle then
+                    local cyc = spec.cycles[mode]
+                    e.cyc = cyc
+                    if not cyc then
                         show(obj, M.spriteName(spec.kind, info.tier, spec.still[mode], info.facing))
                         e.spr = obj:getSprite()
                     else
+                        e.rate = spec.rate and spec.rate(mode, info.tier, d) or nil
+                        if e.rate then fast = true end
                         na = na + 1
                         active[na] = e
                     end
@@ -308,31 +367,56 @@ function M.scan()
         end
     end
     for i = na + 1, #active do active[i] = nil end
-    setFrameJob(na > 0)
+    setFrameJob(na > 0, fast)
 end
 
---- One frame step for every active engine. Public for the tests.
+-- Is a machine whose sprite someone else just changed (the server's state flip) still in a cycling look?
+local function stillCycling(e, obj, cur)
+    local spec = e.spec
+    local info = P.spriteInfo(cur:getName())
+    if not info or info.kind ~= spec.kind then return false end
+    local md = obj:hasModData() and obj:getModData()
+    local d = md and md.dazedpower
+    local look = info.frame ~= nil and e.mode or M.lookOf(spec, info.state, info.tier, d)
+    if look == nil or spec.cycles[look] == nil then return false end
+    -- Follow the new sprite's facing and tier (a windmill yawing into the wind), and its look.
+    if look ~= e.mode then e.mode, e.cyc = look, spec.cycles[look] end
+    e.facing, e.tier = info.facing, info.tier
+    return true
+end
+
+--- One frame step for every active engine. Public for the tests. A fixed-speed cycle's frame comes from the clock
+--  (one per FRAME_MS); a rated one's from its own phase, advanced by the time since the last step (at most MAX_DT)
+--  times its rate, and never while paused.
 function M.frames(t)
-    if paused() then return end
+    if paused() then M.lastFrameT = nil return end
     t = t or now()
+    local dt = M.lastFrameT and math.max(0, math.min(M.MAX_DT, (t - M.lastFrameT) / 1000)) or 0
+    M.lastFrameT = t
     local active, keep = M.active, 0
     for i = 1, #active do
         local e = active[i]
         local obj, spec = e.obj, e.spec
         local cur = P.try(obj, "getSprite")
-        local live = e.mode == spec.cycle and cur ~= nil
+        local live = e.cyc ~= nil and cur ~= nil
         if live and cur ~= e.spr and e.spr ~= nil then
             -- Someone else changed the sprite (the server's state flip): still cycling only if it says so.
-            local info = P.spriteInfo(cur:getName())
-            live = info ~= nil and info.kind == spec.kind and (info.frame ~= nil or spec.modes[info.state] == spec.cycle)
-            if not live then e.mode = nil end
+            live = stillCycling(e, obj, cur)
+            if not live then e.mode, e.cyc = nil, nil end
         end
         if live then
-            local n = #spec.frames
-            local f = math.floor(t / M.FRAME_MS + e.offset) % n
+            local cyc = e.cyc
+            local n = #cyc
+            local f
+            if e.rate then
+                e.phase = (e.phase or e.offset) + dt * e.rate
+                f = math.floor(e.phase) % n
+            else
+                f = math.floor(t / M.FRAME_MS + e.offset) % n
+            end
             if f ~= e.f or cur ~= e.spr then
                 e.f = f
-                show(obj, M.spriteName(spec.kind, e.tier, spec.frames[f + 1], e.facing))
+                show(obj, M.spriteName(spec.kind, e.tier, cyc[f + 1], e.facing))
                 e.spr = P.try(obj, "getSprite")
             end
             keep = keep + 1
@@ -355,7 +439,7 @@ function M.consider(obj)
     if not sq then return end
     local x, y, z = sq:getX(), sq:getY(), sq:getZ()
     -- Engines side by side do not flicker in step.
-    M.tracked[obj] = { obj = obj, spec = spec, x = x, y = y, z = z, offset = (x * 7 + y * 13) % math.max(1, #spec.frames) }
+    M.tracked[obj] = { obj = obj, spec = spec, x = x, y = y, z = z, offset = (x * 7 + y * 13) % spec.longest }
     M.count = M.count + 1
     if not M.scanJob then
         M.scanJob = true
@@ -373,7 +457,7 @@ end
 function M.reset()
     M.tracked, M.count, M.active, M.lights, M.shown = {}, 0, {}, 0, false
     DazedCore.Tick.remove(M.SCAN_ID); DazedCore.Tick.remove(M.FRAME_ID)
-    M.scanJob, M.frameJob = false, false
+    M.scanJob, M.frameJob, M.frameMs, M.lastFrameT = false, false, nil, nil
     DazedPower.More.Machines.each(M.consider)
 end
 

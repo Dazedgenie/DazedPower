@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,116
+    size = 4,127
     id = 2
     // dazedpower_02_0
     tile
@@ -22366,6 +22366,1002 @@ tileset
         IsMoveAble = 
         CustomItem = Base.DazedPropaneWorkshop
         PickUpWeight = 600
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_464
+    tile
+    {
+        xy = 0,116
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_465
+    tile
+    {
+        xy = 1,116
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_466
+    tile
+    {
+        xy = 2,116
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_467
+    tile
+    {
+        xy = 3,116
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_468
+    tile
+    {
+        xy = 0,117
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_469
+    tile
+    {
+        xy = 1,117
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_470
+    tile
+    {
+        xy = 2,117
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_471
+    tile
+    {
+        xy = 3,117
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_472
+    tile
+    {
+        xy = 0,118
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_473
+    tile
+    {
+        xy = 1,118
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_474
+    tile
+    {
+        xy = 2,118
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_475
+    tile
+    {
+        xy = 3,118
+        CustomName = Micro-Hydro Wheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWaterWheel
+        PickUpWeight = 260
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_476
+    tile
+    {
+        xy = 0,119
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_477
+    tile
+    {
+        xy = 1,119
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_478
+    tile
+    {
+        xy = 2,119
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_479
+    tile
+    {
+        xy = 3,119
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_480
+    tile
+    {
+        xy = 0,120
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_481
+    tile
+    {
+        xy = 1,120
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_482
+    tile
+    {
+        xy = 2,120
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_483
+    tile
+    {
+        xy = 3,120
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_484
+    tile
+    {
+        xy = 0,121
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_485
+    tile
+    {
+        xy = 1,121
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_486
+    tile
+    {
+        xy = 2,121
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_487
+    tile
+    {
+        xy = 3,121
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_488
+    tile
+    {
+        xy = 0,122
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_489
+    tile
+    {
+        xy = 1,122
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_490
+    tile
+    {
+        xy = 2,122
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_491
+    tile
+    {
+        xy = 3,122
+        CustomName = Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheel
+        PickUpWeight = 280
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+    }
+    // dazedpower_02_492
+    tile
+    {
+        xy = 0,123
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_493
+    tile
+    {
+        xy = 1,123
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_494
+    tile
+    {
+        xy = 2,123
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_495
+    tile
+    {
+        xy = 3,123
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_496
+    tile
+    {
+        xy = 0,124
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_497
+    tile
+    {
+        xy = 1,124
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_498
+    tile
+    {
+        xy = 2,124
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_499
+    tile
+    {
+        xy = 3,124
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_500
+    tile
+    {
+        xy = 0,125
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_501
+    tile
+    {
+        xy = 1,125
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_502
+    tile
+    {
+        xy = 2,125
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_503
+    tile
+    {
+        xy = 3,125
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+    }
+    // dazedpower_02_504
+    tile
+    {
+        xy = 0,126
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+    }
+    // dazedpower_02_505
+    tile
+    {
+        xy = 1,126
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+    }
+    // dazedpower_02_506
+    tile
+    {
+        xy = 2,126
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+    }
+    // dazedpower_02_507
+    tile
+    {
+        xy = 3,126
+        CustomName = Windsock
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedWindsock
+        PickUpWeight = 30
         PickUpLevel = 0
         MoveType = Object
         Eoffset = -3

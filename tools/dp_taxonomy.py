@@ -22,12 +22,14 @@ PIECES_XL = 4                       # a 2x2 array: pieces 1..4 = NW, NE, SW, SE 
 
 KINDS = ["array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
          "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel",
-         "steamfire", "woodgasfire", "petrolrun", "propaneflame"]
+         "steamfire", "woodgasfire", "petrolrun", "propaneflame", "hydrospin", "treadspin", "windsockflap"]
 # Sprite-only rows that show another kind in motion: the client swaps a turning windmill through these frames.
 # They have no item of their own and a saved frame reads back as the kind it animates.
 # Likewise the steam engine's firebox: flame frames of a running engine and the banked embers of an idle one (DP_SteamFx).
 # And the other engines (0.13.0, DP_GenFx): the wood gas firebox, the petrol engine's shake and the propane burner.
-ALIAS = {"windspin": "windmill", "steamfire": "steam", "woodgasfire": "woodgas", "petrolrun": "petrol", "propaneflame": "propane"}
+# And the turning machines (0.14.0, DP_TurnFx): the water wheel, the zombie treadwheel and the windsock's flutter.
+ALIAS = {"windspin": "windmill", "steamfire": "steam", "woodgasfire": "woodgas", "petrolrun": "petrol", "propaneflame": "propane",
+         "hydrospin": "hydro", "treadspin": "treadwheel", "windsockflap": "windsock"}
 PART_KINDS = [k for k in KINDS if k not in ALIAS]
 MOUNTS = {
     "array": ["ground", "tracker", "xl"], "bank": ["ground", "wall"], "controller": ["ground"],
@@ -36,6 +38,7 @@ MOUNTS = {
     "gauge": ["wall"], "rod": ["ground"], "bench": ["ground"], "hydro": ["ground"],
     "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"], "windspin": ["ground"], "woodgas": ["ground"],
     "treadwheel": ["ground"], "steamfire": ["ground"], "woodgasfire": ["ground"], "petrolrun": ["ground"], "propaneflame": ["ground"],
+    "hydrospin": ["ground"], "treadspin": ["ground"], "windsockflap": ["ground"],
 }
 THREE = ["makeshift", "salvaged", "workshop"]
 TIERS = {
@@ -45,6 +48,7 @@ TIERS = {
     "gauge": ["standard"], "rod": ["standard"], "bench": ["standard"], "hydro": ["standard"],
     "fence": ["standard"], "cooler": ["standard"], "heater": ["standard"], "windspin": THREE, "woodgas": THREE,
     "treadwheel": ["standard"], "steamfire": THREE, "woodgasfire": THREE, "petrolrun": THREE, "propaneflame": THREE,
+    "hydrospin": ["standard"], "treadspin": ["standard"], "windsockflap": ["basic"],
 }
 STATES = {
     "array": ["clear", "snow", "cracked"], "controller": ["off", "on"], "transformer": ["off", "on"],
@@ -67,6 +71,12 @@ STATES = {
     "petrolrun": ["run1", "run2", "run3"],
     # a running propane engine's small blue burner flame and the faint shimmer over its exhaust (no smoke)
     "propaneflame": ["flame1", "flame2", "flame3"],
+    # a turning water wheel's twelve paddles a third of their pitch (10 degrees) on per frame, the water splashing
+    "hydrospin": ["spin1", "spin2", "spin3"],
+    # a zombie walking the treadwheel: four stride poses, the slats a quarter of their pitch on per frame
+    "treadspin": ["walk1", "walk2", "walk3", "walk4"],
+    # a windsock fluttering: the drooping (half) and the streaming (full) sock swung to either side of its plain sprite
+    "windsockflap": ["half1", "half2", "full1", "full2"],
 }
 BANK_CELLS = {"ground": {"makeshift": 3, "salvaged": 6, "workshop": 8}, "wall": {"makeshift": 2, "salvaged": 3, "workshop": 4}}
 

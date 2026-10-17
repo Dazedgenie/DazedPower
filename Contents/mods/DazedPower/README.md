@@ -1,4 +1,4 @@
-# Dazed Power  (v0.13.0, Build 42)
+# Dazed Power  (v0.14.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
@@ -49,6 +49,22 @@ have a tracking array, and Workshop rigs a Workshop controller.
 
 Not included: the roof (flat) panel mount, the converted vanilla "backup" generator (the gas generators
 replace it), the Turkish translation.
+
+## Test in game (0.14.0, turning machines: windmill, water wheel, treadwheel, windsock)
+
+Coded and tested headless only (`tools/tests/turnfx_test.lua`; `anim_test.lua` checks the windmill shows exactly what it
+did before, frame for frame); the art is rendered and packed. Console at start: `DazedPower: ready -- 1020/1020 tiles`.
+In game, all four facings: a turning **water wheel** within 25 tiles and on screen is drawn sharp (not the blur) with its
+paddles going round, water tipping off the chute and spray below, top of the wheel moving away from the chute side; a
+still one is plain. A **treadwheel** with a zombie in it: the zombie's legs stride and the slats roll back under its
+feet, faster while you stand within 8 tiles (lured); an empty wheel is plain. A **windsock** at half or full swings
+side to side (faster when full), a limp one hangs still, and it still turns to follow the wind. **Windmills** spin
+with the wind as before (blur in a gale, a broken rotor rocks) but now freeze while single player is paused and stop
+off screen; both the sandbox *Machine effects* and the client tick box *Animate windmills* turn them off. Machine
+effects off: every plain sprite back within a second. Tick stats: still only `DazedPower.steamfx` (1 s) and
+`DazedPower.steamfxFrames` (40 ms while something with its own speed turns on screen, else 150 ms), and neither when
+no machine is near; the old per-frame windmill tick is gone. FPS with several turning machines on screen against the
+option off. Is the water wheel's turn readable at game zoom (it is the smallest motion of the four)?
 
 ## Test in game (0.13.0, generator effects: wood gas, petrol, propane)
 
@@ -132,6 +148,20 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.14.0 (turning machines).** `DP_MachineFx` learned looks picked from more than the state (`spec.modeOf`), several
+  cycling looks per kind (`spec.cycles`), a speed per machine (`spec.rate`, frames a second; its phase only advances
+  while the game runs, at most `MAX_DT` a step; the frame job runs every `FAST_MS` = 40 ms while such a cycle is on
+  screen) and a kind's own switch (`spec.enabled`); a culled machine still on a frame is restored when the option
+  goes off, and a frame job follows the server's facing flip at once. `DP_WindSpin` (its own per-frame `OnTick` and a
+  5 s square sweep since 0.4) is now a registration on it: W.pick and W.fps unchanged, and the registered look is
+  checked against W.pick in 672 cases. New `DP_TurnFx`: water wheel (`hydrospin` spin1..spin3, 10 degrees a frame of
+  its 30 degree paddle pitch, 8 fps scaled down to half by condition), treadwheel (`treadspin` walk1..walk4: four
+  stride poses, the slats a quarter pitch a frame, 4 fps, x1.5 lured, x0.5 crawler), windsock (`windsockflap`
+  half1/half2/full1/full2, cycled plain, 1, plain, 2 at 3 or 6 fps). `DPM_Machines` now also lists windsocks. Sprite
+  alias kinds `hydrospin` (rows 244-246, `dazedpower_02_464` to `_475`), `treadspin` (247-250, `_476` to `_491`),
+  `windsockflap` (251-254, `_492` to `_507`): 44 tiles, tileset 02 now 508 of 512. Rendered by `tools/blender/dz2.py
+  dp:hydrospin,treadspin,windsockflap` (`hydro_frame`, `treadwheel_part(frame=)` with `zombie_walker(stride=)`, and
+  `SOCK_FLAP` in `dz_render.build_windsock`), appended with `import_art.py ... --append`. Tests: `turnfx_test.lua`.
 - **0.13.0 (generator effects).** The steam pilot's tracking, cull, lights, pause, cleanup and option moved into a shared
   `DP_MachineFx` (client only) that every kind registers with (`M.register`: its looks per state, its frame cycle, its
   one-frame looks, its light); `DP_SteamFx` is now a thin registration that keeps its 0.12.0 calls, and `DP_GenFx`

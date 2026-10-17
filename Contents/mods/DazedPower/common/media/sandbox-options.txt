@@ -179,9 +179,10 @@ option DazedPower.TreadmillWatts
     translation = DazedPower_TreadmillWatts,
 }
 
-/* Machine effects (0.12.0; every generator since 0.13.0). MachineEffects: on each player's own machine, steam, wood
-   gas, petrol and propane generators near a player show they are running (flicker frames, smoke or exhaust, a light
-   at night). Visual only; off puts the plain sprites back. */
+/* Machine effects (0.12.0; every generator since 0.13.0; the turning machines since 0.14.0). MachineEffects: on each
+   player's own machine, steam, wood gas, petrol and propane generators near a player show they are running (flicker
+   frames, smoke or exhaust, a light at night), and windmills, water wheels, treadwheels and windsocks turn. Visual
+   only; off puts the plain sprites back. */
 option DazedPower.MachineEffects
 {
     type = boolean,

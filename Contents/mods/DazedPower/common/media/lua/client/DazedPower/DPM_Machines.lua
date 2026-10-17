@@ -1,4 +1,5 @@
---[[ Dazed Power -- every loaded power-source machine on this side, for the machine sounds and the spinning blades.
+--[[ Dazed Power -- every loaded power-source machine on this side (and, since 0.14.0, every windsock), for the
+     machine effects (DP_MachineFx: the engines' fire, the spinning blades, the water wheel, treadwheel and windsock).
 
      Fed by MapObjects as chunks stream in and machines are placed, by OnObjectAdded, and by a slow sweep round each
      local player that catches anything no event announced. Readers walk this list instead of searching squares. ]]
@@ -17,14 +18,19 @@ Mc.SWEEP_MS = 10000             -- real time between the fallback sweeps
 Mc.SWEEP_RADIUS = 18            -- squares round each local player the sweep reads
 Mc.SWEEP_FLOORS = 1             -- floors above and below the player
 
+Mc.EXTRA_KINDS = { windsock = true }   -- not power sources, but they move on screen (DP_TurnFx)
 Mc.objs = Mc.objs or {}         -- object -> true
+
+local function watched(kind)
+    return P.SOURCE_KINDS[kind] == true or Mc.EXTRA_KINDS[kind] == true
+end
 Mc.listeners = Mc.listeners or {}
 
 --- Is this one of our power-source machines (by its sprite)?
 function Mc.isMachine(obj)
     local spr = obj and obj.getSprite and obj:getSprite()
     local info = spr and P.spriteInfo(spr:getName())
-    return info ~= nil and P.SOURCE_KINDS[info.kind] == true
+    return info ~= nil and watched(info.kind)
 end
 
 --- Track an object if it is one of our machines, and tell the listeners about a new one.
@@ -90,7 +96,7 @@ end
 local function registerSprites()
     if not (MapObjects and MapObjects.OnLoadWithSprite) then return end
     for row = 1, #P.ROWS do
-        if P.SOURCE_KINDS[P.ROWS[row].kind] then
+        if watched(P.ROWS[row].kind) then
             for col = 0, P.COLS - 1 do
                 local name = P.spriteName((row - 1) * P.COLS + col)
                 MapObjects.OnLoadWithSprite(name, Mc.consider, Mc.PRIORITY)

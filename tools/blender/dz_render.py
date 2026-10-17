@@ -762,6 +762,11 @@ def build_steam(tier, state):
 
 
 # ------------------------------------------------------------------ wind instruments
+# dz2's windsockflap rows (DP_TurnFx): +1 or -1 while a flutter frame is built (the sock swung to one side of the plain
+# sprite's line, a wave running down it), else None.
+SOCK_FLAP = None
+
+
 def build_windsock(tier, state):
     p = P(); FIXED_POLE = []
     cyl(0.09, 0.06, (0, 0, 0.03), p["concrete"], segs=16)
@@ -778,6 +783,12 @@ def build_windsock(tier, state):
         t0, t1 = i / n, (i + 1) / n
         ang = math.radians(droop * (0.25 + 0.75 * t1) ** (0.6 if state == "limp" else 1.0))
         d = Vector((0, -math.cos(ang), -math.sin(ang)))
+        if SOCK_FLAP and state != "limp":
+            # A flutter frame: the sock yaws to one side and a wave runs down it, the tail whipping most; the
+            # drooping sock also lifts and falls a little.
+            sway = SOCK_FLAP * (0.45 * t1 + 0.18 * math.sin(2 * math.pi * t1)) * (1.25 if state == "half" else 1.0)
+            lift = -SOCK_FLAP * 0.1 * t1 if state == "half" else 0.0
+            d = Vector((sway, d.y, d.z + lift)).normalized()
         seg = L / n
         a, b = pos, pos + d * seg
         ra, rb = r0 + (r1 - r0) * t0, r0 + (r1 - r0) * t1

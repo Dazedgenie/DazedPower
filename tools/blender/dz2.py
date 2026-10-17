@@ -451,8 +451,17 @@ def bench_part(state):
     path([(0.31, 0.1, 0.8), (0.42, 0.25, 0.4), (0.44, 0.4, 0.02)], 0.008, p["wire_k"])
 
 
-def hydro_part(state):
+HYDRO_STEP = -10.0        # degrees a hydrospin frame turns the wheel: a third of the paddles' 30 degree pitch, top going
+                          # downstream (the chute pours on the +Y side, so that side goes down)
+
+
+def hydro_part(state, frame=None):
+    """The micro-hydro wheel. `frame` spin1..spin3 (the hydrospin rows, DP_TurnFx): the running wheel drawn sharp, not
+    blurred, its paddles and arms turned HYDRO_STEP a frame (three frames loop the 30 degree pitch seamlessly), the
+    water falling from the chute and the spray below it stepped through a looping phase."""
     p = P(); turning = state == "turning"
+    if frame:
+        return hydro_frame(int(frame[-1]))
     frame = p["wood_dark"]
     c = Vector((0.0, 0.0, 0.46)); r = 0.38
     for x in (-0.2, 0.2):
@@ -484,6 +493,48 @@ def hydro_part(state):
         box((0.14, 0.45, 0.02), (0.0, 0.3, 0.945), wat, rot=(-12, 0, 0))
         puffs((0, 0.02, 0.88), 4, 0.04, "#cfe0ea", 0.45, (0.0, -0.3, -0.6), seed=4)
         puffs((0, -0.32, 0.1), 4, 0.05, "#d8e6ee", 0.35, (0.0, -0.1, 0.2), seed=8)
+
+
+def hydro_frame(n):
+    """One hydrospin frame (n 1..3): hydro_part's frame and chute, a sharp wheel turned (n-1)*HYDRO_STEP degrees with
+    a dark iron arm to every paddle (so the arms loop with the paddles), and the water and spray at phase (n-1)/3."""
+    p = P(); frame = p["wood_dark"]
+    c = Vector((0.0, 0.0, 0.46)); r = 0.38
+    for x in (-0.2, 0.2):
+        box((0.06, 0.06, 0.62), (x, 0.0, 0.31), frame); box((0.06, 0.7, 0.06), (x, 0.0, 0.03), frame)
+        tube((x, -0.33, 0.04), (x, 0.0, 0.58), 0.025, frame, 4); tube((x, 0.33, 0.04), (x, 0.0, 0.58), 0.025, frame, 4)
+    iron = mat("#3c3e40", 0.55, 0.4, rust=0.3)
+    cyl(0.03, 0.46, c, iron, axis="X", segs=12)
+    for sx in (-0.1, 0.1): torus(r - 0.02, 0.018, c + Vector((sx, 0, 0)), iron, axis="X", seg=40)
+    # paddles: alternate light and dark boards would break the 30 degree loop, so every paddle is the same pale wood,
+    # with a dark iron arm to each so the turn reads against the hub
+    wood = mat("#9a7c58", 0.8, var=0.2, dirt=0.3)
+    arm = mat("#4a3a2c", 0.7, 0.2, rust=0.2)
+    off = HYDRO_STEP * (n - 1)
+    for i in range(12):
+        a = 2 * math.pi * i / 12 + math.radians(off)
+        d = Vector((0, math.cos(a), math.sin(a)))
+        box((0.22, 0.016, 0.13), c + d * (r - 0.06), wood, rot=(math.degrees(a), 0, 0))
+        for sx in (-0.09, 0.09):
+            tube(c + Vector((sx, 0, 0)) + d * 0.04, c + Vector((sx, 0, 0)) + d * (r - 0.03), 0.006, arm, 5)
+    box((0.18, 0.5, 0.03), (0.0, 0.32, 0.92), wood, rot=(-12, 0, 0))
+    for x in (-0.09, 0.09): box((0.02, 0.5, 0.08), (x, 0.32, 0.95), wood, rot=(-12, 0, 0))
+    for y in (0.5,): box((0.05, 0.05, 0.9), (0.0, y - 0.05, 0.45), frame)
+    gen = mat("#3e5a46", 0.5, 0.3, dirt=0.2)
+    cyl(0.09, 0.18, (0.36, 0.1, 0.22), gen, axis="X"); box((0.2, 0.2, 0.06), (0.36, 0.1, 0.1), frame)
+    tube((0.27, 0.1, 0.22), (0.25, 0.0, 0.46), 0.006, p["rubber"])
+    path([(0.42, 0.15, 0.2), (0.44, 0.35, 0.05), (0.45, 0.45, 0.02)], 0.008, p["wire_k"])
+    wat = mat("#7fa6c4", 0.1, alpha=0.55, dirt=0, wear=False)
+    box((0.14, 0.45, 0.02), (0.0, 0.3, 0.945), wat, rot=(-12, 0, 0))
+    # the sheet of water tipping off the chute's lip onto the wheel's top paddles, and the spray off them and below
+    ph = (n - 1) / 3.0
+    lip = Vector((0.0, 0.07, 0.9))
+    for k in range(4):
+        t = ((k + ph) / 4.0)
+        q = lip + Vector((0, -0.02 - 0.06 * t, -0.16 * t * t - 0.05 * t))
+        ball(0.022 + 0.006 * t, q, mat("#a9c6da", 0.1, alpha=0.45 * (1 - 0.6 * t), dirt=0, wear=False), scale=(2.2, 0.7, 1.0), segs=10)
+    puffs((0, 0.02, 0.86), 4, 0.045, "#e2eef4", 0.5, (0.0, -0.3, -0.6), seed=4, phase=ph)
+    puffs((0, -0.32, 0.1), 4, 0.055, "#e2eef4", 0.4, (0.0, -0.1, 0.25), seed=8, phase=ph)
 
 
 def point_light(at, energy, col=(1.0, 0.6, 0.25)):
@@ -890,11 +941,27 @@ TREAD_R = 0.69                           # the iron tyre the rollers bear on
 TREAD_W = 0.27                           # half the drum's width (the hoops), along X; R + W stays inside the cell
 
 
-def zombie_walker(floor, k=0.83):
+# A treadspin frame's stride (DP_TurnFx walk1..walk4): each leg's knee, ankle and toe (y, z) in four poses, and which
+# pose each leg takes per frame: left planted ahead / right pushing off (walk1, the plain sprite's pose), passing, the
+# mirror, passing. The body rises a little as a leg passes under it.
+STRIDE_POSE = {"ahead": ((-0.13, 0.5), (-0.19, 0.24), (-0.3, 0.2)),
+               "behind": ((0.07, 0.49), (0.2, 0.28), (0.27, 0.205)),
+               "under": ((-0.03, 0.5), (0.0, 0.225), (-0.11, 0.195)),
+               "lift": ((-0.15, 0.56), (-0.06, 0.33), (-0.16, 0.3))}
+STRIDE = {1: ("ahead", "behind", 0.0), 2: ("under", "lift", 0.018), 3: ("behind", "ahead", 0.0), 4: ("lift", "under", 0.018)}
+
+
+def zombie_walker(floor, k=0.83, stride=None):
     """A shambling zombie mid-stride on the drum's floor (z `floor` at its middle), facing the model front (-Y):
     grey-green skin, a torn blood-stained shirt and jeans, head lolling, arms reaching ahead. Modelled about 1.45
-    tall and drawn at `k` of that so it fits the drum. Returns its waist, for the rope."""
+    tall and drawn at `k` of that so it fits the drum. Returns its waist, for the rope. `stride` 1..4 poses the legs
+    for a treadspin frame (STRIDE); None keeps the plain sprite's pose."""
     pv = Vector((0, 0, 0.17))
+    lpose, rpose, bob = STRIDE[stride] if stride else (None, None, 0.0)
+    if stride:
+        # The body lifts as a leg passes under it and sways a touch toward the planted leg.
+        sway = {1: -0.006, 2: -0.01, 3: 0.006, 4: 0.01}[stride]
+        pv = pv - Vector((sway / k, 0, bob / k))
     HEAD.append(HEAD[-1] @ Matrix.Translation((0, 0, floor)) @ Matrix.Scale(k, 4) @ Matrix.Translation(-pv))
     skin = stained("#7c9468", 0.75, 0.1, "#5a2a22", 9.0)
     shirt = stained("#8d9184", 0.85, 0.4, "#4e1914", 5.0)
@@ -903,8 +970,14 @@ def zombie_walker(floor, k=0.83):
     face = mat("#7c9468", 0.75, var=0.22, dirt=0.2)                       # no blotch, so the face reads grey-green
     hair = mat("#4a4a44", 0.9, dirt=0.1)
     # legs mid-stride: the left one planted ahead, the right pushing off behind with its heel up
-    for x, hip, knee, ankle, toe in ((-0.08, (-0.08, 0.0, 0.8), (-0.085, -0.13, 0.5), (-0.085, -0.19, 0.24), (-0.085, -0.3, 0.2)),
-                                     (0.08, (0.08, 0.0, 0.8), (0.085, 0.07, 0.49), (0.085, 0.2, 0.28), (0.085, 0.27, 0.205))):
+    legs = ((-0.08, (-0.08, 0.0, 0.8), (-0.085, -0.13, 0.5), (-0.085, -0.19, 0.24), (-0.085, -0.3, 0.2)),
+            (0.08, (0.08, 0.0, 0.8), (0.085, 0.07, 0.49), (0.085, 0.2, 0.28), (0.085, 0.27, 0.205)))
+    if stride:
+        # the whole body rises by `bob`; the feet are taken down by as much so they stay on the floor
+        legs = tuple((x, (x, 0.0, 0.8)) + tuple((x * 1.0625, yz[0], yz[1] - (bob / k if j else 0.0))
+                                                 for j, yz in enumerate(STRIDE_POSE[pose]))
+                     for x, pose in ((-0.08, lpose), (0.08, rpose)))
+    for x, hip, knee, ankle, toe in legs:
         tube(hip, knee, 0.058, jeans, 10, r2=0.05); ball(0.05, knee, jeans, segs=10)
         tube(knee, ankle, 0.05, jeans, 10, r2=0.042)
         a, t = Vector(ankle), Vector(toe)
@@ -936,12 +1009,18 @@ def zombie_walker(floor, k=0.83):
     return Vector((0, 0, floor)) + (Vector((0.0, -0.02, 0.86)) - pv) * k
 
 
-def treadwheel_part(state):
+TREAD_STEP = 15.0 / 4     # degrees a treadspin frame turns the drum: a quarter of the 24 slats' pitch, the floor going back
+                          # under the zombie's feet (+Y at the bottom)
+
+
+def treadwheel_part(state, frame=None):
     """A zombie treadwheel: an open slatted drum on two wooden hoops shod with iron tyres, riding on four rollers on
     a timber base, held upright by guide posts with rollers at the hoops' sides. The back roller drives a car
     alternator by a belt on the left. Empty, the tether rope hangs off the short post at the front right; walking,
     a grey-green zombie strides in the drum, tied by the waist to that post."""
     p = P(); walking = state == "walking"
+    n_frame = int(frame[-1]) if frame else 0
+    turn = math.radians(TREAD_STEP * (n_frame - 1)) if frame else 0.0
     wood = mat("#8b7155", 0.85, var=0.22, dirt=0.4)
     weath = mat("#7e7262", 0.9, var=0.25, dirt=0.4)
     dark = p["wood_dark"]
@@ -972,10 +1051,13 @@ def treadwheel_part(state):
         torus(R - 0.004, 0.011, C + Vector((x, 0, 0)), iron, axis="X", seg=56, rseg=6)
     n = 24
     for i in range(n):
-        a = 2 * math.pi * (i + 0.5) / n
+        a = 2 * math.pi * (i + 0.5) / n + turn
         d = Vector((0, math.sin(a), -math.cos(a)))
-        box((2 * W + 0.05, 0.075, 0.028), C + d * (R - 0.078), weath if i % 3 else wood, rot=(math.degrees(a), 0, 0), bevel=0.006)
+        # A frame's slats are all one wood: the plain sprite's every-third darker slat would jump when the frames loop.
+        box((2 * W + 0.05, 0.075, 0.028), C + d * (R - 0.078), weath if (i % 3 or frame) else wood, rot=(math.degrees(a), 0, 0), bevel=0.006)
     for x in (-W, W):
+        if frame:
+            break                    # the four corner blocks would jump at the loop too, so the frames leave them out
         for k in range(4):
             a = 2 * math.pi * k / 4 + math.pi / 4
             d = Vector((0, math.sin(a), -math.cos(a)))
@@ -1001,7 +1083,7 @@ def treadwheel_part(state):
     knot = tp + Vector((0, 0, 0.66))
     torus(0.052, 0.014, knot, rope, seg=16, rseg=6); torus(0.052, 0.014, knot + Vector((0, 0, 0.03)), rope, seg=16, rseg=6)
     if walking:
-        waist = zombie_walker(C.z - (R - 0.092))
+        waist = zombie_walker(C.z - (R - 0.092), stride=n_frame or None)
         torus(0.125, 0.014, waist, rope, seg=20, rseg=6, rot=(8, 0, 0))
         mid = knot.lerp(waist, 0.5) + Vector((0, 0, -0.05))
         path([knot + Vector((-0.04, 0.02, 0)), mid, waist + Vector((0.11, -0.02, 0.0))], 0.012, rope, segs=8)
@@ -1099,7 +1181,8 @@ DP_FAMILY = {("array", "ground"): "arrays", ("array", "tracker"): "trackers", ("
              ("lamp", "garden"): "lamps", ("lamp", "street"): "lamps", ("gauge", "wall"): "gauges", ("rod", "ground"): "rod",
              ("bench", "ground"): "bench", ("hydro", "ground"): "hydro", ("windspin", "ground"): "windspin",
              ("treadwheel", "ground"): "treadwheel", ("steamfire", "ground"): "steamfire",
-             ("woodgasfire", "ground"): "woodgasfire", ("petrolrun", "ground"): "petrolrun", ("propaneflame", "ground"): "propaneflame"}
+             ("woodgasfire", "ground"): "woodgasfire", ("petrolrun", "ground"): "petrolrun", ("propaneflame", "ground"): "propaneflame",
+             ("hydrospin", "ground"): "hydrospin", ("treadspin", "ground"): "treadspin", ("windsockflap", "ground"): "windsockflap"}
 MP_TIER = {"makeshift": "makeshift", "salvaged": "salvaged", "workshop": "manufactured", "basic": "basic"}
 PIECE_OFFSET = {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
 
@@ -1115,7 +1198,8 @@ def set_wear(state, kind):
 
 
 DP_BUILT_KINDS = {"array", "bank", "controller", "transformer", "lamp", "gauge", "rod", "bench", "hydro", "windspin",
-                  "fence", "cooler", "heater", "woodgas", "treadwheel", "steamfire", "woodgasfire", "petrolrun", "propaneflame"}
+                  "fence", "cooler", "heater", "woodgas", "treadwheel", "steamfire", "woodgasfire", "petrolrun", "propaneflame",
+                  "hydrospin", "treadspin", "windsockflap"}
 
 
 def dp_build(kind, mount, tier, state):
@@ -1124,6 +1208,9 @@ def dp_build(kind, mount, tier, state):
     if kind == "steamfire": return steamfire_part(tier, state)
     if kind == "woodgasfire": return woodgasfire_part(tier, state)
     if kind in ("petrolrun", "propaneflame"): return gasfx_part(kind, tier, state)
+    if kind == "hydrospin": return hydro_part("turning", state)
+    if kind == "treadspin": return treadwheel_part("walking", state)
+    if kind == "windsockflap": return windsockflap_part(tier, state)
     if kind in BUILDERS: return BUILDERS[kind](MP_TIER[tier], state)
     if kind == "array": return {"ground": array_static, "tracker": array_tracker, "xl": array_xl}[mount](tier, state)
     if kind == "bank": return (bank_ground if mount == "ground" else bank_wall)(tier, int(state[1:]))
@@ -1174,6 +1261,17 @@ def gasfx_part(kind, tier, frame):
         build_gas("petrol" if kind == "petrolrun" else "propane", MP_TIER[tier], "running")
     finally:
         GAS_FRAME = None
+
+
+def windsockflap_part(tier, frame):
+    """A windsock's flutter frame (DP_TurnFx): the half or full sock (frame half1/half2/full1/full2) swung to one side
+    of the plain sprite's line with a wave down it; the client walks plain, 1, plain, 2."""
+    global SOCK_FLAP
+    SOCK_FLAP = 1 if frame.endswith("1") else -1
+    try:
+        build_windsock(tier, frame[:-1])
+    finally:
+        SOCK_FLAP = None
 
 
 def make_root(start):

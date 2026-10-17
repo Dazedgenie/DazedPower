@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.14.0 (2026-10-17)
+- Effects: **the turning machines move.** Near you (25 tiles) and on screen:
+  - **Water wheel:** while it turns, the wheel is drawn sharp instead of as a blur and its paddles go round, with water tipping off the chute and spray below. A badly worn wheel turns slower.
+  - **Zombie treadwheel:** the tied zombie strides (four poses) and the drum's slats roll back under its feet. Faster while it is lured (someone within 8 tiles), slower for a crawler.
+  - **Windsock:** a drooping or streaming sock swings from side to side, faster in a strong wind. A limp sock hangs still.
+  - **Windmills** spin as before (speed with the wind, a blur in a gale, a broken rotor rocking), but now on the same shared effects code as the generators: they stop while single player is paused (they used to keep turning), cost nothing off screen, and follow the sandbox option *Machine effects* as well as their own *Animate windmills* tick box.
+- Visual only, on your own computer: nothing is sent or saved. *Machine effects* off puts every plain sprite back.
+- Art: 44 new sprites (water wheel 3 frames, treadwheel 4, windsock 4; each in four facings), Blender-rendered in the house style and appended on a new page of the existing tileset (`dazedpower_02`, now 508 of 512 tiles); the existing pages and sprite ids are unchanged.
+- Coded and tested headless; not yet run in game.
+
 ## 0.13.1 (2026-10-17)
 - Art: the **petrol** and **propane** running frames are stronger, so they read at game size (the 0.13.0 ones were hard to tell from the still sprite).
   - **Petrol:** the engine now visibly shakes on its mounts, 2 to 3 pixels a frame in alternating directions, while the pallet, frame or base plate stays still; two larger grey-white exhaust puffs climb from the pipe.

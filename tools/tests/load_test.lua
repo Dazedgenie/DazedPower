@@ -115,7 +115,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 244, "244 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 255, "255 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -149,7 +149,20 @@ check(P.sprite("woodgas", "ground", "salvaged", "running", "S") == P.sprite("woo
       and P.spriteInfo(P.sprite("woodgas", "ground", "salvaged", "running", "S")).frame == nil
       and P.spriteInfo(P.sprite("petrol", "ground", "salvaged", "running", "S")).frame == nil
       and P.spriteInfo(P.sprite("propane", "ground", "salvaged", "running", "S")).frame == nil, "frames don't shadow the real running sprites")
-check(P.spriteInfo("dazedpower_02_464") == nil and P.spriteInfo("dazedpower_02_463") ~= nil, "nothing past the sheet")
+-- The turning machines' frames (0.14.0) follow: water wheel, treadwheel, windsock, each reading back as its machine.
+local hs = P.spriteInfo("dazedpower_02_464")
+check(hs and hs.kind == "hydro" and hs.tier == "standard" and hs.frame == "spin1" and hs.state == "turning" and hs.facing == "E",
+      "the water wheel spin frames follow the propane flames")
+local ts = P.spriteInfo("dazedpower_02_476")
+check(ts and ts.kind == "treadwheel" and ts.frame == "walk1" and ts.state == "walking" and ts.facing == "E", "the treadwheel stride frames follow")
+local ws = P.spriteInfo("dazedpower_02_507")
+check(ws and ws.kind == "windsock" and ws.tier == "basic" and ws.frame == "full2" and ws.state == "full" and ws.facing == "N",
+      "the windsock's full2 flutter frame closes the sheet")
+check(P.spriteInfo(P.sprite("hydro", "ground", "standard", "turning", "S")).frame == nil
+      and P.spriteInfo(P.sprite("treadwheel", "ground", "standard", "walking", "S")).frame == nil
+      and P.spriteInfo(P.sprite("windsock", "ground", "basic", "half", "S")).frame == nil, "turning frames don't shadow the real sprites")
+check(P.spriteInfo("dazedpower_02_508") == nil and P.spriteInfo("dazedpower_02_507") ~= nil, "nothing past the sheet")
+check(#P.ROWS * P.COLS <= 2 * P.SHEET_TILES, "the sheet still fits two tilesets")
 -- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
 local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
 check(f2 and f2.kind == "windmill" and f2.state == "turning" and f2.frame == "spin2" and f2.tier == "salvaged" and f2.facing == "W",
@@ -293,6 +306,7 @@ dofile("tread_test.lua")(check, E)
 dofile("treadmill_test.lua")(check, E)
 dofile("steamfx_test.lua")(check, E)
 dofile("genfx_test.lua")(check, E)
+dofile("turnfx_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do
