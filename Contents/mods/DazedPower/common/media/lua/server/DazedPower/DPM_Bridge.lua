@@ -319,7 +319,8 @@ local function liveSources(rec)
         local info = alive(obj) and P.describe(obj)
         if info then
             local d = P.data(obj)
-            local w, fresh = 0, now - (d.tmBeat or 0) <= TREADMILL_FRESH_MS and (d.tmBeat or 0) > 0
+            local beat = d.tmBeat or 0
+            local w, fresh = 0, beat > 0 and now >= beat and now - beat <= TREADMILL_FRESH_MS
             if fresh then
                 w = MM.treadmillOutput(d.tmFitness or 0, d.tmMode, d.condition, P.sandbox("TreadmillWatts"))
             elseif d.tmRider ~= nil or d.tmMode ~= nil then
@@ -1294,7 +1295,10 @@ B.TREADMILL_PRIORITY = 7
 function B.onLoadTreadmill(obj)
     if not (obj and obj.hasModData and obj:hasModData()) then return end
     local md = obj:getModData()
-    if md and md.dazedpower then S.register(obj) end
+    if md and md.dazedpower then
+        DazedPower.Treadmill.clearStale(obj)          -- nobody is on a treadmill that just streamed in
+        S.register(obj)
+    end
 end
 
 function B.registerTreadmill()

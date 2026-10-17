@@ -278,7 +278,9 @@ function R.parts(playerObj)
             local o = objs:get(i)
             local info = o and P.describe(o)
             if info then
-                local d = P.data(o) or {}
+                -- read only for a vanilla gym treadmill (DP_Treadmill): a report must not make an unused one ours
+                local T = DazedPower.Treadmill
+                local d = (info.kind == "treadmill" and T and T.dataOf) and (T.dataOf(o) or {}) or P.data(o) or {}
                 local entry = R.partEntry(o, info, d, s, playerObj)
                 counts[entry.what] = (counts[entry.what] or 0) + 1
                 found[#found + 1] = entry

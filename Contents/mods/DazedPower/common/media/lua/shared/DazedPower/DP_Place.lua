@@ -401,6 +401,7 @@ end
 --- The account name that placed this part, or nil if nobody ever did.
 function G.ownerOf(obj)
     if not obj or not obj.getModData then return nil end
+    if obj.hasModData and not obj:hasModData() then return nil end     -- getModData would make an empty table
     local md = obj:getModData()
     local d = md and md.dazedpower
     local o = d and d.owner
@@ -546,8 +547,18 @@ end
 --  own. Silent: G.mayTake is the gate that tells the player. The menus ask
 --  this for the reason a row is greyed with, and a menu must not put a
 --  note on screen every time it opens.
+--- A vanilla gym treadmill nobody wired or used (DP_Treadmill) is not ours yet: its pick-up is vanilla's.
+local function unusedTreadmill(object, info)
+    local T = DazedPower.Treadmill
+    if not (T and T.identify and T.dataOf) then return false end
+    if info and info.kind ~= "treadmill" then return false end
+    return T.identify(object) ~= nil and T.dataOf(object) == nil
+end
+G.unusedTreadmill = unusedTreadmill
+
 function G.takeRefusal(character, square, object)
     if not object or not P.partOf(object) then return nil end
+    if unusedTreadmill(object) then return nil end
 
     -- A RUNNING controller stays where it is. Removal skips the engine's
     -- setSurroundingElectricity(false) teardown, so the chunk's generator
@@ -1019,6 +1030,7 @@ function ISMoveableSpriteProps:pickUpMoveableInternal(character, square, object,
                                                       sprInstance, spriteName,
                                                       createItem, rotating, ...)
     local info = object and P.describe(object)
+    if info and unusedTreadmill(object, info) then info = nil end     -- leave it vanilla's, and make it no ModData
     if info and info.pieces > 1 and not info.master then
         local wasKept = removal.kept[object]
         removal.kept[object] = true

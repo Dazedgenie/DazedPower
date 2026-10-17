@@ -321,10 +321,19 @@ local function paintScenery(menu)
     end
 end
 
+--- A part's data for reading. A vanilla gym treadmill (DP_Treadmill) is only read, never given ModData, by a menu:
+--  an unused one stays vanilla's until a cable or a run makes it ours.
+local function readData(obj, kind)
+    local T = DazedPower.Treadmill
+    if kind == "treadmill" and T and T.dataOf then return T.dataOf(obj) or {} end
+    return P.data(obj)
+end
+C.readData = readData
+
 --- One line of status for the tooltip, so the common case needs no window.
 local function statusText(obj, part)
     if part == "gauge" and DazedPower.Gauge then return DazedPower.Gauge.status(obj) end
-    local d = P.data(obj)
+    local d = readData(obj, part)
     -- Membership comes first, because an unwired part makes nothing and every
     -- other number on the line is beside the point until it is connected.
     local loose = (part ~= "controller") and not liveSys(d)
@@ -883,7 +892,7 @@ function C.connectionsOf(object, info)
     local out = {}
     local sq = object:getSquare()
     if not sq then return out end
-    local d = P.data(object)
+    local d = readData(object, info and info.kind)
     local sysKey = (info.kind == "controller")
         and M.nodeKey(sq:getX(), sq:getY(), sq:getZ(), "controller") or liveSys(d)
     if not sysKey then return out end
@@ -927,7 +936,7 @@ end
 
 --- The wiring rows for one part.
 function C.wireMenu(menu, worldobjects, target, playerObj, info)
-    local d = P.data(target)
+    local d = readData(target, info and info.kind)
     local sysKey = (info.kind == "controller") and "self" or liveSys(d)
 
     -- Every cable row asks the owner's lock of each part whose wiring it

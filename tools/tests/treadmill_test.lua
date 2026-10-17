@@ -129,6 +129,37 @@ return function(check, E)
     clock = clock + T.FRESH_MS + 1
     check(T.sweep() == 1 and d.tmRider == nil and d.tmBeat == 0, "the sweep clears a rider whose beat stopped")
 
+    -- the authority's own Endurance: a winded sprint is billed as a run, whatever the client says
+    local STs = DazedPower.More.Stats
+    local endu0 = STs.endurance
+    STs.endurance = function() return 0.05 end
+    check(T.beat(a1, { x = mx, y = my, z = 0, mode = "sprint" }) == true and d.tmMode == "run", "the authority drops a winded sprint to a run")
+    STs.endurance = endu0
+    T.release(m)
+    -- one machine per person
+    local side = obj(PFX .. "28", mx + 2, my)
+    check(T.beat(a1, args) == true and d.tmRider == 0, "on the first treadmill")
+    check(T.beat(a1, { x = mx + 2, y = my, z = 0, mode = "walk" }) == true and d.tmRider == nil and d.tmBeat == 0
+        and side.md.dazedpower.tmRider == 0, "a beat on a second treadmill ends the ride on the first")
+    T.release(side)
+    check(T.byRider[0] == nil, "getting off forgets the rider's machine")
+    -- a treadmill streaming in has nobody on it (a saved rider would read "busy" for ever)
+    T.beat(a1, args)
+    T.active[m] = nil
+    local regS = S.register
+    S.register = function() end
+    B.onLoadTreadmill(m)
+    S.register = regS
+    check(d.tmRider == nil and d.tmMode == nil and d.tmBeat == 0, "the loader clears a rider saved with the treadmill")
+    T.byRider[0] = nil
+    -- an unused treadmill stays vanilla's: no pick-up lock, and the menu reads without making ModData
+    local unused = obj(PFX .. "36", 840, 700)
+    local G = DazedPower.Place
+    check(G.unusedTreadmill(unused) and G.takeRefusal(a1, unused:getSquare(), unused) == nil and G.ownerOf(unused) == nil
+        and unused.md.dazedpower == nil, "an unused treadmill is not a locked part")
+    check(DazedPower.TreadmillMenu.status(unused) ~= nil and unused.md.dazedpower == nil, "its status line makes no ModData")
+    check(not G.unusedTreadmill(m), "a used one is")
+
     ------------------------------------------------------------ a single-player round trip
     -- A controller, wired to the treadmill, a rider with Endurance, and the bridge stepping it.
     local instanceof0, getSq0 = instanceof, getSquare

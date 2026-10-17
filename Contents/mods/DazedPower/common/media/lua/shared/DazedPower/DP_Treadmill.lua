@@ -16,6 +16,7 @@
 require "DazedCore/DC_Boot"
 require "DazedPower/DP_Parts"
 require "DazedPower/DPM_Model"
+require "DazedPower/DPM_Stats"
 
 DazedPower = DazedPower or {}
 DazedPower.Treadmill = DazedPower.Treadmill or {}
@@ -71,6 +72,7 @@ local function dataOf(obj)
     local md = obj:getModData()
     return md and md.dazedpower
 end
+T.dataOf = dataOf
 
 --- The treadmill description of an object, or nil when it is not one of the eight tiles. Never makes ModData.
 function T.identify(obj)
@@ -144,6 +146,7 @@ end
 ---------------------------------------------------------------- the beat (authority)
 
 T.active = T.active or {}      -- object -> true for a treadmill with a rider on it, for the sweep
+T.byRider = T.byRider or {}    -- rider key -> the treadmill they last beat on: one machine per person
 
 local function nowMs() return getTimestampMs and getTimestampMs() or 0 end
 
@@ -166,10 +169,21 @@ function T.beat(player, args)
             local now = nowMs()
             local d = P.data(o)
             if d.tmRider ~= nil and d.tmRider ~= who and now - (d.tmBeat or 0) <= T.FRESH_MS then return false end
-            local changed = d.tmRider ~= who or d.tmMode ~= args.mode
+            -- A sprint needs the legs for it: the authority's own copy of Endurance, not the client's say-so.
+            local mode = args.mode
+            if mode == "sprint" then
+                local ST = DazedPower.More and DazedPower.More.Stats
+                local cur = ST and ST.endurance and ST.endurance(player)
+                if cur ~= nil and cur < MM.TREADMILL_SPRINT_MIN_END then mode = "run" end
+            end
+            -- One machine per person: a beat on another treadmill ends the ride on the one before.
+            local prev = who ~= nil and T.byRider[who] or nil
+            if prev and prev ~= o and P.alive(prev) then T.release(prev, player) end
+            local changed = d.tmRider ~= who or d.tmMode ~= mode
             d.tmFitness = try(player, "getPerkLevel", Perks and Perks.Fitness) or 0
-            d.tmBeat, d.tmMode, d.tmRider = now, args.mode, who
+            d.tmBeat, d.tmMode, d.tmRider = now, mode, who
             T.active[o] = true
+            if who ~= nil then T.byRider[who] = o end
             if changed and o.transmitModData then o:transmitModData() end
             return true
         end
@@ -182,9 +196,21 @@ function T.release(obj, player)
     local d = dataOf(obj)
     if not d then return end
     if player and d.tmRider ~= nil and d.tmRider ~= T.riderKey(player) then return end
+    if d.tmRider ~= nil and T.byRider[d.tmRider] == obj then T.byRider[d.tmRider] = nil end
     d.tmBeat, d.tmRider, d.tmMode, d.tmWatts = 0, nil, nil, 0
     T.active[obj] = nil
     if obj.transmitModData then obj:transmitModData() end
+end
+
+--- A treadmill streaming in (a restart, a chunk reloading) has nobody on it: whoever was is in no beat this
+--  process has seen, and a rider key from before (an online ID) may now be somebody else's. Clears the saved
+--  rider so the menu does not read "somebody is on it" for ever. Authority only; makes no ModData.
+function T.clearStale(obj)
+    local d = dataOf(obj)
+    if not d or T.active[obj] then return false end
+    if d.tmRider == nil and d.tmMode == nil and (d.tmBeat or 0) == 0 and (d.tmWatts or 0) == 0 then return false end
+    d.tmBeat, d.tmRider, d.tmMode, d.tmWatts = 0, nil, nil, 0
+    return true
 end
 
 --- Clear a treadmill whose user stopped beating without getting off (a crash, a dropped connection).
@@ -194,6 +220,7 @@ function T.sweep()
     for obj in pairs(T.active) do
         if not P.alive(obj) then
             T.active[obj] = nil
+            for who, o in pairs(T.byRider) do if o == obj then T.byRider[who] = nil end end
         else
             local d = dataOf(obj)
             if not d or d.tmRider == nil then

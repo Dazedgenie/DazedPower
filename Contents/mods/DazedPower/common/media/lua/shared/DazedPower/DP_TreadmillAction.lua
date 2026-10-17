@@ -60,7 +60,7 @@ function DPM_Treadmill:mount()
     self.mountedFrom = { x = c:getX(), y = c:getY() }
     local carry = DPM_Treadmill.carry               -- a gait handed over from the one before: where they first stood
     DPM_Treadmill.carry = nil
-    if carry and carry.object == self.object and carry.from then self.mountedFrom = carry.from end
+    if carry and carry.object == self.object and carry.character == c and carry.from then self.mountedFrom = carry.from end
     self.mountDir = IsoDirections and IsoDirections[dir] or nil
     self.mountAt = { x = x, y = y }
     DPM_Pedal.place(self, x, y)
@@ -77,7 +77,7 @@ end
 
 function DPM_Treadmill:dismount()
     if self.mountedFrom and self:handsOff() then
-        DPM_Treadmill.carry = { object = self.object, from = self.mountedFrom }
+        DPM_Treadmill.carry = { object = self.object, character = self.character, from = self.mountedFrom }
         self.mountedFrom, self.mountAt = nil, nil
         return
     end

@@ -49,7 +49,7 @@ end
 
 --- The status line: wired or not, and what it makes now.
 function TM.status(obj)
-    local d = P.data(obj)
+    local d = T.dataOf(obj) or {}         -- read only: an unused treadmill gets no ModData from a menu
     local bits = { getText("IGUI_DazedPower_SrcTreadmill") }
     if not d.sys or d.sys == "" then bits[#bits + 1] = getText("IGUI_DazedPower_NotWired") end
     if (d.tmWatts or 0) > 0 then
@@ -81,7 +81,7 @@ function TM.rows(menu, wo, target, player, icon)
     icon = icon or function(o) return o end
     local line = menu:addOption(TM.status(target), nil, nil)
     line.notAvailable = true
-    local d = P.data(target)
+    local d = T.dataOf(target)
     for _, mode in ipairs(MM.TREADMILL_MODE_ORDER) do
         local opt = icon(menu:addOption(getText(ROW_KEY[mode]), wo, TM.onRun, target, player, mode), menu, "switchOn")
         local why = TM.refusal(d, player, mode)
