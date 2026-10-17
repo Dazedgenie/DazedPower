@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.15.2 (2026-10-17)
+- Works with the new **Dazed Occupations** mod when it is installed (nothing changes without it):
+  - **Grid Reader** (the Power Plant Operator's free trait): the charge board shows exact watts and watt-hours ("12345.6 W") instead of rounded ones ("12.3 kW").
+  - **Skittish Around Wires** (negative trait): running or cutting cable on a live system is twice as likely to burn your hand, and Electricity skill no longer lowers the risk (still capped, still never lethal, still off with the *Live shock* sandbox option). Power now tells Dazed Occupations this trait has an effect, so it shows up in character creation.
+- Lua tests cover both; not yet run in game.
+
 ## 0.15.1 (2026-10-17)
 - Fix: **a zombie tied with a rope now follows you.** It stood where it was tied: it was left lying down, and the "useless" flag that stops it biting also stops it walking on its own, so asking it to path after you did nothing.
   - Once tied it gets up (a crawler stays a crawler and is dragged).

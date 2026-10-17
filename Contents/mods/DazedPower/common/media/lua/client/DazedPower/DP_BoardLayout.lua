@@ -46,14 +46,28 @@ end
 
 local function clamp(v, lo, hi) return math.max(lo, math.min(hi, v)) end
 
+--- Does the local player read the board exactly (Dazed Occupations' Grid Reader)? False without that mod.
+--  Asked once a second at most: the board formats many numbers a frame.
+function Board.exact()
+    if not (DazedOccupations and DazedOccupations.Perks and DazedOccupations.Perks.value and getPlayer) then return false end
+    local now = getTimestampMs and getTimestampMs() or 0
+    if Board.exactAt and now - Board.exactAt < 1000 and now >= Board.exactAt then return Board.exactIs end
+    local ok, v = pcall(function() return DazedOccupations.Perks.value(getPlayer(), "gridreader.exact", false) end)
+    Board.exactAt, Board.exactIs = now, ok and v == true
+    return Board.exactIs
+end
+
+--- Watts as "450 W" or "12.3 kW"; a Grid Reader sees "450.4 W" and "12345.6 W".
 function Board.fmtW(w)
     w = w or 0
+    if Board.exact() then return string.format("%.1f W", w) end
     if math.abs(w) >= 10000 then return string.format("%.1f kW", w / 1000) end
     return string.format("%d W", math.floor(w + 0.5))
 end
 
 function Board.fmtWh(wh)
     wh = wh or 0
+    if Board.exact() then return string.format("%.1f Wh", wh) end
     if wh >= 10000 then return string.format("%.1f kWh", wh / 1000) end
     return string.format("%d Wh", math.floor(wh + 0.5))
 end

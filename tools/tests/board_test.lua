@@ -1,6 +1,14 @@
 -- Checks the analog charge board's layout: its click regions, what greys out, scaling and the source list.
 return function(check)
     local B = DazedPower.BoardLayout
+    check(B.fmtW(12345.6) == "12.3 kW" and B.fmtWh(450.4) == "450 Wh", "the board rounds its numbers")
+    local gp0, ts0 = getPlayer, getTimestampMs
+    getPlayer, getTimestampMs = function() return {} end, function() return 5000000 end
+    DazedOccupations = { Perks = { value = function(_, e, d) if e == "gridreader.exact" then return true end return d end } }
+    B.exactAt = nil
+    check(B.fmtW(12345.6) == "12345.6 W" and B.fmtWh(450.4) == "450.4 Wh", "a Grid Reader reads it exactly")
+    DazedOccupations, B.exactAt, getPlayer, getTimestampMs = nil, nil, gp0, ts0
+    check(B.fmtW(12345.6) == "12.3 kW", "and without Dazed Occupations, rounded again")
     local function opts(extra)
         local o = { S = 1, fontH = function() return 16 end, measure = function(_, s) return #s * 7 end,
             getText = function(k) return k end, txt = function(k) return k end, needles = { src = 0.5, load = 0.2 }, scales = { src = 2000, load = 2000 } }

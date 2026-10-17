@@ -18,6 +18,18 @@ K.SKILL_CUT = 0.08       -- each Electricity level takes this share off
 K.SKILL_FLOOR = 0.2      -- a master electrician keeps a fifth of the risk
 K.PAIN = 35              -- extra pain on the burned hand
 K.MIN_HEALTH = 25        -- below this overall health nothing happens
+K.SKITTISH = 2.0         -- Dazed Occupations' Skittish Around Wires: this much likelier, and skill no help
+
+-- Tell Dazed Occupations the Skittish trait has an effect here (harmless when that mod is absent).
+DazedOccupationsHooks = DazedOccupationsHooks or {}
+DazedOccupationsHooks["power.shock"] = true
+
+--- Does this worker have Skittish Around Wires (Dazed Occupations)? False without that mod.
+function K.skittish(playerObj)
+    if not (DazedOccupations and DazedOccupations.Perks and DazedOccupations.Perks.value) then return false end
+    local ok, v = pcall(DazedOccupations.Perks.value, playerObj, "skittish.shock", false)
+    return ok and v == true
+end
 
 --- Is this controller's output live? Its isolator on, not tripped, and the system powered.
 function K.live(d)
@@ -25,9 +37,11 @@ function K.live(d)
 end
 
 --- The chance of a shock for one cable job on a live system, from its watts and the worker's level.
-function K.chance(watts, level)
+--  A skittish worker gets no help from skill and twice the risk, still never above MAX.
+function K.chance(watts, level, skittish)
     local kw = math.max(0, tonumber(watts) or 0) / 1000
     local c = math.min(K.MAX, K.BASE + K.PER_KW * kw)
+    if skittish then return math.min(K.MAX, c * K.SKITTISH) end
     local skill = math.max(K.SKILL_FLOOR, 1 - K.SKILL_CUT * math.max(0, tonumber(level) or 0))
     return c * skill
 end
@@ -52,7 +66,7 @@ function K.risk(playerObj, ctrl, why)
     if not K.live(d) then return false end
     local level = P.try(playerObj, "getPerkLevel", Perks and Perks.Electricity) or 0
     local watts = math.max(d.load or 0, d.gen or 0)
-    if ZombRandFloat(0, 1) >= K.chance(watts, level) then return false end
+    if ZombRandFloat(0, 1) >= K.chance(watts, level, K.skittish(playerObj)) then return false end
     local hand = (ZombRand(2) == 0) and "L" or "R"
     K.apply(playerObj, hand)
     if isServer() and sendServerCommand then

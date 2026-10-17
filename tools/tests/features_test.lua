@@ -93,6 +93,13 @@ return function(check, E)
     local K = DazedPower.Shock
     check(math.abs(K.chance(0, 0) - K.BASE) < 1e-9 and K.chance(100000, 0) == K.MAX, "shock chance grows with watts, capped")
     check(math.abs(K.chance(0, 10) - K.BASE * K.SKILL_FLOOR) < 1e-9 and K.chance(2000, 5) < K.chance(2000, 0), "skill lowers the chance")
+    check(K.chance(2000, 10, true) == math.min(K.MAX, K.chance(2000, 0) * K.SKITTISH) and K.chance(100000, 0, true) == K.MAX,
+          "a skittish worker: twice the risk, skill no help, still capped")
+    check(K.skittish({}) == false, "no Dazed Occupations: nobody is skittish")
+    check(DazedOccupationsHooks and DazedOccupationsHooks["power.shock"] == true, "Power announces the Skittish hook")
+    DazedOccupations = { Perks = { value = function(_, effect, default) if effect == "skittish.shock" then return true end return default end } }
+    check(K.skittish({}) == true, "with Dazed Occupations, a skittish worker is seen")
+    DazedOccupations = nil
     check(K.live({ online = true, powered = true }) and not K.live({ online = true, powered = true, trip = true })
           and not K.live({ online = false, powered = true }), "live means switched on, untripped and powered")
     BodyPartType = { Hand_L = "Hand_L", Hand_R = "Hand_R" }
