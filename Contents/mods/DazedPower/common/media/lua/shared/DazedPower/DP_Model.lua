@@ -2286,7 +2286,7 @@ end
 --  that starts and stops it is never in doubt. Its lead is a short one
 --  (M.cableReach's default).
 M.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true,
-                   treadwheel = true }
+                   treadwheel = true, treadmill = true }
 M.LOAD_KINDS = { waterpump = true, purifier = true }
 -- Load kinds whose registration says `slotless` (Dank's gear): they cable, bill and shed but use no controller slot.
 M.SLOTLESS_KINDS = {}

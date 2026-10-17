@@ -111,4 +111,51 @@ return function(check, E)
         check(bike.alpha == 0.3, "after getting off the game fades it as usual")
         getCell = c1
     end
+
+    -- The treadmill: one animation node per gait, picked by the action's variables.
+    do
+        local dir = (arg and arg[1] or "../../Contents/mods/DazedPower/common/media/lua") .. "/../AnimSets/player/actions/"
+        local guids, dupes = {}, 0
+        local function read(name)
+            local f = io.open(dir .. name .. ".xml")
+            local txt = f and f:read("*a")
+            if f then f:close() end
+            return txt
+        end
+        local function count(txt)
+            for g in txt:gmatch('x_name="([%w%-]+)"') do
+                if guids[g] then dupes = dupes + 1 end
+                guids[g] = true
+            end
+        end
+        for _, name in ipairs({ "DazedPedal", "DazedPedalSalvaged", "DazedPedalWorkshop" }) do count(read(name) or "") end
+        for _, mode in ipairs({ "walk", "run", "sprint" }) do
+            local node = "DazedTreadmill" .. mode:sub(1, 1):upper() .. mode:sub(2)
+            local txt = read(node)
+            check(txt ~= nil, node .. ".xml exists")
+            if txt then
+                count(txt)
+                local anim = "Bob_" .. mode:sub(1, 1):upper() .. mode:sub(2)
+                check(txt:find("<m_Name>" .. node .. "</m_Name>", 1, true) and txt:find("<m_AnimName>" .. anim .. "</m_AnimName>", 1, true),
+                    node .. " plays " .. anim)
+                check(txt:find("<m_SpeedScale>DazedTreadmillSpeed</m_SpeedScale>", 1, true), node .. " is paced by DazedTreadmillSpeed")
+                check(txt:find("<m_Name>PerformingAction</m_Name>%s*<m_Type>STRING</m_Type>%s*<m_Value>DazedTreadmill</m_Value>")
+                    and txt:find("<m_Name>DazedTreadmillMode</m_Name>%s*<m_Type>STRING</m_Type>%s*<m_Value>" .. mode .. "</m_Value>"),
+                    node .. " is chosen by the action and the gait")
+                check(txt:find("<boneName>Dummy01</boneName>", 1, true) and txt:find("<boneName>Translation_Data</boneName>", 1, true),
+                    node .. " keeps the pedal's bone weights")
+            end
+        end
+        check(dupes == 0, "no animation node reuses a condition GUID")
+        local c = { vars = {}, x = 1, y = 1 }
+        function c:SetVariable(k, v) assert(type(v) == "string", "SetVariable only takes text in game") self.vars[k] = v end
+        function c:setVariable(k, v) self.vars[k] = v end
+        DPM_Treadmill.setVar(c, "DazedTreadmillSpeed", 1.5)
+        DPM_Treadmill.setVar(c, "DazedTreadmillMode", "run")
+        check(c.vars.DazedTreadmillSpeed == 1.5 and c.vars.DazedTreadmillMode == "run", "the action sets numbers as floats and the gait as text")
+        local c2 = { vars = {} }
+        function c2:SetVariable(k, v) assert(type(v) == "string") self.vars[k] = v end
+        DPM_Treadmill.setVar(c2, "DazedTreadmillSpeed", 1)
+        check(c2.vars.DazedTreadmillSpeed == "1", "with no float setter the speed goes as text")
+    end
 end

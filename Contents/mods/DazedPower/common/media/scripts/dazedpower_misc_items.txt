@@ -12,7 +12,7 @@ module Base
         Icon                = DazedPowerManual,
         BoredomChange       = -18,
         StressChange        = -10,
-        LearnedRecipes      = MakeDazedArrayMakeshift;MakeDazedArraySalvaged;MakeDazedTrackerMakeshift;MakeDazedTrackerSalvaged;MakeDazedArrayXLMakeshift;MakeDazedArrayXLSalvaged;MakeDazedBankMakeshift;MakeDazedBankSalvaged;MakeDazedWallBankMakeshift;MakeDazedWallBankSalvaged;MakeDazedControllerMakeshift;MakeDazedTransformer;MakeDazedPedalMakeshift;MakeDazedPedalSalvaged;MakeDazedWindMakeshift;MakeDazedWindSalvaged;MakeDazedSteamMakeshift;MakeDazedSteamSalvaged;MakeDazedPropaneMakeshift;MakeDazedPropaneSalvaged;MakeDazedPetrolMakeshift;MakeDazedPetrolSalvaged;MakeDazedPowerGauge;MakeDazedGroundingRod;MakeDazedChargerBench;MakeDazedSpaceHeater;MakeDazedWoodGasMakeshift;MakeDazedWoodGasSalvaged;MakeDazedTreadwheel;MakeDazedGearKitLow;MakeDazedGearKitStock,
+        LearnedRecipes      = MakeDazedArrayMakeshift;MakeDazedArraySalvaged;MakeDazedTrackerMakeshift;MakeDazedTrackerSalvaged;MakeDazedArrayXLMakeshift;MakeDazedArrayXLSalvaged;MakeDazedBankMakeshift;MakeDazedBankSalvaged;MakeDazedWallBankMakeshift;MakeDazedWallBankSalvaged;MakeDazedControllerMakeshift;MakeDazedTransformer;MakeDazedPedalMakeshift;MakeDazedPedalSalvaged;MakeDazedWindMakeshift;MakeDazedWindSalvaged;MakeDazedSteamMakeshift;MakeDazedSteamSalvaged;MakeDazedPropaneMakeshift;MakeDazedPropaneSalvaged;MakeDazedPetrolMakeshift;MakeDazedPetrolSalvaged;MakeDazedPowerGauge;MakeDazedGroundingRod;MakeDazedChargerBench;MakeDazedSpaceHeater;MakeDazedWoodGasMakeshift;MakeDazedWoodGasSalvaged;MakeDazedTreadwheel;MakeDazedGearKitLow;MakeDazedGearKitStock;MakeDazedTreadmill,
         StaticModel         = Magazine,
         WorldStaticModel    = MagazineElec1Ground,
         Tags                = base:magazine,
@@ -94,5 +94,21 @@ module Base
         Icon                = DazedGearKitRacing,
         Tooltip             = Tooltip_DazedGearKitRacing,
         Tags                = base:hasmetal,
+    }
+
+    /* The gym treadmill as a source (DP_Treadmill): placing it puts down vanilla's own tile, so it has no sheet row. The icon
+       is the treadwheel's until it has its own. */
+    item DazedTreadmill
+    {
+        DisplayName         = Treadmill Generator,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 40.0,
+        Icon                = DazedTreadwheel,
+        WorldObjectSprite   = recreational_sports_01_39,
+        MetalValue          = 80.0,
+        Tooltip             = Tooltip_DazedTreadmill,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal,
     }
 }

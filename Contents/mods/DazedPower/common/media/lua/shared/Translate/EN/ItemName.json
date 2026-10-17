@@ -67,5 +67,6 @@
     "Base.DazedWoodGasMakeshift": "Makeshift Wood Gas Generator",
     "Base.DazedWoodGasSalvaged": "Salvaged Wood Gas Generator",
     "Base.DazedWoodGasWorkshop": "Workshop Wood Gas Generator",
-    "Base.DazedTreadwheel": "Zombie Treadwheel"
+    "Base.DazedTreadwheel": "Zombie Treadwheel",
+    "Base.DazedTreadmill": "Treadmill Generator"
 }

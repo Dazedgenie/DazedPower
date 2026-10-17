@@ -57,6 +57,11 @@ Polish (all three mods)
 - Still open: Blender art and an animated walk (frames like the windmill's spin), a creak and moan loop in
   DPM_Sounds, Salvaged and Workshop grades, the in-game and dedicated-server passes.
 
+## Player treadmill (agreed 2026-10-17; coded in 0.11.0, untested in game)
+
+- The vanilla gym treadmill as a source, walk / run / sprint by the user's own legs; recognised by sprite, no art of ours.
+- Still open: an icon of its own, a run-direction check on all four facings, the in-game and dedicated-server passes.
+
 ## Considered and left out
 
 Transformer grades, inverters as a separate part, a water heater, motion-sensing lamps, cable overlay sprites.

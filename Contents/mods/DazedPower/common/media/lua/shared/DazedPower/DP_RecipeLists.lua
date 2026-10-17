@@ -33,6 +33,7 @@ DazedPower.RecipeLists = {
         "MakeDazedTreadwheel",
         "MakeDazedGearKitLow",
         "MakeDazedGearKitStock",
+        "MakeDazedTreadmill",
     },
     ADVANCED = {
         "MakeDazedArrayWorkshop",

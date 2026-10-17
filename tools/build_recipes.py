@@ -191,6 +191,10 @@ MISC_RECIPES = [
     ("DazedGearKitLow", 300, "Electricity:2", "Electricity:12", [SCREW, it(1, "ElectronicsScrap"), it(2, "MetalBar"), it(2, "Screws")], "basic"),
     ("DazedGearKitStock", 300, "Electricity:2", "Electricity:12", [SCREW, it(1, "ElectronicsScrap"), it(2, "MetalBar"), it(2, "Screws")], "basic"),
     ("DazedGearKitRacing", 400, "Electricity:6", "Electricity:30", [SCREW, it(2, "ElectronicsScrap"), it(3, "MetalBar"), it(2, "Aluminum"), it(3, "Screws")], "adv"),
+    # the gym treadmill as a power source (DP_Treadmill): the item places the vanilla tile, so it is not a taxonomy part
+    ("DazedTreadmill", 900, "Electricity:3;MetalWelding:2", "Electricity:30;MetalWelding:20",
+     [SCREW, "item 1 [Base.BlowTorch] mode:keep", it(4, "MetalPipe"), it(2, "SheetMetal"), it(4, "ElectronicsScrap"), it(2, "ElectricWire"),
+      it(8, "Screws"), it(1, "RubberHose")], "basic"),
 ]
 
 RECIPE = """    craftRecipe {name}
@@ -215,12 +219,12 @@ RECIPE = """    craftRecipe {name}
 # read exactly as before. (Never a dazedcore:* tag here: a tag that matches no item stops the world loading.)
 # A stripped car alternator stands in for one electronics scrap, and copper wire for the wire, in the pedal and wind rigs.
 import re
-for (kind, mount, tier), r in R.items():
-    if kind not in ("pedal", "windmill"):
-        continue
+
+
+def salvage_alts(inputs):
     out = []
     swapped = False
-    for line in r["inputs"]:
+    for line in inputs:
         m = re.match(r"item (\d+) \[Base\.(ElectronicsScrap)\]$", line)
         w = re.match(r"item (\d+) \[Base\.(Wire|ElectricWire)\]$", line)
         if m and not swapped and int(m.group(1)) >= 2:
@@ -231,7 +235,13 @@ for (kind, mount, tier), r in R.items():
             out.append("item %s [Base.%s;Base.DazedPartCopperWire]" % (w.group(1), w.group(2)))
         else:
             out.append(line)
-    r["inputs"] = out
+    return out
+
+
+for (kind, mount, tier), r in R.items():
+    if kind in ("pedal", "windmill"):
+        r["inputs"] = salvage_alts(r["inputs"])
+MISC_RECIPES = [(n, t, sk, xp, salvage_alts(i) if n == "DazedTreadmill" else i, lr) for (n, t, sk, xp, i, lr) in MISC_RECIPES]
 
 
 def recipe(name, action, time, skill, xp, inputs, outputs, learn, category="Electrical"):
@@ -266,7 +276,7 @@ def main():
     out.append("}")
     (MEDIA / "scripts/dazedpower_recipes.txt").write_text("\n".join(out) + "\n", encoding="utf-8")
     names.update({"MakeDazedGearKitLow": "Make Low-Ratio Gear Kit", "MakeDazedGearKitStock": "Make Stock Gear Kit",
-                  "MakeDazedGearKitRacing": "Make Racing Gear Kit"})
+                  "MakeDazedGearKitRacing": "Make Racing Gear Kit", "MakeDazedTreadmill": "Build Treadmill Generator"})
     tr = MEDIA / "lua/shared/Translate/EN/Recipes.json"
     old = json.loads(tr.read_text(encoding="utf-8")) if tr.exists() else {}
     keep = {k: v for k, v in old.items() if not (k.startswith("MakeDazed") or k.startswith("ScrapDazed"))}
@@ -387,6 +397,22 @@ MISC = """module Base
         Icon                = DazedGearKitRacing,
         Tooltip             = Tooltip_DazedGearKitRacing,
         Tags                = base:hasmetal,
+    }}
+
+    /* The gym treadmill as a source (DP_Treadmill): placing it puts down vanilla's own tile, so it has no sheet row. The icon
+       is the treadwheel's until it has its own. */
+    item DazedTreadmill
+    {{
+        DisplayName         = Treadmill Generator,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 40.0,
+        Icon                = DazedTreadwheel,
+        WorldObjectSprite   = recreational_sports_01_39,
+        MetalValue          = 80.0,
+        Tooltip             = Tooltip_DazedTreadmill,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal,
     }}
 }}
 """

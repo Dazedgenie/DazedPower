@@ -89,5 +89,11 @@
     "ContextMenu_DazedPower_TreadLetGo": "Let go of the rope",
     "ContextMenu_DazedPower_TreadLoad": "Put the zombie on the treadwheel",
     "ContextMenu_DazedPower_TreadRelease": "Release the zombie",
-    "ContextMenu_DazedPower_TreadPutDown": "Put the zombie down"
+    "ContextMenu_DazedPower_TreadPutDown": "Put the zombie down",
+    "ContextMenu_DazedPower_TreadmillWalk": "Walk on the treadmill",
+    "ContextMenu_DazedPower_TreadmillRun": "Run on the treadmill",
+    "ContextMenu_DazedPower_TreadmillSprint": "Sprint on the treadmill",
+    "ContextMenu_DazedPower_TreadmillMaking": "Making {1} W",
+    "ContextMenu_DazedPower_TreadmillTooWinded": "Too winded to sprint. Catch your breath, or run.",
+    "ContextMenu_DazedPower_TreadmillBusy": "Somebody else is on it."
 }

@@ -210,6 +210,48 @@ function M.pedalFatiguePerMinute(gear)
     return M.PEDAL_FATIGUE_PER_MINUTE * M.gearSpec(gear).fatigue
 end
 
+------------------------------------------------------- the player treadmill
+--
+--  A vanilla gym treadmill ("Human Hamster Wheel") that its user drives by running on it. Like the pedal generator
+--  the output is the rider's own effort, so it comes from the same Fitness line; the gait scales it. `mult` is the
+--  share of a pedal-rider's watts, `fatigue` the Fatigue percentage points a game minute costs (Fatigue, as the
+--  pedal's, through DPM_Stats), `drain` the Endurance (0..1) a game minute takes: only a sprint is something the
+--  legs run out of. `pace` is the animation's cadence.
+M.TREADMILL_MODES = {
+    walk   = { mult = 1.0, pace = 1.0, fatigue = 0.20, drain = 0 },
+    run    = { mult = 2.0, pace = 1.0, fatigue = 0.35, drain = 0 },
+    sprint = { mult = 3.5, pace = 1.0, fatigue = 0.50, drain = 0.02 },
+}
+M.TREADMILL_MODE_ORDER = { "walk", "run", "sprint" }
+-- A sprint needs this much Endurance (0..1) to start, and drops to a run when it falls below.
+M.TREADMILL_SPRINT_MIN_END = 0.15
+
+function M.validTreadmillMode(mode)
+    return type(mode) == "string" and M.TREADMILL_MODES[mode] ~= nil
+end
+
+--- Electrical watts the treadmill delivers for a user of this Fitness (0..10) in this gait, on a machine at this
+--  condition (0..100), with the sandbox scale in percent. An unknown gait makes nothing.
+function M.treadmillOutput(fitness, mode, condition, scalePct)
+    local spec = type(mode) == "string" and M.TREADMILL_MODES[mode] or nil
+    if not spec then return 0 end
+    local cond = clamp((condition or 100) / 100, 0, 1)
+    return M.pedalRiderWatts(fitness) * spec.mult * (scalePct or 100) / 100 * (0.4 + 0.6 * cond)
+end
+
+--- Fatigue percentage points one game minute of this gait costs.
+function M.treadmillFatiguePerMinute(mode)
+    local spec = M.TREADMILL_MODES[mode]
+    return spec and spec.fatigue or 0
+end
+
+--- The Endurance (0..1) left after `minutes` of this gait from `cur`; never below 0, and only a sprint spends any.
+function M.treadmillEnduranceAfter(cur, mode, minutes)
+    local spec = M.TREADMILL_MODES[mode]
+    local drain = spec and spec.drain or 0
+    return math.max(0, (cur or 0) - drain * (minutes or 0))
+end
+
 ------------------------------------------------------------------- windmills
 --
 --  A wind turbine's power is the textbook formula, the same one real

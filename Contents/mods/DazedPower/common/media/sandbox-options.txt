@@ -167,3 +167,14 @@ option DazedPower.TreadRopeSnap
     page = DazedPower,
     translation = DazedPower_TreadRopeSnap,
 }
+
+/* Player treadmill (0.11.0). TreadmillWatts scales what a person running on the gym treadmill makes, in percent. */
+option DazedPower.TreadmillWatts
+{
+    type = integer,
+    min = 10,
+    max = 400,
+    default = 100,
+    page = DazedPower,
+    translation = DazedPower_TreadmillWatts,
+}

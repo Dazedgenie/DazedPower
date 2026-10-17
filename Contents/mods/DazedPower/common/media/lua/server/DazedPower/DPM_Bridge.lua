@@ -40,6 +40,7 @@ require "DazedPower/DPM_Parts"
 require "DazedPower/DPM_Model"
 require "DazedPower/DPM_Env"
 require "DazedPower/DPM_Water"
+require "DazedPower/DP_Treadmill"
 
 local S = DazedPower.System
 if not S then return end
@@ -54,6 +55,7 @@ local UM = DazedPower.Model                -- Dazed Power's model
 -- How long a pedal generator's heartbeat is trusted (real ms), see DPM_Pedal:update.
 -- A multiplayer rider beats about once a second, so this rides out a late packet or two.
 local PEDAL_FRESH_MS = 2500
+local TREADMILL_FRESH_MS = DazedPower.Treadmill.FRESH_MS     -- the same for a treadmill's beat (DP_Treadmill)
 
 -- The controller Dazed Power is stepping right now, if any.
 local CTX = nil
@@ -87,7 +89,7 @@ local try, alive = P.try, P.alive
 ---------------------------------------------------- pushing ModData to clients
 
 -- Fields that drift every step, and the step a client can tell apart; every other field is compared exactly.
-B.PUSH_STEP = { windMs = 0.5, windKph = 1, windWatts = 1, steamWatts = 1, genWatts = 1, pedalWatts = 1,
+B.PUSH_STEP = { windMs = 0.5, windKph = 1, windWatts = 1, steamWatts = 1, genWatts = 1, pedalWatts = 1, tmWatts = 1,
                 condition = 0.1, fuel = 0.01, water = 0.1, heat = 0.01,
                 lpg = 0.001, t1Fill = 0.001, t2Fill = 0.001, t1Cond = 0.001, t2Cond = 0.001 }
 -- In-game hours after which an object is pushed again even when nothing it shows has moved.
@@ -133,7 +135,7 @@ end
 --  had no list to file them in.
 local function collect(rec)
     local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {}, heater = {},
-                  treadwheel = {} }
+                  treadwheel = {}, treadmill = {} }
     local root = UM.nodeKey(rec.x, rec.y, rec.z, "controller")
     for nk in pairs((S.claimed or {})[root] or {}) do
         local x, y, z, kind = UM.parseNodeKey(nk)
@@ -267,6 +269,7 @@ local function liveSources(rec)
     local o = rec.dpm or { pedal = {}, windmill = {}, steam = {}, propane = {}, hydro = {} }
     o.hydro = o.hydro or {}
     o.treadwheel = o.treadwheel or {}
+    o.treadmill = o.treadmill or {}
 
     -- Dazed Power's own solar arrays that carry an amplifier: copies of the
     -- entries its gather builds, so the model can price the extra half.
@@ -288,9 +291,9 @@ local function liveSources(rec)
     end
 
     local hooked = DazedPower.Alternator and DazedPower.Alternator.hasLinks(rec)
-    if (#o.pedal + #o.windmill + #o.steam + #(o.propane or {}) + #o.hydro + #o.treadwheel + #solar) == 0 and not hooked then return nil end
+    if (#o.pedal + #o.windmill + #o.steam + #(o.propane or {}) + #o.hydro + #o.treadwheel + #o.treadmill + #solar) == 0 and not hooked then return nil end
     local src = { pedalW = 0, riding = 0, pedals = {}, turbines = {}, boilers = {},
-                  gens = {}, solar = solar, indoors = 0, hydros = {}, hydroW = 0, treads = {}, treadW = 0 }
+                  gens = {}, solar = solar, indoors = 0, hydros = {}, hydroW = 0, treads = {}, treadW = 0, treadmills = {} }
     local now = getTimestampMs and getTimestampMs() or 0
 
     for i = 1, #o.pedal do
@@ -304,6 +307,26 @@ local function liveSources(rec)
             end
             d.pedalWatts = w
             src.pedals[#src.pedals + 1] = { obj = obj, watts = w, amp = d.amp == true }
+            src.pedalW = src.pedalW + w
+            if w > 0 then src.riding = src.riding + 1 end
+        end
+    end
+
+    -- Player treadmills: a fresh beat from the authority's check (DP_Treadmill.beat) is someone running on it. Their
+    -- watts fold into pedalW, the figure the bus, the governors' "need" and the away snapshot already carry.
+    for i = 1, #o.treadmill do
+        local obj = o.treadmill[i]
+        local info = alive(obj) and P.describe(obj)
+        if info then
+            local d = P.data(obj)
+            local w, fresh = 0, now - (d.tmBeat or 0) <= TREADMILL_FRESH_MS and (d.tmBeat or 0) > 0
+            if fresh then
+                w = MM.treadmillOutput(d.tmFitness or 0, d.tmMode, d.condition, P.sandbox("TreadmillWatts"))
+            elseif d.tmRider ~= nil or d.tmMode ~= nil then
+                d.tmRider, d.tmMode = nil, nil          -- the user stopped beating without getting off
+            end
+            d.tmWatts = w
+            src.treadmills[#src.treadmills + 1] = { obj = obj, watts = w, mode = fresh and d.tmMode or nil, condition = d.condition or 100 }
             src.pedalW = src.pedalW + w
             if w > 0 then src.riding = src.riding + 1 end
         end
@@ -865,6 +888,10 @@ local function sourceRows(rec, src)
         local info = R.describe(p.obj)
         add(p.obj, "pedal", info and info.tier, (p.watts or 0) > 0 and "riding" or "idle", p.watts, P.data(p.obj).condition)
     end
+    for _, t in ipairs(src.treadmills or {}) do
+        local w = t.watts or 0
+        add(t.obj, "treadmill", "standard", w > 0 and P.data(t.obj).tmMode or "idle", w, t.condition)
+    end
     for _, c in ipairs(src.cars or {}) do
         local r = add(c.obj, "car", "standard", "running", (c.watts or 0) * eff, c.condition)
         r.x, r.y = c.x or r.x, c.y or r.y
@@ -921,6 +948,12 @@ local function liveEffects(rec, src, dt)
         if alive(p.obj) then
             push(p.obj, R.setVariant(p.obj, p.watts > 0 and "on" or "off"))
         end
+    end
+
+    -- Treadmills: pushed when the figure the client shows moved. No sprite of ours to swap (the tile is vanilla's).
+    for i = 1, #(src.treadmills or {}) do
+        local t = src.treadmills[i]
+        if alive(t.obj) then push(t.obj) end
     end
 
     -- Hydro wheels: turn while wet, wear slowly, show it.
@@ -1255,6 +1288,25 @@ end
 registerSprites()
 Events.OnGameStart.Add(registerSprites)
 
+-- The vanilla gym treadmill (DP_Treadmill): only one somebody wired or used is ours. Its ModData is made by the first
+-- cable (S.connect) or the first beat, so a treadmill streaming in with none is left alone and gets none made here.
+B.TREADMILL_PRIORITY = 7
+function B.onLoadTreadmill(obj)
+    if not (obj and obj.hasModData and obj:hasModData()) then return end
+    local md = obj:getModData()
+    if md and md.dazedpower then S.register(obj) end
+end
+
+function B.registerTreadmill()
+    if not (MapObjects and MapObjects.OnLoadWithSprite) then return end
+    for _, name in ipairs(DazedPower.Treadmill.MASTERS) do
+        MapObjects.OnLoadWithSprite(name, B.onLoadTreadmill, B.TREADMILL_PRIORITY)
+    end
+end
+B.registerTreadmill()
+Events.OnGameStart.Add(B.registerTreadmill)
+if Events.OnServerStarted then Events.OnServerStarted.Add(B.registerTreadmill) end
+
 B.internals = { collect = collect, liveSources = liveSources, stepSources = stepSources,
-                liveEffects = liveEffects, writeBoilers = writeBoilers, settleLoose = settleLoose }
+                liveEffects = liveEffects, writeBoilers = writeBoilers, settleLoose = settleLoose, sourceRows = sourceRows }
 return B

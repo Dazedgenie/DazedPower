@@ -1,4 +1,4 @@
-# Dazed Power  (v0.10.0, Build 42)
+# Dazed Power  (v0.11.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
 Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
@@ -29,6 +29,7 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. |
 | Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. Dazed Climate's cold-storage rule is the unpowered cousin: in a room below 15 C (no cooler needed) ordinary containers (not fridges or freezers) age food slower, about 30% speed at 0-4 C like a fridge and almost not at all when frozen, back to normal at 15 C. A powered Power cooler owns its room and Climate checks for it and leaves that room alone, because both work by rewinding each item's age and must never both run on one container. Any other room-wide food system (a cellar, an ice house) must register with the same check Climate uses. |
 | Zombie treadwheel | One square, one grade for now (Dazed Power Handbook, Electricity 2, Carpentry 3). Knock a zombie down, right-click it with a Rope or Sheet Rope, **Tie up the zombie** (about 3 s; it fails if it gets up first). Walk it home: it follows on the rope, is pulled along when the rope goes taut, never through a wall or fence, and does not attack while tied. Running or sprinting with the rope taut can snap it (a sheet rope sooner), a zombie held back 8 tiles always breaks free, and a snapped rope or **Let go of the rope** frees it to come for you (sandbox *Treadwheel rope can snap*). Within 3 tiles of a wheel, **Put the zombie on the treadwheel**: the zombie leaves the world and walks the wheel for ever, 80 W (a crawler 40%), 140 W while anyone stands within 8 tiles, scaled by the wheel's condition; the slats wear 0.03 points an hour and are repaired like the water wheel. **Release the zombie** lets it out beside the wheel, hostile; **Put the zombie down** leaves a corpse and gives the rope back. A wheel with a zombie in it cannot be picked up. Stand-in art. |
+| Treadmill generator | The vanilla gym treadmill (W 28+29, N 30+31, E 36+37, S 38+39 of `recreational_sports_01`), wired like any source; the item (Dazed Power Handbook, Electricity 3, Metal Welding 2) puts down that tile. Right-click it: **Walk**, **Run** or **Sprint on the treadmill**. A pedal rider's watts (50 W at Fitness 0, 150 W at 10) times 1, 2 or 3.5, scaled by condition and the sandbox *Treadmill output*. Costs Fatigue every game minute (0.20, 0.35, 0.50 points); a sprint also spends 0.02 Endurance a minute and drops to a run below 0.15. One user at a time. Our data is made only when it is first wired or used. |
 | Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate it warms its room. Dazed Power Handbook, Electricity 3. |
 
 **Wiring.** A cable costs Electric Wire by length: one per 4 tiles by default (sandbox *Tiles per Electric Wire*,
@@ -48,6 +49,17 @@ have a tracking array, and Workshop rigs a Workshop controller.
 
 Not included: the roof (flat) panel mount, the converted vanilla "backup" generator (the gas generators
 replace it), the Turkish translation.
+
+## Test in game (0.11.0, the treadmill generator)
+
+Coded and tested headless only (`tools/tests/treadmill_test.lua`). In game, check: the console line `DazedPower: treadmill tiles present`
+(the vanilla tiles are named as expected); all four facings, from either tile, offer Walk, Run and Sprint and wire to a
+controller; the user stands on the middle of the two tiles and faces along the belt (`T.RUN_DIR` in `DP_Treadmill.lua` swaps
+the facing if they run backwards); Bob_Walk, Bob_Run and Bob_Sprint play and are held in place (the bone weights are the
+pedal's); watts show on the board as Treadmill with the gait; a sprint drops to a run when Endurance falls below 15%;
+changing gait while on it does not step the user off; a second player is refused and the rows grey; picking the treadmill
+up or turning it with the vanilla move tool while wired unwires it cleanly; on a dedicated server, that the beats reach the
+server (the watts follow the user's Fitness there) and stop when the user walks off.
 
 ## Test in game (0.10.0, the zombie treadwheel)
 
@@ -97,6 +109,12 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
 
 ## Changes
 
+- **0.11.0.** The player treadmill generator: the vanilla gym treadmill recognised by sprite name through guarded wraps
+  of `P.describe`, `P.master`, `P.piecesAround` and `P.itemFor` (`DP_Treadmill`), with no new sheet rows and nothing wrapped
+  on `P.spriteInfo`. Output model in `DPM_Model` (`treadmillOutput`, gait table), the timed action in `DP_TreadmillAction`
+  (`DPM_Treadmill`, modelled on `DPM_Pedal`), rows in `DP_TreadmillMenu`, Endurance helpers in `DPM_Stats`. The bridge folds
+  treadmill watts into `pedalW` and lists them on the board. Animation nodes `DazedTreadmill{Walk,Run,Sprint}`. New sandbox
+  option TreadmillWatts. Tests: `tools/tests/treadmill_test.lua`.
 - **0.10.0.** The zombie treadwheel (see the parts table): a new part, `treadwheel`, appended to the sheet on a new
   page (`dazedpower_02_264` to `_271`), with stand-in art. The rope and wheel live in `DP_Tread` (rules, leash
   registry, authority commands, the follow loop), `DP_TreadActions` (tying) and `DP_TreadMenu` (rows); the bridge

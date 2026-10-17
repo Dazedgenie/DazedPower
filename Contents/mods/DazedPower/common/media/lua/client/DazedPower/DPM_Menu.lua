@@ -22,6 +22,7 @@ require "DazedPower/DPM_Model"
 require "DazedPower/DPM_Env"
 require "DazedPower/DPM_Stats"
 require "DazedPower/DPM_Actions"
+require "DazedPower/DP_TreadmillMenu"
 
 local C = DazedPower.Context
 local P = DazedPower.Parts
@@ -589,6 +590,12 @@ local function addRows(menu, wo, target, playerObj)
             addRepair(menu, wo, target, playerObj, P.data(target))
             return
         end
+        -- The vanilla gym treadmill: Walk, Run and Sprint (DP_TreadmillMenu), on its master tile.
+        if theirs and theirs.kind == "treadmill" and DazedPower.TreadmillMenu then
+            local master = DazedPower.Treadmill.masterOf(target) or target
+            DazedPower.TreadmillMenu.rows(menu, wo, master, playerObj, ICON)
+            return
+        end
         -- A water wheel gets its condition line and the repair row.
         if theirs and R.REPAIR_ONLY[theirs.kind] then
             local line = menu:addOption(status(target, theirs), nil, nil)
@@ -712,7 +719,8 @@ if not H.menuWrapped then
         if row == "info" and type(option) == "table" and menu and menu.addOption then
             local target, playerObj = option.param1, option.param2
             if target and target.getSprite and playerObj and playerObj.getInventory
-                    and (R.repairable(target) or R.canAmplify(P.describe(target))) then
+                    and (R.repairable(target) or R.canAmplify(P.describe(target))
+                         or (DazedPower.Treadmill and DazedPower.Treadmill.identify(target))) then
                 local ok, err = pcall(addRows, menu, option.target, target, playerObj)
                 if not ok then print("DazedPower: menu rows failed: " .. tostring(err)) end
             end

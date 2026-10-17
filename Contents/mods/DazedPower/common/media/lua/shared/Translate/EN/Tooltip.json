@@ -114,5 +114,6 @@
     "Tooltip_DazedPower_TreadWalkCloser": "Stand within 3 tiles of the wheel.",
     "Tooltip_DazedPower_TreadLoad": "The zombie goes into the wheel and walks it for good.",
     "Tooltip_DazedPower_TreadRelease": "Lets the zombie out beside the wheel. It will come for you.",
-    "Tooltip_DazedPower_TreadPutDown": "Kills the zombie in the wheel. You get the rope back."
+    "Tooltip_DazedPower_TreadPutDown": "Kills the zombie in the wheel. You get the rope back.",
+    "Tooltip_DazedTreadmill": "A gym treadmill wired as a power source. Run on it to make power: walking makes 50 to 150 W, running twice that and sprinting 3.5 times, the fitter you are. Everything tires you and a sprint empties your legs. Wire it to a controller."
 }

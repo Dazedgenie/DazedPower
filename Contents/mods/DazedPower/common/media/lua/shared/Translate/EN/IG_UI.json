@@ -507,5 +507,10 @@
     "IGUI_DazedPower_TreadNoZombie": "I can't see the zombie I tied",
     "IGUI_DazedPower_TreadTooFar": "Bring the zombie closer to the wheel",
     "IGUI_DazedPower_TreadReleased": "It's loose!",
-    "IGUI_DazedPower_TreadOccupied": "There's a zombie in it. Release it or put it down first"
+    "IGUI_DazedPower_TreadOccupied": "There's a zombie in it. Release it or put it down first",
+    "IGUI_DazedPower_SrcTreadmill": "Treadmill",
+    "IGUI_DazedPower_SrcState_walk": "walking",
+    "IGUI_DazedPower_SrcState_run": "running",
+    "IGUI_DazedPower_SrcState_sprint": "sprinting",
+    "IGUI_DazedPower_TreadmillWinded": "Too winded to sprint. Settling to a run"
 }

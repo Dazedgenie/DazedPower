@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode>
+	<m_Name>DazedTreadmillSprint</m_Name>
+	<m_AnimName>Bob_Sprint</m_AnimName>
+	<m_BlendTime>0.3</m_BlendTime>
+	<m_SpeedScale>DazedTreadmillSpeed</m_SpeedScale>
+	<m_SyncTrackingEnabled>false</m_SyncTrackingEnabled>
+	<m_Conditions x_name="0455f33f-981f-4438-87b4-a8f59c0e7925">
+		<m_Name>PerformingAction</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_Value>DazedTreadmill</m_Value>
+	</m_Conditions>
+	<m_Conditions x_name="f60bc3f8-08d4-4d1c-9d28-2559929c0a0a">
+		<m_Name>DazedTreadmillMode</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_Value>sprint</m_Value>
+	</m_Conditions>
+	<m_SubStateBoneWeights>
+		<boneName>Dummy01</boneName>
+	</m_SubStateBoneWeights>
+	<m_SubStateBoneWeights>
+		<boneName>Translation_Data</boneName>
+	</m_SubStateBoneWeights>
+</animNode>

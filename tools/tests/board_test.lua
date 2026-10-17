@@ -77,4 +77,16 @@ return function(check)
     check(totalY(lm) + 16 * 3 <= 490, "TOTAL and its notes stay above the isolator")
     local lEnd = loadArea(B.build(snap({ loadList = loads }), opts({ loadScroll = 50 })))
     check(lEnd.off == lEnd.max and totalY(B.build(snap({ loadList = {} }), opts())) == totalY(lm), "circuits scroll stops at the end and TOTAL doesn't move")
+
+    -- The treadmill reads on the sources list by name and gait.
+    local tmRows = B.sources({ gen = 280, dpmRows = { { k = "treadmill", t = "standard", s = "sprint", w = 280 } } })
+    check(#tmRows == 1 and tmRows[1].k == "treadmill" and tmRows[1].s == "sprint", "a treadmill is a source row")
+    local tmModel = B.build(snap({ gen = 280, dpmRows = { { k = "treadmill", t = "standard", s = "sprint", w = 280 } } }),
+        opts({ measure = function() return 1 end }))      -- narrow text, so no name is shortened
+    local named, gait = false, false
+    for _, op in ipairs(tmModel.ops) do
+        if op.k == "text" and op.str:find("IGUI_DazedPower_SrcTreadmill", 1, true) == 1 then named = true end
+        if op.k == "text" and op.str == "sprint" then gait = true end      -- the stand-in getText hands back keys, so the gait falls back to its own name
+    end
+    check(named and gait, "the board names the treadmill and its gait")
 end

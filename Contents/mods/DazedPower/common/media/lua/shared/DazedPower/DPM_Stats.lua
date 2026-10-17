@@ -44,12 +44,12 @@ local function fatigueMax()
     return 1
 end
 
---- Read Fatigue in the engine's own units, and how: returns value, setter.
-local function access(character)
+--- Read a stat ("FATIGUE", "ENDURANCE") in the engine's own units, and how: returns value, setter.
+local function accessStat(character, name)
     local okS, stats = pcall(function() return character:getStats() end)
     if not okS or not stats then return nil, nil end
     -- Build 42.13+: the CharacterStat enum.
-    local stat = CharacterStat and CharacterStat.FATIGUE
+    local stat = CharacterStat and CharacterStat[name]
     if stat and stats.get then
         local ok, v = pcall(stats.get, stats, stat)
         if ok and type(v) == "number" then
@@ -57,14 +57,18 @@ local function access(character)
         end
     end
     -- Older builds: a getter and setter per stat.
-    if stats.getFatigue then
-        local ok, v = pcall(stats.getFatigue, stats)
+    local camel = name:sub(1, 1) .. name:sub(2):lower()
+    local getter, setter = stats["get" .. camel], stats["set" .. camel]
+    if getter and setter then
+        local ok, v = pcall(getter, stats)
         if ok and type(v) == "number" then
-            return v, function(nv) return pcall(stats.setFatigue, stats, nv) end
+            return v, function(nv) return pcall(setter, stats, nv) end
         end
     end
     return nil, nil
 end
+
+local function access(character) return accessStat(character, "FATIGUE") end
 
 --- The character's Fatigue as a percentage (0..100), or nil if unreadable.
 function ST.fatiguePct(character)
@@ -82,6 +86,20 @@ function ST.addFatiguePct(character, pct)
     local ok = set(math.min(max, v + (pct or 0) / 100 * max))
     if not ok then warnOnce("set refused") end
     return ok == true
+end
+
+--- The character's Endurance on the engine's 0..1 scale (1 = fresh), or nil if unreadable.
+function ST.endurance(character)
+    local v = accessStat(character, "ENDURANCE")
+    if v == nil then return nil end
+    return math.max(0, math.min(1, v))
+end
+
+--- Set Endurance (0..1). Returns true if it was written.
+function ST.setEndurance(character, value)
+    local v, set = accessStat(character, "ENDURANCE")
+    if v == nil or not set then return false end
+    return set(math.max(0, math.min(1, value or 0))) == true
 end
 
 return ST

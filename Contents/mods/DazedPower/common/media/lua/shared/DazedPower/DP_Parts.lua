@@ -47,6 +47,7 @@ P.SANDBOX_DEFAULTS = {
     LiveShock = true,
     ColdStarts = true,
     TreadRopeSnap = true,
+    TreadmillWatts = 100,
 }
 
 -- The Dazed Core preset values for this page: { easy, standard, realistic, hardcore } per option.
@@ -61,6 +62,7 @@ P.PRESETS = {
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
     ColdStarts = { false, true, true, true },
     TreadRopeSnap = { false, true, true, true },
+    TreadmillWatts = { 100, 100, 100, 100 },
 }
 if DazedCore and DazedCore.Preset then DazedCore.Preset.register("DazedPower", P.PRESETS) end
 
@@ -251,7 +253,7 @@ P.PIECE_OFFSET = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } }
 
 -- The power sources Dazed Power brought, and the two wind instruments that are parts but never wire or tick.
 P.SOURCE_KINDS = { pedal = true, windmill = true, steam = true, propane = true, petrol = true, hydro = true, woodgas = true,
-                   treadwheel = true }
+                   treadwheel = true, treadmill = true }
 -- A grounding rod is never wired and never ticks; it only protects a controller from lightning by standing near it.
 P.PASSIVE = { rod = true }
 P.INSTRUMENT = { windsock = true, vane = true }
