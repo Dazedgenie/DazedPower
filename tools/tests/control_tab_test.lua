@@ -2,10 +2,10 @@
 -- lamps and marks, and every handler as an admin, a moderator and a plain player (the last two must change nothing).
 -- Also writes the view of a realistic world to /home/claude/work/views/power.lua (or $VIEWS_OUT) for the lead to draw.
 -- Run from tools/tests: lua control_tab_test.lua [<DazedCore lua root>]; Lua 5.1 or later. DAZEDCORE_LUA works too.
-local core = arg[1] or os.getenv("DAZEDCORE_LUA") or "../../../dazedcore/Contents/mods/DazedCore/common/media/lua"
+local core = arg[1] or os.getenv("DAZEDCORE_LUA") or "../../../DazedCore/Contents/mods/DazedCore/common/media/lua"
 local root = "../../Contents/mods/DazedPower/common/media/lua"
 package.path = core .. "/shared/?.lua;" .. root .. "/shared/?.lua;" .. package.path
-local E = dofile(core .. "/../../../tools/tests/engine_stub.lua")
+local E = dofile(core .. "/../../../../../../tools/tests/engine_stub.lua")
 local print = E.realPrint
 local fails, checks = 0, 0
 local function check(c, m) checks = checks + 1 if not c then fails = fails + 1; print("FAIL " .. m) end end

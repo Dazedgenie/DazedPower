@@ -31,7 +31,7 @@ W.FRAMES = { "spin1", "spin2", "spin3", "spin4" }
 W.CUT_IN = { makeshift = 3.5, salvaged = 3.0, workshop = 2.5 }
 
 W.tracked = W.tracked or {}     -- object -> { phase = frames advanced }
-W.count = W.count or 0          -- how many are tracked (Kahlua has no next())
+W.count = W.count or 0          -- how many are tracked (Kahlua has no next function)
 local spriteMemo = {}
 local lastTick, lastSweep = nil, 0
 -- tier -> frame -> facing -> sprite name, so a frame step builds no strings.

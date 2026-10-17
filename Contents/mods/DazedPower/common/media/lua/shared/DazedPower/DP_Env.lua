@@ -24,6 +24,7 @@
        while the engine shows the sun.
 ]]
 
+require "DazedCore/DC_Util"
 require "DazedPower/DP_Model"
 require "DazedPower/DP_Parts"
 
@@ -275,11 +276,7 @@ function E.skyDay(y, m0, d)
 end
 
 --- The world-clock hour, as a float, used for catch-up across chunk unloads.
-function E.worldHours()
-    local gt = getGameTime()
-    if not gt then return 0 end
-    return gt:getWorldAgeHours() or 0
-end
+E.worldHours = DazedCore.Util.worldHours   -- Core's helper
 
 
 -------------------------------------------------------------------- almanac

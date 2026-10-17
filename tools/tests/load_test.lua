@@ -3,10 +3,10 @@
 -- Run from tools/tests: lua load_test.lua [<lua root>] [<core lua root>]; DAZEDCORE_LUA also names the core.
 -- The defaults are this repo's mod folder and the sibling dazedcore repo beside it.
 local root = arg[1] or "../../Contents/mods/DazedPower/common/media/lua"
-local core = arg[2] or os.getenv("DAZEDCORE_LUA") or "../../../dazedcore/Contents/mods/DazedCore/common/media/lua"
+local core = arg[2] or os.getenv("DAZEDCORE_LUA") or "../../../DazedCore/Contents/mods/DazedCore/common/media/lua"
 package.path = core .. "/shared/?.lua;" .. core .. "/client/?.lua;" .. root .. "/shared/?.lua;" .. root .. "/server/?.lua;" .. root .. "/client/?.lua;" .. package.path
--- The core's stand-in engine lives in its own tools, three folders up from its lua root.
-local E = dofile(core .. "/../../../tools/tests/engine_stub.lua")
+-- The core's stand-in engine lives in the Core repo's tools/tests (six folders up from its lua root).
+local E = dofile(core .. "/../../../../../../tools/tests/engine_stub.lua")
 local print = E.realPrint
 local fails, checks = 0, 0
 local function check(c, m) checks = checks + 1 if not c then fails = fails + 1 print("FAIL " .. m) end end
@@ -246,6 +246,16 @@ do
     check(G.indexDirty and not G.litAt(12, 10, 0), "G.drop takes the circle out of the rebuilt index")
     G.resetState()
     getSquare = gs0
+end
+
+-- Dazed Core 1.9.0 helpers: Power's hooks sit on Core's Tick and Menu, and its helper names alias Core's.
+do
+    local Core = DazedCore
+    check(Core.Tick.has("DazedPower.machines"), "the machine sweep is a Core Tick job")
+    check(Core.Menu.worldHandlers["DazedPower.context"] ~= nil, "the world right-click is a Core Menu handler")
+    check(DazedPower.Parts.try == Core.Util.try and DazedPower.Parts.txt == Core.Util.txt and DazedPower.Parts.count == Core.Util.count, "Parts.try, txt and count are Core's")
+    check(DazedPower.Env.worldHours == Core.Util.worldHours, "Env.worldHours is Core's")
+    check(Core.Boot.tooOld["DazedPower"] == nil, "Power's Core requirement is met")
 end
 
 dofile("features_test.lua")(check, E)

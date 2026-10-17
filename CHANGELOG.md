@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.0 (2026-10-17)
+- Needs Dazed Core 1.9.0. Internal only, nothing changes in play: the world right-click menu, the fence zap check and the machine sweep now run on Core's shared Menu and Tick hooks, Power's guarded-call, text, count and world-clock helpers are Core's, and Power reports its Core requirement at boot (an older Core is named in the console).
+
 ## 0.8.8 (2026-10-17)
 - With Dazed Salvage installed, the pedal and wind generator recipes accept a stripped car Alternator in place of one electronics scrap, and Copper Wire in place of the wire. Without Salvage nothing changes.
 

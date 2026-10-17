@@ -3,6 +3,7 @@
 
 if isClient() then return end
 
+require "DazedCore/DC_Tick"
 require "DazedPower/DP_System"
 require "DazedPower/DP_Appliances"
 require "DazedPower/DP_Charge"
@@ -240,11 +241,9 @@ local function checkFence(fence, systems, dirty, now, ctx)
     end
 end
 
-A.tickCount = A.tickCount or 0
-function A.onTick()
-    A.tickCount = A.tickCount + 1
-    if A.tickCount < A.FENCE_EVERY_TICKS then return end
-    A.tickCount = 0
+--- One fence check pass. Dazed Core's Tick runs it every FENCE_EVERY_TICKS-th frame; A.onTick below
+--  keeps the old counter for a Core without Tick.
+function A.fenceCheck()
     local now = nowMs()
     A.pruneCooldowns(A.cooldown, now)
     local systems, dirty, ctx = {}, {}, { gates = {} }
@@ -261,6 +260,14 @@ function A.onTick()
     for _, sys in pairs(dirty) do
         for _, r in ipairs(sys.racks) do if r.obj and r.obj.transmitModData then r.obj:transmitModData() end end
     end
+end
+
+A.tickCount = A.tickCount or 0
+function A.onTick()
+    A.tickCount = A.tickCount + 1
+    if A.tickCount < A.FENCE_EVERY_TICKS then return end
+    A.tickCount = 0
+    A.fenceCheck()
 end
 
 --------------------------------------------------------------- cooler
@@ -377,7 +384,11 @@ end
 
 if not A.hooked then
     A.hooked = true
-    if Events.OnTick then Events.OnTick.Add(A.onTick) end
+    if DazedCore and DazedCore.Tick and DazedCore.Tick.everyTicks then
+        DazedCore.Tick.everyTicks("DazedPower.fences", A.FENCE_EVERY_TICKS, function() A.fenceCheck() end)
+    elseif Events.OnTick then
+        Events.OnTick.Add(A.onTick)
+    end
     if Events.EveryTenMinutes then Events.EveryTenMinutes.Add(A.everyTenMinutes) end
 end
 

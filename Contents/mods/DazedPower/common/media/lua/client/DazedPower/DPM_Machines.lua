@@ -3,6 +3,7 @@
      Fed by MapObjects as chunks stream in and machines are placed, by OnObjectAdded, and by a slow sweep round each
      local player that catches anything no event announced. Readers walk this list instead of searching squares. ]]
 
+require "DazedCore/DC_Tick"
 require "DazedPower/DP_Parts"
 
 DazedPower.More = DazedPower.More or {}
@@ -72,13 +73,18 @@ function Mc.sweep()
     end
 end
 
+local function sweepGuarded()
+    local ok, err = pcall(Mc.sweep)
+    if not ok and print then print("DazedPower machines: " .. tostring(err)) end
+end
+
+-- Dazed Core's Tick runs it every SWEEP_MS (first on the first frame, as before); the old throttle stays for a Core without Tick.
 local lastSweep = nil
 local function onTick()
     local now = getTimestampMs and getTimestampMs() or 0
     if lastSweep and now >= lastSweep and now - lastSweep < Mc.SWEEP_MS then return end
     lastSweep = now
-    local ok, err = pcall(Mc.sweep)
-    if not ok and print then print("DazedPower machines: " .. tostring(err)) end
+    sweepGuarded()
 end
 
 local function registerSprites()
@@ -101,7 +107,11 @@ if not Mc.hooked then
     if Events then
         if Events.OnGameStart then Events.OnGameStart.Add(registerSprites) end
         if Events.OnObjectAdded then Events.OnObjectAdded.Add(Mc.consider) end
-        if Events.OnTick then Events.OnTick.Add(onTick) end
+        if DazedCore and DazedCore.Tick and DazedCore.Tick.every then
+            DazedCore.Tick.every("DazedPower.machines", Mc.SWEEP_MS, sweepGuarded)
+        elseif Events.OnTick then
+            Events.OnTick.Add(onTick)
+        end
     end
 end
 

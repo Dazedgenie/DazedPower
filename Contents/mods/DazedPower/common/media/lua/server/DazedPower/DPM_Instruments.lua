@@ -30,6 +30,7 @@
 
 if isClient() then return end
 
+require "DazedCore/DC_Util"
 require "DazedPower/DPM_Parts"
 require "DazedPower/DPM_Model"
 require "DazedPower/DPM_Env"
@@ -48,10 +49,7 @@ I.MAX_CREDIT_HOURS = 1               -- a gap longer than this was time unwatche
 -- The loaded instruments. Kahlua ignores weak tables, so I.tick drops each one that P.alive says has left.
 I.loaded = I.loaded or {}
 
-local function worldHours()
-    local gt = getGameTime and getGameTime()
-    return gt and gt:getWorldAgeHours() or 0
-end
+local worldHours = DazedCore.Util.worldHours   -- Core's helper
 
 -- Still standing in the world, on a square the cell still holds (P.alive).
 local standing = P.alive

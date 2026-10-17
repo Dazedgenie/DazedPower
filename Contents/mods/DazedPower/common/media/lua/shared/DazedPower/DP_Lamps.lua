@@ -59,7 +59,8 @@ local function key(sq)
     return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ()
 end
 
-local function clamp(v, lo, hi)
+-- Core's (1.9.0; the same for the two bounds given here). The local stays for an older Core, which lacks it.
+local clamp = DazedCore.Util.clamp or function(v, lo, hi)
     if v < lo then return lo end
     if v > hi then return hi end
     return v

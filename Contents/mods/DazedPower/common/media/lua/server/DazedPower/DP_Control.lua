@@ -14,6 +14,7 @@
 
 if isClient() then return end
 
+require "DazedCore/DC_Util"
 require "DazedCore/DC_Net"
 pcall(require, "DazedCore/DC_Control")
 
@@ -45,15 +46,8 @@ local TIER_WORD = { makeshift = "Makeshift", salvaged = "Salvaged", workshop = "
 local function Sys() return DazedPower.System end
 local function Parts() return DazedPower.Parts end
 
--- A guarded method call: the mod's own helper when it is there, else a local one.
-local function try(obj, method, ...)
-    local P = Parts()
-    if P and P.try then return P.try(obj, method, ...) end
-    if not obj or not obj[method] then return nil end
-    local ok, v = pcall(obj[method], obj, ...)
-    if ok then return v end
-    return nil
-end
+-- A guarded method call (Core's helper; DazedPower.Parts.try is the same function).
+local try = DazedCore.Util.try
 
 local function push(obj) try(obj, "transmitModData") end
 

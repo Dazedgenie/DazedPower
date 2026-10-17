@@ -1,7 +1,7 @@
-# Dazed Power  (v0.7.3, Build 42)
+# Dazed Power  (v0.9.0, Build 42)
 
 Solar, wind, pedal, steam and gas power for Project Zomboid, in one mod, re-graded and extended.
-Needs **Dazed Core** (`DazedCore`), loaded first. Works with
+Needs **Dazed Core 1.9.0 or newer** (`DazedCore`), loaded first. Works with
 *Dazed Plumbing*: generators and boilers burn and drink from its tanks, the pump and purifier wire to a
 controller. Derived from the original *Off-Grid: Solar Power* by cakcan (CC BY-NC-SA 4.0; see `NOTICE.md`).
 

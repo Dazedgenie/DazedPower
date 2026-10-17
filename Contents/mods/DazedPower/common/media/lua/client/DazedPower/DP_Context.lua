@@ -8,6 +8,7 @@
      array -- but it is worth knowing it is the engine's doing, not a bug.
 ]]
 
+require "DazedCore/DC_Menu"
 require "DazedPower/DP_Parts"
 require "DazedPower/DP_GenPanel"
 require "DazedPower/DP_Gauge"
@@ -438,7 +439,10 @@ function C.lampMenu(context, worldobjects, target)
 end
 
 function C.onFill(playerNum, context, worldobjects, test)
-    local playerObj = getSpecificPlayer(playerNum)
+    -- The index from the engine's own event, or the player Dazed Core's Menu passes.
+    -- (Not `and ... or`: an index with no player must give nil, not fall through to the number.)
+    local playerObj = playerNum
+    if type(playerNum) == "number" then playerObj = getSpecificPlayer(playerNum) end
     if not playerObj then return end
     stripGeneratorMenu(context, test)
     stripLampBattery(context, test)
@@ -1191,6 +1195,13 @@ function C.onAdminCommand(worldobjects, object, playerObj, command)
     C.send(playerObj, command, { x = sq:getX(), y = sq:getY(), z = sq:getZ() })
 end
 
-Events.OnFillWorldObjectContextMenu.Add(C.onFill)
+-- One shared right-click hook in Dazed Core 1.9.0 (handler errors are reported once there); the plain event otherwise.
+if DazedCore and DazedCore.Menu and DazedCore.Menu.world then
+    DazedCore.Menu.world("DazedPower.context", function(player, context, square, objects, worldobjects, test)
+        return C.onFill(player, context, worldobjects, test)
+    end)
+else
+    Events.OnFillWorldObjectContextMenu.Add(C.onFill)
+end
 
 return C

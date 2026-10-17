@@ -19,11 +19,17 @@ require "DazedCore/DC_Boot"
 require "DazedPower/DP_Parts"
 
 DazedPower = DazedPower or {}
-DazedPower.VERSION = "0.8.8"
+DazedPower.VERSION = "0.9.0"
 DazedPower.Boot = DazedPower.Boot or {}
 local B = DazedPower.Boot
 local P = DazedPower.Parts
 DazedCore.Boot.register("DazedPower", DazedPower.VERSION)
+if DazedCore.Boot.require then
+    DazedCore.Boot.require("DazedPower", "1.9.0")
+else
+    -- A Core older than 1.9.0 has no Boot.require: say so here, as it would.
+    print("DazedPower: needs Dazed Core 1.9.0, have " .. tostring(DazedCore.VERSION) .. ": update Dazed Core")
+end
 
 function B.check()
     if B.done then return end

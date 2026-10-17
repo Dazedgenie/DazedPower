@@ -11,6 +11,7 @@
 ]]
 
 require "DazedCore/DC_Boot"
+require "DazedCore/DC_Util"
 require "DazedPower/DP_Model"
 
 DazedPower = DazedPower or {}
@@ -20,14 +21,9 @@ local P = DazedPower.Parts
 ---------------------------------------------------- engine and sandbox access
 
 --- Call an optional method: nil, not an error, when the object is nil, lacks
---  the method, or the call throws. For engine surfaces that differ between
---  builds and for objects that may already have left the world.
-function P.try(obj, method, ...)
-    if not obj or not obj[method] then return nil end
-    local ok, v = pcall(obj[method], obj, ...)
-    if ok then return v end
-    return nil
-end
+--  the method, or the call throws. Dazed Core's helper (same behaviour); the
+--  name stays exported here for every caller.
+P.try = DazedCore.Util.try
 
 --- Every sandbox option the mod declares, at the default
 --  media/sandbox-options.txt gives it. Keep the two in step by hand, and list
@@ -1184,18 +1180,7 @@ end
 --  a bare per-cent throws UnknownFormatConversionException, because
 --  FORMAT_TOKEN matches only %% and %1..%9. build_translations escapes them.
 --  Braces are not Lua pattern metacharacters either, so gsub takes them as-is.
-function P.txt(key, ...)
-    local s = getText(key)
-    if s == nil then return tostring(key) end
-    for i = 1, select("#", ...) do
-        local v = tostring((select(i, ...)))
-        -- gsub reads % in the REPLACEMENT as a capture reference and throws
-        -- "invalid use of '%'", so anything heading into one gets escaped.
-        v = string.gsub(v, "%%", "%%%%")
-        s = string.gsub(s, "{" .. i .. "}", v)
-    end
-    return s
-end
+P.txt = DazedCore.Util.txt   -- Core's helper: the same substitution and % escaping
 
 --- The colour a refusal note is drawn in above the character: orange-red,
 --  one constant for every refusal Dazed Power shows (2026-09-29, "Red/
@@ -1230,11 +1215,7 @@ end
 --  never puts a noun in the plural after a number ("1 akü", "3 akü"), so its
 --  One key carries the same words as the other. The count picks the key; the
 --  arguments fill it, the count alone when none are given.
-function P.count(key, n, ...)
-    local k = (n == 1) and (key .. "One") or key
-    if select("#", ...) > 0 then return P.txt(k, ...) end
-    return P.txt(k, n)
-end
+P.count = DazedCore.Util.count   -- Core's helper: the "One" twin key when n is 1
 
 --- "3 arrays, 1 module": a system's arrays and the modules they carry.
 function P.arrayLine(arrays, modules)

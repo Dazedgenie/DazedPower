@@ -9,7 +9,7 @@ description=Off-grid electricity for [b]Build 42[/b]: solar, wind, pedal, water,
 description=
 description=[table]
 description=[tr][td][b]Game version[/b][/td][td]Build 42 only (42.0+)[/td][/tr]
-description=[tr][td][b]Requires[/b][/td][td][b]Dazed Core[/b] (subscribe to it too)[/td][/tr]
+description=[tr][td][b]Requires[/b][/td][td][b]Dazed Core 1.9.0 or newer[/b] (subscribe to it too)[/td][/tr]
 description=[tr][td][b]Multiplayer[/b][/td][td]Built for it, not yet tested on a dedicated server[/td][/tr]
 description=[tr][td][b]Add mid-save[/b][/td][td]Yes. Saves from Off-Grid: Solar Power do not carry over[/td][/tr]
 description=[tr][td][b]Works with[/b][/td][td]Dazed Plumbing, Climate, Cooking, Essentials and Electric Vehicles[/td][/tr]
@@ -101,6 +101,6 @@ description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.8.8[/i]
+description=[i]Mod ID: DazedPower · Version 0.9.0[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=unlisted
