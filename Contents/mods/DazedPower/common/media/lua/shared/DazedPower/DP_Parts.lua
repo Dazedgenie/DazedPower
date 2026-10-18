@@ -47,6 +47,7 @@ P.SANDBOX_DEFAULTS = {
     LiveShock = true,
     ColdStarts = true,
     TreadRopeSnap = true,
+    TreadRealZombie = true,
     TreadmillWatts = 100,
     MachineEffects = true,
 }
@@ -63,6 +64,7 @@ P.PRESETS = {
     StormRate = { 50, 100, 100, 160 }, HydrogenRisk = { false, true, true, true },
     ColdStarts = { false, true, true, true },
     TreadRopeSnap = { false, true, true, true },
+    TreadRealZombie = { true, true, true, true },
     TreadmillWatts = { 100, 100, 100, 100 },
 }
 if DazedCore and DazedCore.Preset then DazedCore.Preset.register("DazedPower", P.PRESETS) end

@@ -168,6 +168,16 @@ option DazedPower.TreadRopeSnap
     translation = DazedPower_TreadRopeSnap,
 }
 
+/* Zombie treadwheel (0.17.0). TreadRealZombie: the zombie put on a wheel stays in the world, walking in the drum.
+   Off: it leaves the world and the wheel shows a painted one (0.10.0). Each wheel keeps the way it was loaded. */
+option DazedPower.TreadRealZombie
+{
+    type = boolean,
+    default = true,
+    page = DazedPower,
+    translation = DazedPower_TreadRealZombie,
+}
+
 /* Player treadmill (0.11.0). TreadmillWatts scales what a person running on the gym treadmill makes, in percent. */
 option DazedPower.TreadmillWatts
 {

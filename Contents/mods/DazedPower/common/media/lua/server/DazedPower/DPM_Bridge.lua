@@ -975,7 +975,9 @@ local function liveEffects(rec, src, dt)
             local d = P.data(t.obj)
             if t.walking then d.condition = math.max(0, (d.condition or 100) - MM.TREAD_WEAR * dt) end
             d.treadWatts, d.treadLured = t.watts or 0, t.lured or nil
-            push(t.obj, P.setState(t.obj, t.walking and "walking" or "empty"))
+            -- A real zombie walks the wheel itself (DP_Tread, 0.17.0): the drum is shown without the painted one.
+            local real = type(d.zombie) == "table" and d.zombie.real == true
+            push(t.obj, P.setState(t.obj, (t.walking and not real) and "walking" or "empty"))
         end
     end
 

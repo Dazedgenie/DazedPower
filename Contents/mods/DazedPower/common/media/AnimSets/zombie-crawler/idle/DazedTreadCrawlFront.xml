@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode>
+	<m_Name>DazedTreadCrawlFront</m_Name>
+	<m_AnimName>Zombie_Crawl</m_AnimName>
+	<m_BlendTime>0.40</m_BlendTime>
+	<m_SpeedScale>0.50</m_SpeedScale>
+	<m_Conditions x_name="9dbfe1b8-02ea-4f4f-86cf-d4501dc50028">
+		<m_Name>DazedTread</m_Name>
+		<m_Type>BOOL</m_Type>
+		<m_Value>true</m_Value>
+	</m_Conditions>
+	<m_Conditions x_name="2e3247a2-6208-467f-b424-b2b967a97f8a">
+		<m_Name>FallOnFront</m_Name>
+		<m_Type>BOOL</m_Type>
+		<m_Value>true</m_Value>
+	</m_Conditions>
+</animNode>

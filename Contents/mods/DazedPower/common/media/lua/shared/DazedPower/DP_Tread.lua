@@ -8,11 +8,12 @@
         when the rope goes taut it is pulled along, never through a wall or a fence. Running or sprinting with the rope taut can snap it, and so can the zombie being
         held back more than SNAP_DIST tiles (stuck behind a fence, a door shut on it). A snapped rope, or
         letting go, frees the zombie and it turns on whoever held it.
-     3. Put it on a Zombie Treadwheel within LOAD_REACH tiles. The zombie leaves the world and becomes data on
-        the wheel (its outfit, sex and whether it crawls), which walks for ever and makes power (DPM_Model's
-        treadOutput) like any other source on the cable.
-     4. From the wheel it can be released (a hostile zombie in the same clothes, loose beside it) or put down
-        (a corpse, and the rope back).
+     3. Put it on a Zombie Treadwheel within LOAD_REACH tiles. The wheel keeps a record of it (its outfit, sex
+        and whether it crawls), walks for ever and makes power (DPM_Model's treadOutput) like any other source on
+        the cable. The zombie itself stays in the drum, walking in place (0.17.0, "the real zombie on the wheel"
+        below); with the sandbox option Real zombie on the treadwheel off it leaves the world and the wheel's
+        sprite shows a painted one instead (0.10.0).
+     4. From the wheel it can be released (loose beside it, hostile) or put down (a corpse, and the rope back).
 
      Who does what. Everything that changes the world runs on the authority (the server, or single player):
      the leash registry, the rope taken and given back, the zombie removed or spawned, the wheel's ModData.
@@ -277,6 +278,194 @@ local function clearWheel(wheel)
     d.zombie, d.treadWatts, d.treadLured = nil, 0, nil
     P.setState(wheel, "empty")
     wheel:transmitModData()
+    local sq = wheel:getSquare()
+    if sq then T.unfile(sq:getX(), sq:getY(), sq:getZ()) end
+end
+
+---------------------------------------------------------------- the real zombie on the wheel (0.17.0)
+--[[ With the sandbox option Real zombie on the treadwheel (TreadRealZombie, on), the zombie put on a wheel stays
+     in the world: pinned in the drum, inert and toothless, walking in place (AnimSets zombie/idle/DazedTreadWalk:
+     the game's own Zombie_Walk, or Zombie_Crawl for a crawler, while its DazedTread variable is set). The wheel
+     shows its plain drum ("empty" sprite); its power still comes from its ModData record, so a wheel that cannot
+     find its zombie for a moment keeps turning. Kill the zombie and the wheel is empty. The authority files each
+     such wheel (ModData "DazedPowerTread") and keeps its zombie: re-found by where it stands after a reload, made
+     inert again, and if it has gone (streamed out and lost) an identical one is put back. Every client pins the
+     ones near its players each frame (DP_TreadWheel). Off, the sprite wheel of 0.10.0 is used, and wheels loaded
+     either way keep the way they were loaded. The idea of leaving the zombie inert in the world with its own
+     animation is the one Zombie Leash & Lead (CativeiroBR, by gadinho) uses for its prisoners. ]]
+
+T.REAL_REACH = 1.0        -- tiles from the wheel's middle within which its zombie is looked for
+T.KEEP_MS = 2000          -- the authority's look at its real wheels
+T.RESPAWN_MS = 6000       -- a real wheel's zombie missing this long, with a player in RESPAWN_NEAR, is put back
+T.RESPAWN_NEAR = 30
+T.VAR = "DazedTread"      -- the animation variable (AnimSets zombie/idle and zombie-crawler/idle)
+T.TAG = "DazedPowerWheel" -- ModData mark on a wheel's zombie: the key of its wheel
+-- The way a wheel's zombie faces: the wheel's facing (the model's front, tools/blender/dz2.py treadwheel_part).
+T.FACE = { E = { 1, 0 }, S = { 0, 1 }, W = { -1, 0 }, N = { 0, -1 } }
+
+T.held = T.held or {}     -- wheel key -> { z, missing }: the authority's cache of each real wheel's zombie
+
+--- Does the real zombie option apply to a wheel loaded now? (On unless switched off.)
+function T.realOn() return P.sandbox("TreadRealZombie") ~= false end
+
+--- Is this wheel record a real zombie in the world (not the painted one)?
+function T.isReal(desc) return type(desc) == "table" and desc.real == true end
+
+function T.key(x, y, z) return tostring(x) .. "," .. tostring(y) .. "," .. tostring(z) end
+
+--- Where a wheel's zombie stands and the way it faces: x, y, z, fx, fy.
+function T.spot(wheel)
+    local sq = wheel and wheel:getSquare()
+    if not sq then return nil end
+    local f = T.FACE[P.facingOf(wheel)] or T.FACE.S
+    return sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), f[1], f[2]
+end
+
+--- The authority's list of real wheels, kept in the save (global ModData) when there is one.
+function T.registry()
+    if not T.reg then
+        local ok, md = pcall(function() return ModData and ModData.getOrCreate and ModData.getOrCreate("DazedPowerTread") end)
+        T.reg = (ok and type(md) ~= "boolean" and md) or {}
+    end
+    return T.reg
+end
+
+function T.file(x, y, z) T.registry()[T.key(x, y, z)] = { x = x, y = y, z = z } end
+function T.unfile(x, y, z)
+    local k = T.key(x, y, z)
+    T.registry()[k] = nil
+    T.held[k] = nil
+end
+
+--- The zombie standing in a real wheel: the one marked for it, else one in its clothes, within REAL_REACH of
+--  its middle and on no rope. Nil when there is none.
+function T.wheelZombie(wheel, desc)
+    local x, y, z = T.spot(wheel)
+    if not x then return nil end
+    local key = T.key(math.floor(x), math.floor(y), z)
+    local tied = {}
+    for _, l in pairs(T.leashes) do tied[l.zid] = true end
+    local cell = getCell and getCell()
+    local list = cell and try(cell, "getZombieList")
+    local best, bestD, marked = nil, math.huge, nil
+    local r2 = T.REAL_REACH * T.REAL_REACH
+    for i = 0, (list and list:size() or 0) - 1 do
+        local zb = list:get(i)
+        if zb and T.zombieAlive(zb) and math.floor(try(zb, "getZ") or -99) == z and not tied[T.zid(zb) or -1] then
+            local dx, dy = (try(zb, "getX") or 1e9) - x, (try(zb, "getY") or 1e9) - y
+            local d2 = dx * dx + dy * dy
+            if d2 <= r2 then
+                local md = try(zb, "getModData")
+                if md and md[T.TAG] == key then marked = zb break end
+                local outfit = try(zb, "getOutfitName")
+                if (not desc or not desc.outfit or outfit == desc.outfit) and d2 < bestD then best, bestD = zb, d2 end
+            end
+        end
+    end
+    local zb = marked or best
+    local md = zb and try(zb, "getModData")
+    if md then md[T.TAG] = key end
+    return zb
+end
+
+--- Make a zombie a wheel's walker (or, `on` false, a zombie again). Pinning it in place is the clients' job.
+--  Called every frame or two for a wheel near a player, so only try (a missing method answers nil, nothing throws).
+function T.harness(zb, on)
+    if not zb then return end
+    try(zb, "setUseless", on)
+    try(zb, "setNoTeeth", on)
+    try(zb, "setVariable", T.VAR, on)
+    if on then
+        try(zb, "setTarget", nil)
+    else
+        local md = try(zb, "getModData")
+        if md then md[T.TAG] = nil end
+    end
+end
+
+--- Put a zombie at x, y without walking it there.
+function T.place(zb, x, y)
+    try(zb, "setX", x); try(zb, "setY", y)
+    try(zb, "setLastX", x); try(zb, "setLastY", y)
+    try(zb, "setNextX", x); try(zb, "setNextY", y)
+end
+
+--- A zombie like the one a wheel held, put back in the drum. Returns it or nil.
+local function spawnIn(wheel, desc)
+    local x, y, z = T.spot(wheel)
+    if not (x and addZombiesInOutfit) then return nil end
+    local ok, list = pcall(addZombiesInOutfit, math.floor(x), math.floor(y), z, 1, desc and desc.outfit or nil,
+                           (desc and desc.female) and 100 or 0, desc and desc.crawler == true, false, false,
+                           false, false, false, 1.0)
+    local zb = ok and list and list.size and list:size() > 0 and list:get(0) or nil
+    if zb then
+        T.place(zb, x, y)
+        local md = try(zb, "getModData")
+        if md then md[T.TAG] = T.key(math.floor(x), math.floor(y), z) end
+        T.harness(zb, true)
+    end
+    return zb
+end
+
+--- The authority's look at every real wheel: its zombie found and kept inert, or put back if it has gone.
+--  A wheel that is gone or no longer holds a real zombie leaves the list (and its zombie, if found, is let go).
+function T.keep(now)
+    now = now or nowMs()
+    local reg = T.registry()
+    local drop = {}
+    for k, e in pairs(reg) do
+        local sq = DazedCore.Util.squareAt(e.x, e.y, e.z)
+        if sq then                                          -- not loaded: left as it is until it is
+            local wheel = wheelAt(e.x, e.y, e.z)
+            local desc = wheel and T.occupant(wheel)
+            local h = T.held[k] or {}
+            T.held[k] = h
+            if not T.isReal(desc) then
+                drop[#drop + 1] = k
+                if h.z and T.zombieAlive(h.z) then T.harness(h.z, false) end
+            else
+                if not (h.z and T.zombieAlive(h.z)) then h.z = T.wheelZombie(wheel, desc) end
+                if h.z then
+                    h.missing = nil
+                    if T.isDown(h.z) then T.standUp(h.z) end     -- knocked over in the drum: back on its feet
+                    T.harness(h.z, true)
+                else
+                    h.missing = h.missing or now
+                    local px, py = sq:getX() + 0.5, sq:getY() + 0.5
+                    local near = false
+                    for _, p in ipairs(DazedCore.Util.players()) do
+                        local dx, dy = (try(p, "getX") or 1e9) - px, (try(p, "getY") or 1e9) - py
+                        if dx * dx + dy * dy <= T.RESPAWN_NEAR * T.RESPAWN_NEAR then near = true break end
+                    end
+                    if near and now - h.missing >= T.RESPAWN_MS then
+                        h.z, h.missing = spawnIn(wheel, desc), nil
+                        print("DazedPower: tread wheel " .. k .. " lost its zombie, put back: " .. tostring(h.z ~= nil))
+                    end
+                end
+            end
+        end
+    end
+    for _, k in ipairs(drop) do reg[k] = nil T.held[k] = nil end
+end
+
+--- A real wheel's zombie killed: the wheel is empty (its record goes, nothing is put back).
+function T.onZombieDead(zb)
+    if not zb then return end
+    local md = try(zb, "getModData")
+    local key = md and md[T.TAG]
+    for k, h in pairs(T.held) do
+        if h.z == zb then key = k break end
+    end
+    local e = key and T.registry()[key]
+    if not e then return end
+    local wheel = wheelAt(e.x, e.y, e.z)
+    if wheel and T.isReal(T.occupant(wheel)) then clearWheel(wheel) else T.unfile(e.x, e.y, e.z) end
+end
+
+if not T.keepFiled and DazedCore.Tick and not (isClient and isClient()) then
+    T.keepFiled = true
+    DazedCore.Tick.every("DazedPower.treadKeep", T.KEEP_MS, function() pcall(T.keep) end)
+    if Events and Events.OnZombieDead then Events.OnZombieDead.Add(function(zb) pcall(T.onZombieDead, zb) end) end
 end
 
 --- The commands a client sends. Each re-checks everything against the world as it is.
@@ -315,14 +504,49 @@ function T.COMMANDS.treadLoad(player, args)
     local d = P.data(wheel)
     d.zombie = T.describeZombie(zb)
     d.zombie.rope = l.rope
-    pcall(function()
-        zb:removeFromWorld()
-        zb:removeFromSquare()
-    end)
-    P.setState(wheel, "walking")
+    local real = T.realOn()
+    if real then
+        -- It stays in the world, pinned in the drum and walking in place; the wheel shows its plain drum.
+        d.zombie.real = true
+        local x, y, z = T.spot(wheel)
+        T.standUp(zb)
+        T.place(zb, x, y)
+        local md = try(zb, "getModData")
+        if md then md[T.TAG] = T.key(sq:getX(), sq:getY(), sq:getZ()) end
+        T.harness(zb, true)
+        T.file(sq:getX(), sq:getY(), sq:getZ())
+        T.held[T.key(sq:getX(), sq:getY(), sq:getZ())] = { z = zb }
+        P.setState(wheel, "empty")
+    else
+        pcall(function()
+            zb:removeFromWorld()
+            zb:removeFromSquare()
+        end)
+        P.setState(wheel, "walking")
+    end
     wheel:transmitModData()
     T.leashes[pid] = nil
-    DazedCore.Net.broadcast(T.MOD, "treadLeashEnd", { pid = pid, zid = l.zid, why = "loaded" })
+    DazedCore.Net.broadcast(T.MOD, "treadLeashEnd", { pid = pid, zid = l.zid, why = "loaded", real = real or nil })
+end
+
+--- A real wheel's zombie, for release or putting down: the authority's own, else found where it stands.
+local function realZombie(wheel, desc)
+    local sq = wheel:getSquare()
+    local h = T.held[T.key(sq:getX(), sq:getY(), sq:getZ())]
+    if h and h.z and T.zombieAlive(h.z) then return h.z end
+    return T.wheelZombie(wheel, desc)
+end
+
+--- Move a real wheel's zombie out onto a free square beside the wheel (the one spawnBeside would use).
+local function stepOut(wheel, zb)
+    local sq = wheel:getSquare()
+    for _, off in ipairs({ { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } }) do
+        local s = DazedCore.Util.squareAt(sq:getX() + off[1], sq:getY() + off[2], sq:getZ())
+        if s and try(s, "isFree", false) and not try(sq, "isBlockedTo", s) then
+            T.place(zb, s:getX() + 0.5, s:getY() + 0.5)
+            return
+        end
+    end
 end
 
 function T.COMMANDS.treadRelease(player, args)
@@ -331,8 +555,14 @@ function T.COMMANDS.treadRelease(player, args)
     if not desc then return end
     local sq = wheel:getSquare()
     if not near(player, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), T.LOAD_REACH + 0.5) then return end
+    local zb = T.isReal(desc) and realZombie(wheel, desc) or nil
     clearWheel(wheel)
-    local zb = spawnBeside(wheel, desc, false)
+    if zb then
+        T.harness(zb, false)
+        stepOut(wheel, zb)
+    else
+        zb = spawnBeside(wheel, desc, false)
+    end
     if zb then pcall(function() zb:setTarget(player) end) end
     note(player, "IGUI_DazedPower_TreadReleased", true)
 end
@@ -343,8 +573,14 @@ function T.COMMANDS.treadPutDown(player, args)
     if not desc then return end
     local sq = wheel:getSquare()
     if not near(player, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), T.LOAD_REACH + 0.5) then return end
+    local zb = T.isReal(desc) and realZombie(wheel, desc) or nil
     clearWheel(wheel)
-    local zb = spawnBeside(wheel, desc, true)
+    if zb then
+        T.harness(zb, false)
+        stepOut(wheel, zb)
+    else
+        zb = spawnBeside(wheel, desc, true)
+    end
     if zb then
         if not pcall(function() zb:Kill(player) end) then pcall(function() zb:setHealth(0) end) end
     end
@@ -414,7 +650,10 @@ local function onLeashEnd(args)
     T.found[args.zid] = nil
     T.logged[args.zid] = nil
     local leader = T.playerFor(args.pid)
-    if args.why == "loaded" then
+    if args.why == "loaded" and args.real then
+        -- It walks the wheel now: DP_TreadWheel pins it there and keeps it inert.
+        if zb then T.harness(zb, true) end
+    elseif args.why == "loaded" then
         -- Gone on the authority already; this side's copy goes too, in case removal had not reached it.
         if zb and not try(zb, "isRemoteZombie") then pcall(function() zb:removeFromWorld() zb:removeFromSquare() end) end
     elseif zb then

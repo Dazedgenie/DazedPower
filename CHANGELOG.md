@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.17.0 (2026-10-18)
+- **The real zombie walks the treadwheel.** The zombie you put on a wheel no longer turns into a painted one: it stays in the world, held in the middle of the drum, facing the wheel's front and walking in place on the game's own zombie walk (a crawler crawls). It cannot bite or wander off, and the wheel makes power exactly as before. The drum shows without the painted zombie and stands still while the real one walks it.
+  - Kill it (or put it down from the menu) and the wheel is empty. Release it and that same zombie is let loose beside the wheel and comes for you.
+  - Across saves it is found again where it stands. If it is lost (the game dropped it while the area was unloaded), an identical one is put back in the drum after a few seconds, once someone is within 30 tiles.
+  - New sandbox option **Real zombie on the treadwheel** (on). Off brings back the painted zombie of 0.10.0. Each wheel keeps the way it was loaded, so wheels already turning in a save stay painted until their zombie is released and put back.
+  - Leaving the zombie inert in the world with an animation of its own is the approach *Zombie Leash & Lead* (CativeiroBR, by gadinho) uses for its prisoners.
+- Lua tests cover loading, the pin, finding it after a reload, putting a lost one back, killing, release and put down; not yet run in game.
+
 ## 0.16.0 (2026-10-18)
 - Fix: **a tied zombie really follows you now.** 0.15.1 never moved it in single player: the game reports every zombie as "remote" there, so the rope code thought another machine was in charge of it and left it alone (your console showed `drives`/`owned=false`). The leader's own machine now always walks it.
 - **It walks on its own legs**, the way the *Zombie Leash & Lead* mod (CativeiroBR, by gadinho) does it: close to you it stands still and harmless; once you are 2 tiles off it is woken and set on you, so the game's own walking brings it along, and it is made still again before it is close enough to lunge. It never bites (no teeth) while tied. If the game does not walk it (1.5 s without moving), the rope steps it after you instead, and a taut rope still pulls it, never through walls.

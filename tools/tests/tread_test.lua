@@ -63,7 +63,7 @@ return function(check, E)
     function Z:isKnockedDown() return false end
     function Z:isCrawling() return self.crawler == true end
     function Z:isBecomeCrawler() return false end
-    function Z:getOutfitName() return "Police" end
+    function Z:getOutfitName() return self.outfit or "Police" end
     function Z:isFemale() return true end
     function Z:isRemoteZombie() return true end      -- what single player answers (Kyle's console, 0.15.1)
     function Z:spotted(p) self.spottedBy = p end
@@ -242,7 +242,8 @@ return function(check, E)
     check(zb.useless == false and zb.target == player, "a snapped rope frees the zombie, and it comes for its leader")
     player.running = false
 
-    ------------------------------------------------------------ onto the wheel
+    ------------------------------------------------------------ onto the wheel (the sprite wheel: real zombie option off)
+    SandboxVars.DazedPower.TreadRealZombie = false
     local wsq = E.square(520, 500, 0)
     local wheel = E.object(P.sprite("treadwheel", "ground", "standard", "empty", "S"), wsq)
     local info = P.describe(wheel)
@@ -310,6 +311,115 @@ return function(check, E)
     DazedCore.Net.send(player, "DazedPower", "treadRelease", { x = 520, y = 500, z = 0 })
     check(T.occupied(wheel) and #spawned == 2, "the authority refuses a release from out of reach")
     P.data(wheel).zombie = nil
+
+    ------------------------------------------------------------ the real zombie on the wheel (0.17.0, the default)
+    SandboxVars.DazedPower.TreadRealZombie = nil
+    check(T.realOn(), "the real zombie option is on by default")
+    function Z:getModData() self.md = self.md or {} return self.md end
+    function Z:setVariable(k, v) self.vars = self.vars or {} self.vars[k] = v end
+    local face0 = Z.faceLocationF
+    function Z:faceLocationF(x, y) self.fx, self.fy = x - self.x, y - self.y end
+    local KEY = "520,500,0"
+    local function loadOne(id)
+        E.give(player, "Base.Rope", 1)
+        local z = zombie(id, 518.5, 501.5, { down = true, outfit = "Police" })
+        player.x, player.y = 518.5, 500.5
+        DP_TieZombie:new(player, id, T.ropeIn(player)):complete()
+        DazedCore.Net.send(player, "DazedPower", "treadLoad", { x = 520, y = 500, z = 0 })
+        return z
+    end
+    local zr = loadOne(20)
+    occ = T.occupant(wheel)
+    check(occ and occ.real == true and not zr.gone and T.leashOf(player) == nil,
+          "real: the wheel keeps its record and the zombie stays in the world, off the rope")
+    check(zr.x == 520.5 and zr.y == 500.5 and zr.down == false, "it is put on its feet in the middle of the drum")
+    check(zr.useless == true and zr.noTeeth == true and zr.vars and zr.vars[T.VAR] == true and zr.md[T.TAG] == KEY,
+          "inert, toothless, walking in place, marked for its wheel")
+    check(P.describe(wheel).state == "empty", "the drum shows no painted zombie")
+    check(T.registry()[KEY] ~= nil, "the authority files the wheel")
+    check(G.mayTake(player, wsq, wheel, true) == false, "a wheel with a real zombie in it cannot be picked up either")
+    DazedPower.Alternator = nil
+    src = B.internals.liveSources(rec)
+    check(src.treads[1].walking, "its record powers the wheel")
+    P.setState(wheel, "walking")
+    local getSquare0 = getSquare
+    getSquare = function(x, y, z) return E.square(x, y, z) end
+    local okE, errE = pcall(B.internals.liveEffects, { x = 520, y = 500, z = 0, dpm = rec.dpm, arrays = {} }, src, 1)
+    getSquare = getSquare0
+    check(okE, "liveEffects runs: " .. tostring(errE))
+    DazedPower.Alternator = alt0
+    check(P.describe(wheel).state == "empty", "and the bridge keeps the plain drum while it walks")
+
+    -- Every frame the client holds it in the drum, facing the wheel's front (S: +y).
+    local Wc = DazedPower.TreadWheel
+    check(Wc ~= nil, "DP_TreadWheel loaded")
+    Wc.track(wheel)
+    zr.x, zr.y, zr.useless, zr.vars[T.VAR] = 521.1, 500.9, false, false
+    Wc.frame(1e7)
+    check(zr.x == 520.5 and zr.y == 500.5 and zr.useless == true and zr.vars[T.VAR] == true and zr.fx == 0 and zr.fy == 1,
+          "pinned back each frame, facing the wheel's front")
+
+    -- A reload loses every cache: the keeper finds it again by its mark, and stands it up if it was knocked over.
+    T.held = {}
+    zr.down = true
+    T.keep(1000)
+    check(T.held[KEY] and T.held[KEY].z == zr and zr.down == false, "after a reload the keeper finds it by its mark and stands it up")
+    -- A stranger in the drum in other clothes is not taken for it.
+    zr.md[T.TAG] = nil
+    local stranger = zombie(21, 520.6, 500.4, { outfit = "Farmer" })
+    zr.gone = true
+    check(T.wheelZombie(wheel, occ) == nil, "a zombie in other clothes is not taken for the wheel's")
+    stranger.gone = true
+
+    -- Gone (lost to streaming): put back, but not at once.
+    T.held = {}
+    local n0 = #spawned
+    T.keep(2000)
+    check(#spawned == n0, "a missing zombie is not put back at once")
+    T.keep(2000 + T.RESPAWN_MS)
+    local back = spawned[#spawned]
+    check(#spawned == n0 + 1 and back.outfit == "Police" and back.x == 520.5 and back.y == 500.5 and back.useless == true
+          and back.vars[T.VAR] == true, "gone too long: one in the same clothes is put back in the drum, walking")
+    T.keep(3000 + T.RESPAWN_MS)
+    check(#spawned == n0 + 1, "and only one")
+
+    -- Killed: the wheel is empty, nothing comes back, and the client lets go of it.
+    back.dead = true
+    T.onZombieDead(back)
+    check(not T.occupied(wheel) and T.registry()[KEY] == nil, "killing it empties the wheel")
+    T.keep(9e9)
+    check(#spawned == n0 + 1, "and nothing is put back")
+
+    -- Release: the same zombie, freed, after the player; nothing spawned.
+    local zr2 = loadOne(22)
+    Wc.frame(2e7)
+    n0 = #spawned
+    DazedCore.Net.send(player, "DazedPower", "treadRelease", { x = 520, y = 500, z = 0 })
+    check(not T.occupied(wheel) and T.registry()[KEY] == nil and #spawned == n0, "released: the wheel is empty, nothing spawned")
+    check(not zr2.dead and zr2.useless == false and zr2.noTeeth == false and zr2.vars[T.VAR] == false and zr2.target == player,
+          "the real zombie is loose, has its teeth back, and comes for the player")
+    zr2.x = 521.5
+    Wc.frame(3e7)
+    check(zr2.x == 521.5 and zr2.useless == false, "and no client holds it in the drum any more")
+
+    -- Put down: the same zombie killed, the rope back.
+    local ropes = E.count(player, "Base.Rope")
+    local zr3 = loadOne(23)
+    n0 = #spawned
+    DazedCore.Net.send(player, "DazedPower", "treadPutDown", { x = 520, y = 500, z = 0 })
+    check(zr3.dead and #spawned == n0 and not T.occupied(wheel), "put down: the real zombie is killed, nothing spawned")
+    check(E.count(player, "Base.Rope") == ropes + 1, "and the rope comes back")
+
+    -- A real wheel whose zombie cannot be found is still released: one is spawned beside it as before.
+    P.data(wheel).zombie = { outfit = "Chef", real = true }
+    T.file(520, 500, 0)
+    n0 = #spawned
+    DazedCore.Net.send(player, "DazedPower", "treadRelease", { x = 520, y = 500, z = 0 })
+    check(#spawned == n0 + 1 and spawned[#spawned].target == player and T.registry()[KEY] == nil,
+          "no zombie to be found: one in its clothes is released instead")
+    SandboxVars.DazedPower.TreadRealZombie = nil
+    T.held, T.reg = {}, nil
+    Z.faceLocationF = face0
 
     getCell, getSpecificPlayer, getTimestampMs = saved.getCell, saved.getSpecificPlayer, saved.getTimestampMs
     instanceof, addZombiesInOutfit, ZombRandFloat = saved.instanceof, saved.addZombiesInOutfit, saved.ZombRandFloat
