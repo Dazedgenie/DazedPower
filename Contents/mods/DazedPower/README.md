@@ -240,6 +240,7 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   (`DPM_Treadmill`, modelled on `DPM_Pedal`), rows in `DP_TreadmillMenu`, Endurance helpers in `DPM_Stats`. The bridge folds
   treadmill watts into `pedalW` and lists them on the board. Animation nodes `DazedTreadmill{Walk,Run,Sprint}`. New sandbox
   option TreadmillWatts. Tests: `tools/tests/treadmill_test.lua`.
+- **0.19.1.** Debug generator spawns: DP_DebugSpawn registers hidden Dazed Core sets (`powerGens`, `powerGens_<kind>`, `powerGens_<kind>_<tier>`, `powerGens_<item>`) that stay off the flat list, and client DP_DebugGenMenu adds them as a submenu under Core's "Dazed debug" row.
 - **0.19.0.** The box fan: kind `fan` (ground, standard, off/on), a LATE row after the large treadwheel so nothing
   moves: `dazedpower_03_28` to `dazedpower_03_35`. A switched appliance like the heater (`A.SWITCHED`), 60 W, priority 3;
   its Dazed Climate object source is `A.fanHeat` (`A.fanEffect`: -4 when the room is >= 24 C and 1 C warmer than outside,

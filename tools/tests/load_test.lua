@@ -383,6 +383,37 @@ do
         "the debug spawn set skips the running controller and reaches the 2x2 array and the amplifier")
 end
 
+-- The generator submenu's sets: one per tiered source and tier, one per source for all three tiers, the one-tier
+-- sources, and one for the lot, none of them in Dazed debug's flat list.
+do
+    local P, G, S = DazedPower.Parts, DazedPower.DebugGens, DazedCore.DebugSpawn
+    local ok, total = G ~= nil and S ~= nil, 0
+    if ok then
+        for _, kind in ipairs(G.TIERED) do
+            local all = S.sets[G.kindId(kind)]
+            local list = all and all.items() or {}
+            if #list ~= 3 then ok = false end
+            for i, tier in ipairs(P.TIERS[kind]) do
+                local one = S.sets[G.tierId(kind, tier)]
+                local item = one and one.items()[1]
+                if not item or item ~= list[i] or not P.ITEM[kind].ground[tier] then ok = false end
+            end
+            total = total + #list
+        end
+        for _, full in ipairs(G.SINGLE) do
+            local one = S.sets[G.itemId(full)]
+            if not (one and one.items()[1] == full) then ok = false end
+            total = total + 1
+        end
+        local lot = S.sets[G.ALL] and S.sets[G.ALL].items() or {}
+        if #lot ~= total then ok = false end
+        for _, id in ipairs(S.order) do
+            if string.sub(id, 1, 9) == "powerGens" then ok = false end
+        end
+    end
+    check(ok and total == 22, "the generator debug sets cover 6 sources in 3 tiers and 4 one-tier sources, off the flat list (" .. total .. ")")
+end
+
 -- The battery rack set places every floor rack fill level itself, a square apart, with the cells to match.
 do
     local P, Seed = DazedPower.Parts, DazedPower.Seed

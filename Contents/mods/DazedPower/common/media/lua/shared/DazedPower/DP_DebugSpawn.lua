@@ -85,3 +85,58 @@ local function spawnBanks(character)
 end
 
 S.register("powerBanks", "battery rack", nil, { label = "IGUI_DazedPower_DebugBanks", place = spawnBanks })
+
+--- Every generator one at a time, for the "Spawn Dazed Power generators" submenu (client DP_DebugGenMenu): each
+--  source that comes in three tiers, by tier or all three together, then the one-tier sources, and one row for
+--  the lot. Each row is a Dazed Core set, so the authority puts the parts down through the player's own place
+--  call, but the sets stay out of Dazed debug's flat list: the submenu is the only way to them.
+DazedPower.DebugGens = DazedPower.DebugGens or {}
+local G = DazedPower.DebugGens
+G.TIERED = { "pedal", "windmill", "steam", "propane", "petrol", "woodgas" }
+G.SINGLE = { "Base.DazedWaterWheel", "Base.DazedTreadwheelLarge", "Base.DazedTreadwheel", "Base.DazedTreadmill" }
+G.ALL = "powerGens"
+G.NAME = "Dazed Power generator"
+
+function G.kindId(kind) return "powerGens_" .. kind end
+function G.tierId(kind, tier) return "powerGens_" .. kind .. "_" .. tier end
+function G.itemId(fullType) return "powerGens_" .. fullType end
+
+--- The ground item of one tiered source, or nil.
+function G.item(kind, tier)
+    local byMount = P.ITEM[kind]
+    return byMount and byMount.ground and byMount.ground[tier]
+end
+
+local function hidden(id, items)
+    S.register(id, G.NAME, items)
+    for i = #S.order, 1, -1 do
+        if S.order[i] == id then table.remove(S.order, i) end
+    end
+end
+
+local function tiersOf(kind)
+    local out = {}
+    for _, tier in ipairs(P.TIERS[kind] or {}) do
+        local item = G.item(kind, tier)
+        if item then out[#out + 1] = item end
+    end
+    return out
+end
+
+for _, kind in ipairs(G.TIERED) do
+    hidden(G.kindId(kind), function() return tiersOf(kind) end)
+    for _, tier in ipairs(P.TIERS[kind] or {}) do
+        hidden(G.tierId(kind, tier), function() return { G.item(kind, tier) } end)
+    end
+end
+for _, fullType in ipairs(G.SINGLE) do
+    hidden(G.itemId(fullType), function() return { fullType } end)
+end
+hidden(G.ALL, function()
+    local out = {}
+    for _, kind in ipairs(G.TIERED) do
+        for _, item in ipairs(tiersOf(kind)) do out[#out + 1] = item end
+    end
+    for _, fullType in ipairs(G.SINGLE) do out[#out + 1] = fullType end
+    return out
+end)

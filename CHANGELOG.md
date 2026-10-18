@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.1 (2026-10-18)
+- **Debug: spawn single generators.** Dazed debug (right-click, debug mode or staff) has a new "Spawn Dazed Power generators" submenu. Each tiered generator (pedal, windmill, steam engine, propane, petrol, wood gas) has its own submenu with a row for each tier (Makeshift, Salvaged, Workshop) and one for all three tiers. Below them are rows for the micro-hydro wheel, both zombie treadwheels and the treadmill generator, and one row spawns every generator in every tier. They are placed around you the same way as the full Dazed Power spawn.
+- Lua tests cover the new spawn sets; the menu itself is not yet tried in game.
+
 ## 0.19.0 (2026-10-18)
 - **Box fan.** A new floor appliance, wired to a controller like the space heater and switched on from its menu. Draws 60 W while it runs, Low priority by default, and goes dark when its system has no power. Built from the Dazed Power Handbook (Electricity 2): 2 electronics scrap, a small sheet metal, a wire, an electric wire and 2 screws, with a screwdriver and pliers. Found in tool and electronics stores now and then. Blender art in the Dazed Power style, off (blades) and running (a blur).
 - **With Dazed Climate** the fan pushes a hot room's air out: while it runs in a room at 24 C or more that is warmer than outside, it takes 4 off the room's heat (the room cooler takes 12, a fireplace gives 22), which settles a hot room toward 24 C on a cooler night. When it is as hot outside, or the room is not warm, it only stirs the air. Without Dazed Climate it is a load and nothing more.
