@@ -65,7 +65,8 @@ return function(check, E)
     function Z:isBecomeCrawler() return false end
     function Z:getOutfitName() return "Police" end
     function Z:isFemale() return true end
-    function Z:isRemoteZombie() return false end
+    function Z:isRemoteZombie() return true end      -- what single player answers (Kyle's console, 0.15.1)
+    function Z:spotted(p) self.spottedBy = p end
     function Z:setUseless(b) self.useless = b end
     function Z:setOnFloor(b) self.down = b end
     function Z:setNoTeeth(b) self.noTeeth = b end
@@ -149,13 +150,24 @@ return function(check, E)
     local far = T.followTo(500, 500, 510, 500, 0.1)
     check(far - 500 > 0.16, "further behind, it closes faster")
 
-    -- Tied lying down, it gets up and walks after its leader at a slack rope (no AI needed).
-    player.x, player.y = 505.0, 500.5
+    -- Tied lying down, it gets up; close to its leader it stands inert and harmless.
+    player.x, player.y = 502.5, 500.5
     zb.x, zb.y = 501.5, 500.5
     T.follow()
     check(zb.down == false, "the tied zombie is stood up")
+    check(zb.useless == true and zb.noTeeth == true and zb.target == nil, "close up it is inert, toothless and targets nobody")
+
+    -- The leader walks off: it is woken and set on them, so the game walks it (single player, where
+    -- isRemoteZombie reads true, still drives it).
+    player.x = 505.0
     T.follow()
-    check(zb.x > 501.5 and T.dist(zb, player) >= T.ROPE_LEN - 0.001, "it steps toward its leader within the rope: " .. zb.x)
+    check(zb.useless == false and zb.target == player and zb.spottedBy == player and zb.noTeeth == true,
+          "further off it is woken, set on its leader and still has no teeth")
+    check((zb.pathed or 0) >= 1, "and asked to path after them")
+    -- This mock never walks by itself: after STUCK_MS the rope steps it instead.
+    local x1 = zb.x
+    for _ = 1, 4 do T.follow() end
+    check(zb.x > x1, "a zombie the game does not walk is stepped by the rope: " .. zb.x)
     for _ = 1, 40 do T.follow() end
     check(math.abs(T.dist(zb, player) - T.ROPE_LEN) < 0.01, "and stops at the rope's length: " .. T.dist(zb, player))
     isGamePaused = function() return true end
@@ -164,11 +176,49 @@ return function(check, E)
     T.follow()
     check(zb.x == px, "nothing steps while single player is paused")
     isGamePaused = nil
+    -- The visible rope: an invisible, hooked rat led by the player and held at the zombie's neck.
+    local R = DazedPower.TreadRope
+    if R then
+        local made = {}
+        local attached = {}
+        player.getAttachedAnimals = function() return { add = function(_, a) attached[#attached + 1] = a end } end
+        player.removeAttachedAnimal = function(_, a) a.detached = true end
+        local IA0 = IsoAnimal
+        IsoAnimal = { new = function(_, x, y, z, kind)
+            local a = { kind = kind, md = {}, data = {} }
+            function a:setOnHook(b) self.hook = b end
+            function a:getModData() return self.md end
+            function a:getData() local o = self return { setAttachedPlayer = function(_, p) o.leader = p end, setAttachedTree = function() end } end
+            function a:setX(v) self.x = v end
+            function a:setY(v) self.y = v end
+            function a:setZ(v) self.z = v end
+            function a:removeFromWorld() self.gone = true end
+            made[#made + 1] = a
+            return a
+        end }
+        R.frame()
+        local a = made[1]
+        check(a and a.kind == "rat" and a.hook == true and a.md[R.TAG] and attached[1] == a and a.leader == player,
+              "leading, a hooked, marked rat is led by the player")
+        check(a and math.abs(a.x - zb.x) < 0.05 and math.abs(a.z - (zb.z + R.NECK)) < 1e-6, "held at the zombie's neck")
+        R.frame()
+        check(#made == 1, "one rat per leash, not one a frame")
+        local saved = T.leashes[0]
+        T.leashes[0] = nil
+        R.frame()
+        check(a.gone and a.detached and R.ghosts[0] == nil, "no leash, no rat")
+        T.leashes[0] = saved
+        IsoAnimal = IA0
+        player.getAttachedAnimals, player.removeAttachedAnimal = nil, nil
+    end
+    -- Walking up to it makes it inert again.
+    player.x = zb.x + 1.0
+    T.follow()
+    check(zb.useless == true and zb.target == nil, "with its leader close again it is inert")
 
     zb.down = false
     player.x, player.y = 510.5, 500.5
     T.follow()
-    check(zb.useless == true and zb.noTeeth == true and zb.target == nil, "a tied zombie does not attack or choose a target")
     check((zb.pathed or 0) >= 1, "it is asked to walk after its leader")
     check(math.abs(T.dist(zb, player) - T.TAUT) < 0.01, "a taut rope pulls it along: " .. T.dist(zb, player))
     check(T.leashOf(player) ~= nil, "walking, the rope holds")

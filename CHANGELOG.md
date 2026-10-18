@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.0 (2026-10-18)
+- Fix: **a tied zombie really follows you now.** 0.15.1 never moved it in single player: the game reports every zombie as "remote" there, so the rope code thought another machine was in charge of it and left it alone (your console showed `drives`/`owned=false`). The leader's own machine now always walks it.
+- **It walks on its own legs**, the way the *Zombie Leash & Lead* mod (CativeiroBR, by gadinho) does it: close to you it stands still and harmless; once you are 2 tiles off it is woken and set on you, so the game's own walking brings it along, and it is made still again before it is close enough to lunge. It never bites (no teeth) while tied. If the game does not walk it (1.5 s without moving), the rope steps it after you instead, and a taut rope still pulls it, never through walls.
+- **You can see the rope.** The game only draws a rope from a player to an animal they lead, so you lead an invisible rat held at the zombie's neck, and the game's own rope runs from your hand to the zombie (the same trick Zombie Leash & Lead uses). Visual only, on your own screen; a stray rat left by a crash is cleared when you come near it.
+- A snapped rope or letting go now turns the zombie on you in single player too (that was skipped for the same "remote" reason).
+- Lua tests cover the walk/still switching, the stuck fallback, pause and the rope rat; not yet run in game.
+
 ## 0.15.2 (2026-10-17)
 - Works with the new **Dazed Occupations** mod when it is installed (nothing changes without it):
   - **Grid Reader** (the Power Plant Operator's free trait): the charge board shows exact watts and watt-hours ("12345.6 W") instead of rounded ones ("12.3 kW").

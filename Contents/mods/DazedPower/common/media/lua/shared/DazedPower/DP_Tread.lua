@@ -3,8 +3,9 @@
      1. Knock a zombie down (a shove, a hit, the electric fence) and, while it is on the floor, tie a rope
         round it (DP_TieZombie, a short timed action that fails if it gets up first). The rope is used up.
      2. Walk it home. The tied zombie is made "useless" (it does not attack) and follows the leader on the
-        rope: it is stood up, and stepped after them at a shamble each frame (a "useless" zombie may not walk on
-        its own), faster the further behind it falls, never through a wall or a fence. Running or sprinting with the rope taut can snap it, and so can the zombie being
+        rope: it is stood up and walks after them on its own legs (woken when the leader is a couple of
+        tiles off, made inert again close up, the way the Zombie Leash & Lead mod by gadinho does it), and
+        when the rope goes taut it is pulled along, never through a wall or a fence. Running or sprinting with the rope taut can snap it, and so can the zombie being
         held back more than SNAP_DIST tiles (stuck behind a fence, a door shut on it). A snapped rope, or
         letting go, frees the zombie and it turns on whoever held it.
      3. Put it on a Zombie Treadwheel within LOAD_REACH tiles. The zombie leaves the world and becomes data on
@@ -49,6 +50,10 @@ T.LOST_MS = 3000          -- a tied zombie nobody can find for this long has gon
 T.WALK_SPEED = 1.6        -- tiles a second a tied zombie shambles after its leader when the rope is slack-ish
 T.CATCHUP = 3.0           -- and how hard it closes a longer gap (fraction of the excess per second)
 T.STEP_MAX_MS = 100       -- a frame longer than this (a hitch, a pause) steps no further than this one
+T.WALK_ON = 2.0           -- tiles: further than this from its leader, a tied zombie is woken to walk after them
+T.WALK_OFF = 1.3          -- closer than this it is made inert again (before it is near enough to lunge)
+T.STUCK_MS = 1500         -- woken this long without moving STUCK_MOVE tiles, the rope steps it instead
+T.STUCK_MOVE = 0.3
 
 -- pid -> { pid, zid, rope, x, y, z }: the authority's truth, and each client's mirror of it.
 T.leashes = T.leashes or {}
@@ -390,7 +395,7 @@ function T.free(zb, toward)
     -- Clear the flags even on a remote zombie: this client may have set them while it owned it.
     pcall(function() zb:setUseless(false) end)
     pcall(function() zb:setNoTeeth(false) end)
-    if toward and not try(zb, "isRemoteZombie") then pcall(function() zb:setTarget(toward) end) end
+    if toward and (not mp() or not try(zb, "isRemoteZombie")) then pcall(function() zb:setTarget(toward) end) end
 end
 
 T.logged = T.logged or {}     -- zid -> true once the follow loop has reported a leash to the console
@@ -499,6 +504,46 @@ end
 
 T.lastCheck, T.lastPath, T.lastStep = T.lastCheck or {}, T.lastPath or {}, T.lastStep or {}
 
+--- One frame of walking a tied zombie after its leader. A "useless" zombie stands inert and cannot bite,
+--  so close to the leader it is made useless; once the leader is WALK_ON away it is woken and set on the
+--  leader, and the game's own walking brings it along until it is back within WALK_OFF. It never bites
+--  (no teeth). Should the game not walk it (STUCK_MS without moving), the rope steps it instead. A taut
+--  rope always pulls, never through a wall. Nothing moves while single player is paused.
+function T.drive(l, pid, zb, leader, now)
+    pcall(function() zb:setNoTeeth(true) end)
+    if not l.stood then l.stood = true T.standUp(zb) end
+    local d = T.dist(zb, leader)
+    if d > T.WALK_ON then l.walking = true elseif d < T.WALK_OFF then l.walking = false end
+    local dt = math.min(now - (T.lastStep[pid] or now), T.STEP_MAX_MS) / 1000
+    T.lastStep[pid] = now
+    local zx, zy = zb:getX(), zb:getY()
+    if l.walking then
+        pcall(function() zb:setUseless(false) end)
+        pcall(function() zb:setTarget(leader) end)
+        pcall(function() zb:spotted(leader, true) end)
+        if not T.lastPath[pid] or now - T.lastPath[pid] >= T.PATH_MS then
+            T.lastPath[pid] = now
+            pcall(function() zb:pathToLocationF(leader:getX(), leader:getY(), leader:getZ()) end)
+        end
+        if not l.moveAt then
+            l.moveAt, l.mx, l.my = now, zx, zy
+        elseif (zx - l.mx) * (zx - l.mx) + (zy - l.my) * (zy - l.my) >= T.STUCK_MOVE * T.STUCK_MOVE then
+            l.moveAt, l.mx, l.my = now, zx, zy
+        elseif now - l.moveAt >= T.STUCK_MS then
+            l.stuck = true                                  -- the game is not walking it: the rope does
+        end
+        if l.stuck and not paused() then
+            local nx, ny = T.followTo(zx, zy, leader:getX(), leader:getY(), dt)
+            if nx then pcall(stepTo, zb, nx, ny) end
+        end
+    else
+        pcall(function() zb:setUseless(true) zb:setTarget(nil) end)
+        l.moveAt = nil
+        pcall(function() zb:faceLocationF(leader:getX(), leader:getY()) end)
+    end
+    if not paused() and T.dist(zb, leader) > T.TAUT then pcall(pull, zb, leader) end
+end
+
 --- One frame of every leash this machine can see.
 function T.follow()
     if isServer and isServer() then return end            -- a dedicated server moves nobody
@@ -509,33 +554,16 @@ function T.follow()
     for pid, l in pairs(T.leashes) do
         local leader = T.playerFor(pid)
         local zb = zombieOf(l, now, leader)
-        local owned = zb ~= nil and not try(zb, "isRemoteZombie")
+        -- The leader's own machine walks the zombie (as Zombie Leash & Lead does): in single player that is
+        -- this machine. isRemoteZombie is no guide here, it reads true in single player.
+        local drives = zb ~= nil and leader ~= nil and (not mp() or try(leader, "isLocalPlayer") == true)
         if leader and zb and not T.logged[l.zid] then
             T.logged[l.zid] = true
-            print(string.format("DazedPower: tread leash %s found, owned=%s down=%s floor=%s crawl=%s d=%.1f",
-                tostring(l.zid), tostring(owned), tostring(T.isDown(zb)), tostring(try(zb, "isOnFloor")),
+            print(string.format("DazedPower: tread leash %s found, drives=%s down=%s floor=%s crawl=%s d=%.1f",
+                tostring(l.zid), tostring(drives), tostring(T.isDown(zb)), tostring(try(zb, "isOnFloor")),
                 tostring(try(zb, "isCrawling")), T.dist(zb, leader)))
         end
-        if leader and zb and owned then
-            -- Tied: it does not bite, it does not choose its own target, and it walks after its leader.
-            pcall(function() zb:setUseless(true) zb:setNoTeeth(true) zb:setTarget(nil) end)
-            if not l.stood then l.stood = true T.standUp(zb) end
-            local d = T.dist(zb, leader)
-            if d > T.ROPE_LEN and (not T.lastPath[pid] or now - T.lastPath[pid] >= T.PATH_MS) then
-                T.lastPath[pid] = now
-                pcall(function() zb:pathToLocationF(leader:getX(), leader:getY(), leader:getZ()) end)
-            end
-            -- A "useless" zombie may not walk on its own, so the rope walks it: a step a frame, never
-            -- through a wall. Nothing while single player is paused.
-            local dt = math.min(now - (T.lastStep[pid] or now), T.STEP_MAX_MS) / 1000
-            T.lastStep[pid] = now
-            if not paused() then
-                local nx, ny = T.followTo(zb:getX(), zb:getY(), leader:getX(), leader:getY(), dt)
-                if nx then pcall(stepTo, zb, nx, ny) end
-                if T.dist(zb, leader) > T.TAUT then pcall(pull, zb, leader) end
-            end
-            pcall(function() zb:faceLocationF(leader:getX(), leader:getY()) end)
-        end
+        if drives then T.drive(l, pid, zb, leader, now) end
         -- The leader's own client reads the rope and asks the authority to end the leash.
         if leader and try(leader, "isLocalPlayer") and (not T.lastCheck[pid] or now - T.lastCheck[pid] >= T.CHECK_MS) then
             T.lastCheck[pid] = now
