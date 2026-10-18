@@ -12,8 +12,6 @@ description=[tr][td][b]Game version[/b][/td][td]Build 42 only (42.0+)[/td][/tr]
 description=[tr][td][b]Requires[/b][/td][td][b]Dazed Core 1.9.0 or newer[/b] (subscribe to it too)[/td][/tr]
 description=[tr][td][b]Multiplayer[/b][/td][td]Built for it, not yet tested on a dedicated server[/td][/tr]
 description=[tr][td][b]Add mid-save[/b][/td][td]Yes. Saves from Off-Grid: Solar Power do not carry over[/td][/tr]
-description=[tr][td][b]Works with[/b][/td][td]Dazed Plumbing, Climate, Cooking, Essentials and Electric Vehicles[/td][/tr]
-description=[tr][td][b]Mod ID[/b][/td][td]DazedPower[/td][/tr]
 description=[/table]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-first.png?v=2[/img]
@@ -34,10 +32,10 @@ description=[*][b]Windmills[/b] that turn to follow the wind, plus a windsock an
 description=[*][b]Pedal generators[/b] you sit on and ride.
 description=[*]A [b]micro-hydro wheel[/b] beside water: a steady 350 W, slower in ice.
 description=[*][b]Steam engines[/b] burn fuel and drink water.
-description=[*][b]Propane, petrol and wood gas generators[/b] start and stop on their own at the levels you set. Makeshift ones are pull-start. Wood gas runs on logs and planks, needs a few minutes to warm up and its grate cleaned of ash.
+description=[*][b]Propane, petrol and wood gas generators[/b] start and stop on their own at the levels you set. Makeshift ones are pull-start. Wood gas burns logs and planks, warms up for a few minutes and needs its ash cleaned out.
 description=[*][b]Car alternator[/b]: a parked car with its engine running feeds up to 500 W.
-description=[*][b]Treadmill generator[/b]: wire a gym treadmill to a controller, then walk, run or sprint on it. Fitness 0 to 10 makes 50 to 150 W walking, double running, 3.5 times sprinting; a sprint empties your legs.
-description=[*][b]Zombie treadwheel[/b]: knock a zombie down, tie it up with a rope, walk it home and put it in the wheel. It walks for ever: about 80 W, up to 140 W while someone stands close. Run with it on a taut rope and the rope can snap.
+description=[*][b]Treadmill generator[/b]: wire a gym treadmill to a controller and walk, run or sprint on it. Fitness 0 to 10 makes 50 to 150 W walking, double running, 3.5 times sprinting; sprinting tires you.
+description=[*][b]Zombie treadwheel[/b]: knock a zombie down, tie it with a rope (you see the rope), lead it home and put it in the wheel, where the real zombie walks for ever: about 80 W, 140 W while someone stands close. Running on a taut rope can snap it.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-store.png?v=2[/img]
@@ -48,7 +46,7 @@ description=[*][b]Charge controllers[/b]: Makeshift manages 8 parts, Workshop 24
 description=[*][b]Load priority[/b]: Essential, Normal or Low per machine. As the batteries run down, Low is cut first.
 description=[/list]
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/board.png?v=2[/img]
-description=Right-click the controller, [b]System monitor[/b]: the analog charge board shows sources and load on two dials, how long the bank will last at this draw, every cell, today's harvest, every circuit, the main isolator and your generators.
+description=Right-click the controller, [b]System monitor[/b]: the analog charge board shows sources and load on two dials, how long the bank lasts at this draw, every cell, today's harvest, every circuit, the main isolator and your generators.
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-gear.png?v=2[/img]
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/gear.png?v=2[/img]
@@ -82,14 +80,13 @@ description=[*][b]Electric Vehicles[/b]: charge homemade EVs from your banks.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-sandbox.png?v=2[/img]
-description=16 options, from array output and battery wear to lightning, cable cost and found solar gear. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
+description=18 options, from array output and battery wear to lightning, cable cost, found solar gear and the treadwheel. Or pick one [b]preset[/b] (Easy, Standard, Realistic, Hardcore) on the Dazed Core page to set them all at once.
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-compat.png?v=2[/img]
 description=[list]
-description=[*]Build 42 only.
 description=[*]Do not run it alongside Off-Grid: Solar Power; Dazed Power replaces it.
-description=[*][b]Dazed Dank[/b] (0.57 and up, with Dazed Core 1.8.4): grow lights, grow room fans, heaters, ACs and humidifiers, hydro and drip pumps and the drying fan are Power loads. Cable one to a controller or transformer and it is billed on the LOADS page, shows in Load Priority (Grow lights, Fans, Hydro pumps, Grow climate) and goes dark when it is cut. Dank gear takes no controller slot. Gear you do not cable keeps running off a lit square, free, as before.
-description=[*]Multiplayer has not been tested on a dedicated server yet. If something desyncs, please tell me.
+description=[*][b]Dazed Dank[/b] (0.57+, Core 1.8.4+): grow lights, fans, heaters, ACs, humidifiers, pumps and the drying fan cabled to a controller or transformer are Power loads: billed on the LOADS page, in Load Priority (Grow lights, Fans, Hydro pumps, Grow climate), dark when cut, no controller slot. Uncabled gear still runs free off a lit square.
+description=[*]If something desyncs in multiplayer, please tell me.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-help.png?v=2[/img]
@@ -98,11 +95,11 @@ description=
 description=[hr][/hr]
 description=
 description=[h2]The Dazed suite[/h2]
-description=[b]Dazed Core[/b] · [b]Dazed Power: Electric Vehicles[/b] · [b]Dazed Plumbing[/b] · [b]Dazed Dank[/b] · [b]Dazed Dank: Garden Crops[/b] · [b]Dazed Climate[/b] · [b]Dazed Butchery[/b] · [b]Dazed Cooking[/b] · [b]Dazed Essentials[/b]
+description=[b]Dazed[/b] Core · Power: Electric Vehicles · Plumbing · Dank · Dank: Garden Crops · Climate · Butchery · Cooking · Essentials
 description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.10.0[/i]
+description=[i]Mod ID: DazedPower · Version 0.17.0[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=unlisted
