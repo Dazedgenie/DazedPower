@@ -1,5 +1,5 @@
---[[ DazedPower -- the electric fence, the room cooler and the space heater: the rules both sides share.
-     All three are wired like the charger bench, and the server (DP_ApplianceTick) and the menus apply the same answers. ]]
+--[[ DazedPower -- the electric fence, the room cooler, the space heater and the box fan: the rules both sides share.
+     All four are wired like the charger bench, and the server (DP_ApplianceTick) and the menus apply the same answers. ]]
 
 require "TimedActions/ISBaseTimedAction"
 require "DazedPower/DP_Parts"
@@ -27,6 +27,12 @@ A.COOLER_MAX_HOURS = 0.5      -- the longest gap one pass credits, so a long unl
 A.HEATER_W = 1500             -- the space heater's draw while it runs
 A.HEATER_HEAT = 18            -- what a running heater gives its room, in C-squares per hour (a lit fireplace is 22)
 A.COOLER_HEAT = -12           -- what a running cooler takes out of its room's air
+A.FAN_W = 60                  -- the box fan's draw while it runs
+A.FAN_HEAT = -4               -- a running fan pushing a warm room's air out to cooler air outside
+A.FAN_WARM = 24               -- the fan only moves heat when its room is at least this warm (C)...
+A.FAN_MARGIN = 1              -- ...and this much warmer than outside; otherwise it only stirs the air
+-- The parts with their own on/off switch: they start switched off.
+A.SWITCHED = { heater = true, fan = true }
 
 --------------------------------------------------------------- power gate
 
@@ -53,9 +59,9 @@ function A.systemData(obj)
     return P.data(ctrl), nil, ctrl
 end
 
---- Is this appliance powered right now (a heater also needs its own switch on)? Returns live and, when not, the reason key.
+--- Is this appliance powered right now (a heater or fan also needs its own switch on)? Returns live and, when not, the reason key.
 function A.status(obj, kind)
-    if kind == "heater" and not A.switchedOn(obj and P.data(obj)) then return false, "IGUI_DazedPower_HeaterSwitchedOff" end
+    if A.SWITCHED[kind] and not A.switchedOn(obj and P.data(obj)) then return false, "IGUI_DazedPower_HeaterSwitchedOff" end
     local cd, why = A.systemData(obj)
     if not cd then return false, why end
     return A.gate(cd, kind)
@@ -152,7 +158,7 @@ end
 
 --------------------------------------------------------------- space heater
 
---- Whether a heater's own switch is on; a new one starts switched off.
+--- Whether a heater's or fan's own switch is on; a new one starts switched off.
 function A.switchedOn(d)
     return type(d) == "table" and d.heatOn == true
 end
@@ -225,7 +231,31 @@ function A.outsideCoolerCools(info)
     return false
 end
 
---- Dazed Climate's object sources for the heater and the cooler, as it takes them.
+--------------------------------------------------------------- box fan
+
+--- What a fan does to its room's air at room temperature `roomT` with `outT` outside (C), running or not.
+--  It moves heat only out of a warm room into cooler air; anything else is a breeze and no more.
+function A.fanEffect(live, roomT, outT)
+    if live ~= true or type(roomT) ~= "number" or type(outT) ~= "number" then return 0 end
+    if roomT < A.FAN_WARM or roomT < outT + A.FAN_MARGIN then return 0 end
+    return A.FAN_HEAT
+end
+
+--- A running fan's share of its room's heat, read from Dazed Climate's own room temperature and outdoor curve.
+function A.fanHeat(o)
+    local d = rawData(o)
+    if type(d) ~= "table" or d.live ~= true then return 0 end
+    local DCl = DazedClimate
+    local Rm = DCl and DCl.Rooms
+    if not (Rm and type(Rm.roomTemp) == "function" and type(DCl.outdoorNow) == "function") then return 0 end
+    local sq = P.try(o, "getSquare")
+    local key = A.roomKey(sq and P.try(sq, "getRoom"))
+    local ok1, roomT = pcall(Rm.roomTemp, key)
+    local ok2, outT = pcall(DCl.outdoorNow)
+    return A.fanEffect(true, ok1 and roomT or nil, ok2 and outT or nil)
+end
+
+--- Dazed Climate's object sources for the heater, the cooler and the fan, as it takes them.
 function A.climateSources()
     local out = {}
     for _, kind in ipairs({ "heater", "cooler" }) do
@@ -236,10 +266,11 @@ function A.climateSources()
     end
     -- Its cold storage asks the cooler whether it is already keeping the food cold.
     out[2].cools = function(o) return A.coolerKeepsCold(o) end
+    out[3] = { match = function(o) return P.partOf(o) == "fan" end, heat = A.fanHeat }
     return out
 end
 
---- Have Dazed Climate read the rooms around a heater or cooler again now, after one is placed or lifted.
+--- Have Dazed Climate read the rooms around a heater, cooler or fan again now, after one is placed or lifted.
 function A.markRoomStale(obj)
     local Rm = DazedClimate and DazedClimate.Rooms
     if not (Rm and type(Rm.info) == "table" and type(Rm.keyOf) == "function") then return end
@@ -275,10 +306,10 @@ if Events and not A.climateHooked then
     if Events.OnServerStarted then Events.OnServerStarted.Add(A.registerClimate) end
 end
 
---- Throw a heater's switch on the authority; the next controller tick lights or darkens it. True when it changed.
+--- Throw a heater's or fan's switch on the authority; the next controller tick lights or darkens it. True when it changed.
 function A.setSwitch(obj, on)
     local info = obj and P.describe(obj)
-    if not info or info.kind ~= "heater" then return false end
+    if not info or not A.SWITCHED[info.kind] then return false end
     local d = P.data(obj)
     if A.switchedOn(d) == (on == true) then return false end
     d.heatOn = (on == true) or nil
@@ -290,7 +321,7 @@ function A.setSwitch(obj, on)
     return true
 end
 
---  The heater's switch: a moment at the heater; its completion runs on the authority.
+--  The heater's (and the fan's) switch: a moment at it; its completion runs on the authority.
 DP_HeaterSwitch = ISBaseTimedAction and ISBaseTimedAction:derive("DP_HeaterSwitch") or {}
 
 function DP_HeaterSwitch:isValid()

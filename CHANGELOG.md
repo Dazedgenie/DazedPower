@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.0 (2026-10-18)
+- **Box fan.** A new floor appliance, wired to a controller like the space heater and switched on from its menu. Draws 60 W while it runs, Low priority by default, and goes dark when its system has no power. Built from the Dazed Power Handbook (Electricity 2): 2 electronics scrap, a small sheet metal, a wire, an electric wire and 2 screws, with a screwdriver and pliers. Found in tool and electronics stores now and then. Blender art in the Dazed Power style, off (blades) and running (a blur).
+- **With Dazed Climate** the fan pushes a hot room's air out: while it runs in a room at 24 C or more that is warmer than outside, it takes 4 off the room's heat (the room cooler takes 12, a fireplace gives 22), which settles a hot room toward 24 C on a cooler night. When it is as hot outside, or the room is not warm, it only stirs the air. Without Dazed Climate it is a load and nothing more.
+- The electric space heater (0.5.0) already warms its room with Dazed Climate; nothing changed there.
+- Lua tests cover the fan's rows, item, wiring, switch, billing and its Climate heat; not yet run in game.
+
 ## 0.18.0 (2026-10-18)
 - **The zombie treadwheel is now 2x2 squares.** The old one-square drum was too small for a real zombie (its head stuck out of the top). The new **Large Zombie Treadwheel** has a drum tall enough for a grown zombie to walk upright inside, drawn in the Dazed Power style in all four facings.
   - Built from the same handbook recipe, so a handbook you already read still teaches it: 14 planks, 24 nails, 2 metal pipes, 2 electronics scrap, 2 electric wire, 4 screws, a hammer and a screwdriver (Electricity 2, Carpentry 3). Scrapping it gives back 7 planks, 10 nails, 2 pipes and an electronics scrap.

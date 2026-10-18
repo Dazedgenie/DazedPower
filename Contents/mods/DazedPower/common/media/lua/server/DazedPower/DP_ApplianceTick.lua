@@ -1,4 +1,4 @@
---[[ DazedPower -- the electric fence, the room cooler and the space heater on the authority: sprites and status each controller tick,
+--[[ DazedPower -- the electric fence, the room cooler, the space heater and the box fan on the authority: sprites and status each controller tick,
      zaps every few ticks, the cooler's food credit every ten game minutes (their watts are billed by DPM_Bridge via A.draw). ]]
 
 if isClient() then return end
@@ -21,7 +21,7 @@ local alive = P.alive
 
 -- Shared and never written: listOf runs for every controller every few ticks, so it hands this out instead of a new table.
 local EMPTY = {}
-local KINDS = { "fence", "cooler", "heater" }
+local KINDS = { "fence", "cooler", "heater", "fan" }
 
 local function listOf(rec, kind)
     return (rec and rec.dpm and rec.dpm[kind]) or EMPTY
@@ -37,7 +37,7 @@ end
 
 --------------------------------------------------------------- billing
 
---- What the wired fences, coolers and heaters draw on this controller: watts per kind while running, rated watts idle.
+--- What the wired fences, coolers, heaters and fans draw on this controller: watts per kind while running, rated watts idle.
 function A.draw(rec)
     local active, idle, total = {}, {}, 0
     for _, kind in ipairs(KINDS) do
@@ -45,7 +45,7 @@ function A.draw(rec)
             if alive(o) then
                 local d = P.data(o)
                 local w = (kind == "fence") and A.FENCE_IDLE_W or (kind == "heater") and A.HEATER_W
-                          or A.coolerWatts(d.cooled or 0)
+                          or (kind == "fan") and A.FAN_W or A.coolerWatts(d.cooled or 0)
                 if d.live == true and not (kind == "cooler" and d.noRoom) then
                     active[kind] = (active[kind] or 0) + w
                     total = total + w
@@ -62,7 +62,7 @@ end
 
 --- A.status, with the controller looked up once per system string in `cache` (sys -> { cd, why }).
 local function statusCached(o, kind, cache)
-    if kind == "heater" and not A.switchedOn(P.data(o)) then return false, "IGUI_DazedPower_HeaterSwitchedOff" end
+    if A.SWITCHED[kind] and not A.switchedOn(P.data(o)) then return false, "IGUI_DazedPower_HeaterSwitchedOff" end
     local sys = P.data(o).sys
     if type(sys) ~= "string" or sys == "" then return false, "IGUI_DazedPower_ApplLoose" end
     local e = cache[sys]

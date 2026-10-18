@@ -115,7 +115,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 263, "263 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 265, "265 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -171,7 +171,7 @@ local tw = P.spriteInfo(P.sprite("treadwheel", "xl", "standard", "walking", "N",
 check(tw and tw.piece == 4 and not tw.master and tw.state == "walking" and tw.frame == nil, "2x2 treadwheel piece 4 decoded")
 check(P.sprite("treadwheel", "ground", "standard", "walking", "S") == "dazedpower_02_269", "the one-square treadwheel keeps its sprites")
 check(P.itemFor("treadwheel", "xl", "standard") == "Base.DazedTreadwheelLarge", "the 2x2 treadwheel's item")
-check(P.spriteInfo("dazedpower_03_27") ~= nil and P.spriteInfo("dazedpower_03_28") == nil, "nothing past the sheet")
+check(P.spriteInfo("dazedpower_03_35") ~= nil and P.spriteInfo("dazedpower_03_36") == nil, "nothing past the sheet")
 check(#P.ROWS * P.COLS <= 3 * P.SHEET_TILES, "the sheet fits three tilesets")
 -- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
 local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
@@ -192,7 +192,7 @@ for n = 0, #P.ROWS * P.COLS - 1 do
     if P.indexOf(nm) ~= n or tonumber(string.match(nm, "_(%d+)$")) >= 512 then over = over + 1 end
 end
 check(over == 0, "every sprite round-trips and no tileset holds more than 512")
-check(#P.allItems() == 72, "72 items: " .. #P.allItems())
+check(#P.allItems() == 73, "73 items: " .. #P.allItems())
 check(M.wireLegal("windmill", "controller") and M.wireLegal("windmill", "windmill") and not M.wireLegal("windmill", "array"), "source wiring rules")
 check(M.wireLegal("waterpump", "transformer") and not M.wireLegal("array", "waterpump") and not M.wireLegal("vane", "controller"), "load and instrument rules")
 check(M.ctrlSpec("makeshift").nodes == 8 and M.ctrlSpec("workshop").nodes == 24, "controller node caps")

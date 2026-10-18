@@ -31,6 +31,7 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Zombie treadwheel | The **Large Zombie Treadwheel** (0.18.0): 2x2 squares, its drum tall enough for a grown zombie; one grade (Dazed Power Handbook, Electricity 2, Carpentry 3; 14 planks, 24 nails, 2 metal pipes). Wheels of the old one-square kind already standing keep working and can be scrapped, but are no longer built. Knock a zombie down, right-click it with a Rope or Sheet Rope, **Tie up the zombie** (about 3 s; it fails if it gets up first). Walk it home: it follows on the rope, is pulled along when the rope goes taut, never through a wall or fence, and does not attack while tied. Running or sprinting with the rope taut can snap it (a sheet rope sooner), a zombie held back 8 tiles always breaks free, and a snapped rope or **Let go of the rope** frees it to come for you (sandbox *Treadwheel rope can snap*). Within 3 tiles of a wheel, **Put the zombie on the treadwheel**: the zombie stays in the drum, walking in place for ever (0.17.0; kill it and the wheel is empty; sandbox *Real zombie on the treadwheel* off: it leaves the world and the wheel shows a painted one), 80 W (a crawler 40%), 140 W while anyone stands within 8 tiles, scaled by the wheel's condition; the slats wear 0.03 points an hour and are repaired like the water wheel. **Release the zombie** lets it out beside the wheel, hostile; **Put the zombie down** leaves a corpse and gives the rope back. A wheel with a zombie in it cannot be picked up. Blender art (0.11.1): the empty wheel, and a grey-green zombie walking it. |
 | Treadmill generator | The vanilla gym treadmill (W 28+29, N 30+31, E 36+37, S 38+39 of `recreational_sports_01`), wired like any source; the item (Dazed Power Handbook, Electricity 3, Metal Welding 2) puts down that tile. Right-click it: **Walk**, **Run** or **Sprint on the treadmill**. A pedal rider's watts (50 W at Fitness 0, 150 W at 10) times 1, 2 or 3.5, scaled by condition and the sandbox *Treadmill output*. Costs Fatigue every game minute (0.20, 0.35, 0.50 points); a sprint also spends 0.02 Endurance a minute and drops to a run below 0.15. One user at a time. Our data is made only when it is first wired or used. |
 | Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate it warms its room. Dazed Power Handbook, Electricity 3. |
+| Box fan | Stands on the floor; cabled and switched like the heater (0.19.0). Draws 60 W while it runs, Low priority by default. With Dazed Climate it pushes a hot room's air out (-4, in a room at 24 C or more that is warmer than outside). Dazed Power Handbook, Electricity 2. |
 
 **Wiring.** A cable costs Electric Wire by length: one per 4 tiles by default (sandbox *Tiles per Electric Wire*,
 0 = free), and cutting it gives half of what it cost back (cables from found rigs, or run while cables were free, give nothing). Running or cutting a cable while the controller is switched on can burn
@@ -64,6 +65,13 @@ faces the machine, loops without a jump, and the action finishes and does its jo
 in the palm and point sensibly? Then untick **Work animations** (options, Dazed Core page) and every one of these goes
 back to the 0.14.0 looting animation (ExamineVehicle for the sky). With a skirt or dress on, laying cable: the hem
 stays off the floor. Multiplayer: a second player sees the same animations.
+
+## Test in game (0.19.0, the box fan)
+
+Console at start: `DazedPower: ready -- 1060/1060 tiles`. Build **Box Fan** from the handbook, place it in all four
+facings: blades show while off, a blur while on. Cable it to a controller, **Switch on**: it lights only while the system
+has power and shows FAN on the LOADS page (60 W) and in Load Priority. With Dazed Climate, on a hot day in a closed room
+the room's temperature should creep down toward 24 C at night (when outside is cooler) and not move while it is hotter outside.
 
 ## Test in game (0.18.0, the large 2x2 treadwheel)
 
@@ -232,6 +240,10 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   (`DPM_Treadmill`, modelled on `DPM_Pedal`), rows in `DP_TreadmillMenu`, Endurance helpers in `DPM_Stats`. The bridge folds
   treadmill watts into `pedalW` and lists them on the board. Animation nodes `DazedTreadmill{Walk,Run,Sprint}`. New sandbox
   option TreadmillWatts. Tests: `tools/tests/treadmill_test.lua`.
+- **0.19.0.** The box fan: kind `fan` (ground, standard, off/on), a LATE row after the large treadwheel so nothing
+  moves: `dazedpower_03_28` to `dazedpower_03_35`. A switched appliance like the heater (`A.SWITCHED`), 60 W, priority 3;
+  its Dazed Climate object source is `A.fanHeat` (`A.fanEffect`: -4 when the room is >= 24 C and 1 C warmer than outside,
+  read from `Rooms.roomTemp` and `outdoorNow`). Rendered by `tools/blender/dz2.py dp:fan` (`fan_part`).
 - **0.18.0.** The large treadwheel: mount `xl` of `treadwheel`, four pieces like the XL array, its rows APPENDED after
   every older row (`dp_taxonomy.LATE`, mirrored as `P.LATE`) so nothing already in a save moves: `dazedpower_02_508` to
   `dazedpower_03_27`. Rendered by `tools/blender/dz2.py dp:treadxl` (`treadwheel_xl_part`, drum radius 1.0 with the zombie

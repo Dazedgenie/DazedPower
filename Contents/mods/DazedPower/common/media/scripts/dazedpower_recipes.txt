@@ -2289,6 +2289,50 @@ module Base
         }
     }
 
+    craftRecipe MakeDazedBoxFan
+    {
+        timedAction     = MakingElectrical,
+        time            = 400,
+        SkillRequired   = Electricity:2,
+        Tags            = AnySurfaceCraft,
+        category        = Electrical,
+        xpAward         = Electricity:15,
+        NeedToBeLearn   = true,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
+            item 1 tags[base:pliers] mode:keep flags[MayDegradeVeryLight],
+            item 2 [Base.ElectronicsScrap],
+            item 1 [Base.SmallSheetMetal],
+            item 1 [Base.Wire],
+            item 1 [Base.ElectricWire],
+            item 2 [Base.Screws],
+        }
+        outputs
+        {
+            item 1 Base.DazedBoxFan,
+        }
+    }
+
+    craftRecipe ScrapDazedBoxFan
+    {
+        timedAction     = DismantleElectrical,
+        time            = 200,
+        Tags            = AnySurfaceCraft,
+        category        = Electrical,
+        xpAward         = Electricity:5,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
+            item 1 [Base.DazedBoxFan] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.ElectronicsScrap,
+            item 1 Base.SmallSheetMetal,
+        }
+    }
+
     craftRecipe MakeDazedGearKitLow
     {
         timedAction     = MakingElectrical,

@@ -468,6 +468,7 @@
     "IGUI_DazedPower_BoardCond": "Cond {1}",
     "IGUI_DazedPower_BoardToday": "Today {1}",
     "IGUI_DazedPower_Load_heater": "HEATER",
+    "IGUI_DazedPower_Load_fan": "FAN",
     "IGUI_DazedPower_HeaterSwitchedOff": "switched off",
     "IGUI_DazedPower_GenCold": "COLD",
     "IGUI_DazedPower_GenColdFail": "too cold, it would not start",

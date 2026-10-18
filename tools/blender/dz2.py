@@ -655,6 +655,43 @@ def heater_part(state):
         point_light((0, -0.3, 0.25), 7, (1.0, 0.5, 0.2))
 
 
+def fan_part(state):
+    """A box fan standing on the floor (0.19.0): a cream plastic frame round a wire grille, five blades on the motor
+    hub that blur to a disc while it runs, the speed knob on the top corner and the cord trailing off the square."""
+    p = P(); on = state == "on"
+    body = mat("#cfc8b6", 0.55, 0.05, var=0.08, dirt=0.3)
+    zc, h, d = 0.31, 0.27, 0.13                       # middle of the fan, half its size, frame depth
+    for x in (-0.17, 0.17): box((0.05, 0.2, 0.035), (x, 0, 0.018), p["plastic"], bevel=0.008)
+    for zz in (zc - h, zc + h): box((2 * h + 0.03, d, 0.03), (0, 0, zz), body, bevel=0.01)
+    for x in (-h, h): box((0.03, d, 2 * h + 0.03), (x, 0, zc), body, bevel=0.01)
+    shroud = mat("#c2bba8", 0.6, 0.05, dirt=0.3)
+    for y in (-d / 2 + 0.01, d / 2 - 0.01): torus(0.235, 0.012, (0, y, zc), shroud, axis="Y", seg=40, rseg=6)
+    for cx in (-1, 1):                                # the frame's corners filled in behind the round opening
+        for cz in (-1, 1):
+            box((0.06, 0.012, 0.06), (cx * (h - 0.03), d / 2 - 0.008, zc + cz * (h - 0.03)), body, bevel=0.004)
+    wire = mat("#b9b6ae", 0.35, 0.7, dirt=0.15)
+    for y in (-d / 2 + 0.004, d / 2 - 0.004):         # front and back grilles: rings and spokes
+        for rr in (0.06, 0.11, 0.16, 0.205): torus(rr, 0.0035, (0, y, zc), wire, axis="Y", seg=36, rseg=5)
+        for a in range(0, 180, 30): box((0.45, 0.004, 0.005), (0, y, zc), wire, rot=(0, a, 0), bevel=0)
+    cyl(0.035, 0.008, (0, -d / 2 - 0.002, zc), body, axis="Y", segs=20)
+    cyl(0.055, 0.06, (0, 0.035, zc), p["steel_dark"], axis="Y", segs=20)
+    cyl(0.03, 0.03, (0, -0.012, zc), mat("#e3ddcd", 0.5, dirt=0.15), axis="Y", segs=16)
+    if on:
+        cyl(0.205, 0.006, (0, -0.018, zc), mat("#9fa6aa", 0.45, alpha=0.35, dirt=0, wear=False), axis="Y", segs=40)
+    else:
+        blade = mat("#a7b9c2", 0.4, 0.1, dirt=0.15)
+        for i in range(5):
+            a = i * 72 + 15; r = math.radians(a)
+            box((0.085, 0.005, 0.15), (math.cos(r) * 0.11, -0.018, zc + math.sin(r) * 0.11), blade, rot=(18, -a + 90, 0), bevel=0.002)
+    # the speed knob sits on the top corner; its pointer is turned to 0 when off, to the middle speed when running
+    cyl(0.026, 0.02, (0.19, 0, zc + h + 0.025), p["plastic"], segs=16)
+    box((0.006, 0.026, 0.008), (0.19, 0.0, zc + h + 0.037), mat("#e8e2cf", 0.5), rot=(0, 0, 60 if on else 0))
+    for i in range(3): box((0.004, 0.004, 0.003), (0.19 + 0.034 * math.cos(math.radians(150 - 40 * i)),
+                                                    0.034 * math.sin(math.radians(150 - 40 * i)), zc + h + 0.017), p["dark"], bevel=0)
+    box((0.14, 0.035, 0.012), (-0.04, 0, zc + h + 0.02), body, bevel=0.005)    # the carry handle
+    path([(-0.2, 0.06, 0.08), (-0.24, 0.12, 0.02), (-0.36, 0.3, 0.012), (-0.46, 0.45, 0.012)], 0.006, p["wire_k"])
+
+
 # ------------------------------------------------------------------ wood gas generators
 def gas_line(pts, r, m, flange=None):
     """A pipe run with a flange ring at each joint (salvaged / workshop lines)."""
@@ -1278,7 +1315,7 @@ def set_wear(state, kind):
 
 DP_BUILT_KINDS = {"array", "bank", "controller", "transformer", "lamp", "gauge", "rod", "bench", "hydro", "windspin",
                   "fence", "cooler", "heater", "woodgas", "treadwheel", "steamfire", "woodgasfire", "petrolrun", "propaneflame",
-                  "hydrospin", "treadspin", "windsockflap"}
+                  "hydrospin", "treadspin", "windsockflap", "fan"}
 
 
 def dp_build(kind, mount, tier, state):
@@ -1303,6 +1340,7 @@ def dp_build(kind, mount, tier, state):
     if kind == "fence": return fence_part(state)
     if kind == "cooler": return cooler_part(state)
     if kind == "heater": return heater_part(state)
+    if kind == "fan": return fan_part(state)
     if kind == "woodgas": return woodgas_part(tier, state)
     if kind == "treadwheel": return treadwheel_xl_part(state) if mount == "xl" else treadwheel_part(state)
 
@@ -1836,11 +1874,11 @@ DP_ITEMS = {("array", "ground"): "DazedArray%s", ("array", "tracker"): "DazedTra
             ("bench", "ground"): "DazedChargerBench", ("hydro", "ground"): "DazedWaterWheel",
             ("fence", "ground"): "DazedElectricFence", ("cooler", "wall"): "DazedRoomCooler", ("heater", "ground"): "DazedSpaceHeater",
             ("woodgas", "ground"): "DazedWoodGas%s", ("treadwheel", "ground"): "DazedTreadwheel",
-            ("treadwheel", "xl"): "DazedTreadwheelLarge"}
+            ("treadwheel", "xl"): "DazedTreadwheelLarge", ("fan", "ground"): "DazedBoxFan"}
 ICON_STATE = {"array": "clear", "bank": None, "controller": "on", "transformer": "on", "lamp": "off", "pedal": "off", "windmill": "still",
               "steam": "cold", "windsock": "full", "vane": "set", "propane": "off", "petrol": "off", "gauge": "full", "rod": "set",
               "bench": "off", "hydro": "still", "fence": "on", "cooler": "off", "heater": "on", "woodgas": "off",
-              "treadwheel": "empty"}
+              "treadwheel": "empty", "fan": "off"}
 # Parts whose world model makes a poor 32 px icon (too thin, or a long conduit) get a model of their own.
 ICON_MODEL = {"DazedGroundingRod": rod_icon, "DazedPowerGauge": gauge_icon_model}
 # Items with an icon but no sheet row of their own (the treadmill places vanilla's tile).

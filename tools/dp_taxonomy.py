@@ -22,7 +22,7 @@ PIECES_XL = 4                       # a 2x2 part (the XL array, the large treadw
 
 KINDS = ["array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
          "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel",
-         "steamfire", "woodgasfire", "petrolrun", "propaneflame", "hydrospin", "treadspin", "windsockflap"]
+         "steamfire", "woodgasfire", "petrolrun", "propaneflame", "hydrospin", "treadspin", "windsockflap", "fan"]
 # Sprite-only rows that show another kind in motion: the client swaps a turning windmill through these frames.
 # They have no item of their own and a saved frame reads back as the kind it animates.
 # Likewise the steam engine's firebox: flame frames of a running engine and the banked embers of an idle one (DP_SteamFx).
@@ -38,7 +38,7 @@ MOUNTS = {
     "gauge": ["wall"], "rod": ["ground"], "bench": ["ground"], "hydro": ["ground"],
     "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"], "windspin": ["ground"], "woodgas": ["ground"],
     "treadwheel": ["ground", "xl"], "steamfire": ["ground"], "woodgasfire": ["ground"], "petrolrun": ["ground"], "propaneflame": ["ground"],
-    "hydrospin": ["ground"], "treadspin": ["ground"], "windsockflap": ["ground"],
+    "hydrospin": ["ground"], "treadspin": ["ground"], "windsockflap": ["ground"], "fan": ["ground"],
 }
 THREE = ["makeshift", "salvaged", "workshop"]
 TIERS = {
@@ -48,7 +48,7 @@ TIERS = {
     "gauge": ["standard"], "rod": ["standard"], "bench": ["standard"], "hydro": ["standard"],
     "fence": ["standard"], "cooler": ["standard"], "heater": ["standard"], "windspin": THREE, "woodgas": THREE,
     "treadwheel": ["standard"], "steamfire": THREE, "woodgasfire": THREE, "petrolrun": THREE, "propaneflame": THREE,
-    "hydrospin": ["standard"], "treadspin": ["standard"], "windsockflap": ["basic"],
+    "hydrospin": ["standard"], "treadspin": ["standard"], "windsockflap": ["basic"], "fan": ["standard"],
 }
 STATES = {
     "array": ["clear", "snow", "cracked"], "controller": ["off", "on"], "transformer": ["off", "on"],
@@ -77,6 +77,8 @@ STATES = {
     "treadspin": ["walk1", "walk2", "walk3", "walk4"],
     # a windsock fluttering: the drooping (half) and the streaming (full) sock swung to either side of its plain sprite
     "windsockflap": ["half1", "half2", "full1", "full2"],
+    # the box fan (0.19.0): switched on and powered, its blades a blur
+    "fan": ["off", "on"],
 }
 BANK_CELLS = {"ground": {"makeshift": 3, "salvaged": 6, "workshop": 8}, "wall": {"makeshift": 2, "salvaged": 3, "workshop": 4}}
 
@@ -88,7 +90,8 @@ def states_for(kind, mount, tier):
 
 # Mounts added after their kind's rows were released: their rows go at the END of the sheet, in this order, so
 # nothing already standing in a save moves. The 2x2 treadwheel (0.18.0) fits a full-size zombie in its drum.
-LATE = [("treadwheel", "xl")]
+# A kind added after the LATE rows were released goes on the end too (the box fan, 0.19.0).
+LATE = [("treadwheel", "xl"), ("fan", "ground")]
 
 
 def pieces_of(kind, mount):
@@ -148,6 +151,7 @@ ITEM = {
     "heater": {"ground": {"standard": "DazedSpaceHeater"}},
     "woodgas": {"ground": {"makeshift": "DazedWoodGasMakeshift", "salvaged": "DazedWoodGasSalvaged", "workshop": "DazedWoodGasWorkshop"}},
     "treadwheel": {"ground": {"standard": "DazedTreadwheel"}, "xl": {"standard": "DazedTreadwheelLarge"}},
+    "fan": {"ground": {"standard": "DazedBoxFan"}},
 }
 # Items that are not world parts.
 OTHER_ITEMS = ["DazedPowerManual", "DazedPowerManualAdv", "DazedAlmanac", "DazedAmplifier",
@@ -171,6 +175,7 @@ NAME = {
     ("fence", "ground"): "Electric Fence", ("cooler", "wall"): "Room Cooler", ("heater", "ground"): "Electric Space Heater",
     ("woodgas", "ground"): "{T} Wood Gas Generator",
     ("treadwheel", "ground"): "Zombie Treadwheel", ("treadwheel", "xl"): "Large Zombie Treadwheel",
+    ("fan", "ground"): "Box Fan",
 }
 # Weight in kg (PickUpWeight is kg x 10). Anything over 30 comes apart into parts (DazedCore.Heavy).
 WEIGHT = {
@@ -192,6 +197,7 @@ WEIGHT = {
     ("fence", "ground"): {"standard": 12}, ("cooler", "wall"): {"standard": 14}, ("heater", "ground"): {"standard": 6},
     ("woodgas", "ground"): {"makeshift": 34, "salvaged": 48, "workshop": 62},
     ("treadwheel", "ground"): {"standard": 28}, ("treadwheel", "xl"): {"standard": 30},
+    ("fan", "ground"): {"standard": 3},
 }
 
 

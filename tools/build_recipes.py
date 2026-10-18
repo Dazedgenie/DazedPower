@@ -182,6 +182,10 @@ make("cooler", "wall", "standard", 900, "Electricity:4", "Electricity:45",
 make("heater", "ground", "standard", 500, "Electricity:3", "Electricity:25",
      [SCREW, PLIERS, it(2, "ElectronicsScrap"), it(1, "SheetMetal"), it(2, "ElectricWire"), it(1, "SmallSheetMetal"), it(3, "Screws")],
      ["item 1 Base.ElectronicsScrap", "item 1 Base.SheetMetal"], "basic", scrapTime=300, scrapXp="Electricity:8")
+# the box fan (0.19.0): a small motor off scrap, a sheet-metal frame and a wire grille
+make("fan", "ground", "standard", 400, "Electricity:2", "Electricity:15",
+     [SCREW, PLIERS, it(2, "ElectronicsScrap"), it(1, "SmallSheetMetal"), it(1, "Wire"), it(1, "ElectricWire"), it(2, "Screws")],
+     ["item 1 Base.ElectronicsScrap", "item 1 Base.SmallSheetMetal"], "basic", scrapTime=200, scrapXp="Electricity:5")
 # ---- the zombie treadwheel: a plank wheel on an A-frame, a pipe axle and a small dynamo. Carpentry first.
 # The one-square wheel (0.13.0) is no longer built, only scrapped: its drum is too small for a real zombie. The 2x2 wheel
 # (0.18.0) keeps the recipe name MakeDazedTreadwheel, so whoever learned it from the handbook builds the large one.

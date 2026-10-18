@@ -169,7 +169,7 @@ return function(check, E)
     DazedCore.Note.say, getOnlinePlayers = say0, op0
 
     ------------------------------------------------------------ the space heater
-    check(P.KINDS[#P.KINDS - 10] == "heater" and P.ROWS[167].kind == "heater", "the heater is appended after the earlier rows")
+    check(P.KINDS[#P.KINDS - 11] == "heater" and P.ROWS[167].kind == "heater", "the heater is appended after the earlier rows")
     check(P.sprite("heater", "ground", "standard", "off", "S") == "dazedpower_02_149"
           and P.sprite("heater", "ground", "standard", "on", "N") == "dazedpower_02_155", "heater sprites follow the cooler's")
     check(P.sprite("cooler", "wall", "standard", "on", "N") == "dazedpower_02_147", "the cooler's sprites did not move")
@@ -208,8 +208,8 @@ return function(check, E)
     DazedClimate = { Rooms = { addObjectSource = function(s) objSrc[#objSrc + 1] = s end,
                                addRoomSource = function(f) roomSrc[#roomSrc + 1] = f end } }
     A.climateDone = nil
-    check(A.registerClimate() and #objSrc == 2 and #roomSrc == 1, "the heater, the cooler and the outside coolers register")
-    check(A.registerClimate() and #objSrc == 2, "and only once")
+    check(A.registerClimate() and #objSrc == 3 and #roomSrc == 1, "the heater, the cooler, the fan and the outside coolers register")
+    check(A.registerClimate() and #objSrc == 3, "and only once")
     local cooler = E.object(P.sprite("cooler", "wall", "standard", "on", "S"), E.square(45, 40, 0))
     P.data(heater).live = true
     P.data(cooler).live = true
@@ -233,6 +233,39 @@ return function(check, E)
     check(not objSrc[2].cools(cooler) and not A.outsideCoolerCools({ key = "1,2,0" }), "an unpowered cooler keeps nothing cold")
     A.status, A.roomOf = status0, roomOf0
     A.outsideCoolers[cooler] = nil
+
+    ------------------------------------------------------------ the box fan (0.19.0)
+    check(P.KINDS[#P.KINDS] == "fan" and P.ROWS[264].kind == "fan" and P.ROWS[265].state == "on", "the fan's rows are the last on the sheet")
+    check(P.sprite("fan", "ground", "standard", "off", "E") == "dazedpower_03_28"
+          and P.sprite("fan", "ground", "standard", "on", "N") == "dazedpower_03_35", "fan sprites follow the 2x2 treadwheel")
+    check(P.itemFor("fan", "ground", "standard") == "Base.DazedBoxFan", "the fan's item")
+    check(M.wireLegal("fan", "controller") and not M.countsAsNode("fan") and M.APPLIANCE_KINDS.fan, "wired like the heater, no controller slot")
+    check(DazedPower.Priority.of({}, "fan") == 3, "a fan is a Low priority load by default")
+    local fan = E.object(P.sprite("fan", "ground", "standard", "off", "S"), E.square(47, 40, 0))
+    local flive, fwhy = A.status(fan, "fan")
+    check(not flive and fwhy == "IGUI_DazedPower_HeaterSwitchedOff", "a new fan is switched off")
+    check(A.setSwitch(fan, true) and A.switchedOn(P.data(fan)), "its switch turns it on")
+    P.data(fan).live = true
+    local fa, _, ft = A.draw({ dpm = { fan = { fan }, heater = {}, fence = {}, cooler = {} } })
+    check(fa.fan == A.FAN_W and ft == 60, "a running fan bills 60 W")
+    check(A.fanEffect(true, 29, 22) == -4, "a running fan pushes a hot room's air out to cooler air")
+    check(A.fanEffect(true, 29, 33) == 0 and A.fanEffect(true, 29, 28.5) == 0, "not when it is as hot or hotter outside")
+    check(A.fanEffect(true, 21, 10) == 0, "nor in a room that is not warm")
+    check(A.fanEffect(false, 29, 22) == 0 and A.fanEffect(true, nil, 22) == 0, "nor when off or the room is unknown")
+    local fanSrc = objSrc[3]
+    check(fanSrc.match(fan) and not fanSrc.match(heater), "the fan's source matches fans only")
+    check(fanSrc.heat(fan) == 0, "without Dazed Climate's room temperatures the fan moves no heat")
+    DazedClimate.outdoorNow = function() return 20 end
+    DazedClimate.Rooms.roomTemp = function(key) return key == "3,4,0" and 28 or nil end
+    local fsq = P.try(fan, "getSquare")
+    local fdef = { getX = function() return 3 end, getY = function() return 4 end, getZ = function() return 0 end }
+    local getRoom0 = fsq.getRoom
+    fsq.getRoom = function() return { getRoomDef = function() return fdef end } end
+    check(fanSrc.heat(fan) == -4, "Dazed Climate reads a running fan in a warm room as -4")
+    P.data(fan).live = nil
+    check(fanSrc.heat(fan) == 0, "and an idle one as nothing")
+    fsq.getRoom = getRoom0
+    DazedClimate.outdoorNow, DazedClimate.Rooms.roomTemp = nil, nil
 
     -- Placing or lifting one marks its Dazed Climate room stale.
     local def = { getX = function() return 3 end, getY = function() return 4 end, getZ = function() return 0 end }

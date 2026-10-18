@@ -259,6 +259,8 @@ def tile_props(kind, mount, tier, state, facing, piece, index):
         p["IsHigh"] = ""; p["ItemHeight"] = "60"
     elif kind == "heater":
         p["solidtrans"] = ""; p["ItemHeight"] = "40"
+    elif kind == "fan":
+        p["ItemHeight"] = "50"
     elif kind == "controller":
         p["solidtrans"] = ""; p["ItemHeight"] = "88"; p["GeneratorSound"] = "DazedPowerQuiet"
     elif kind == "transformer":
@@ -342,7 +344,7 @@ def build_pack(cells, out):
 
 
 # Kinds with no stand-in at all: their art is the Blender render in tools/art, and a missing cell is an error.
-RENDER_ONLY = ("fence", "cooler", "heater", "treadwheel")
+RENDER_ONLY = ("fence", "cooler", "heater", "treadwheel", "fan")
 
 
 WOODGAS_LOOK = {"off": "off", "warming": "off", "running": "running", "broken": "broken"}

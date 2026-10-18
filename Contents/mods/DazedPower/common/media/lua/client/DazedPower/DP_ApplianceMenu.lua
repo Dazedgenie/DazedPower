@@ -1,4 +1,4 @@
---[[ DazedPower -- the electric fence's, the room cooler's and the space heater's menu rows, and the fence's zap on a client.
+--[[ DazedPower -- the electric fence's, the room cooler's, the space heater's and the box fan's menu rows, and the fence's zap on a client.
 
      The rows only read: the state the server last wrote (on or off, and why), the fence's zaps today
      and the containers the cooler keeps cold. A zap in multiplayer arrives as `fenceZap` and is applied
@@ -47,9 +47,9 @@ function AM.coolerMenu(menu, obj)
     end
 end
 
---- The heater's rows: its state and its switch. The switch is greyed for anyone the pick-up lock refuses.
-function AM.heaterMenu(menu, worldobjects, obj, playerObj)
-    infoRow(menu, AM.stateText(obj, "heater"))
+--- The heater's (or the fan's) rows: its state and its switch. The switch is greyed for anyone the pick-up lock refuses.
+function AM.heaterMenu(menu, worldobjects, obj, playerObj, kind)
+    infoRow(menu, AM.stateText(obj, kind or "heater"))
     local on = A.switchedOn(P.data(obj))
     local C = DazedPower.Context
     local opt = menu:addOption(getText(on and "ContextMenu_DazedPower_SwitchOff" or "ContextMenu_DazedPower_SwitchOn"), worldobjects,

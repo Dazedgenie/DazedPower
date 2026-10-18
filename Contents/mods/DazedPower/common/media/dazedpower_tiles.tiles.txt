@@ -23474,7 +23474,7 @@ tileset
 tileset
 {
     file = dazedpower_03
-    size = 4,7
+    size = 4,9
     id = 3
     // dazedpower_03_0
     tile
@@ -24175,5 +24175,181 @@ tileset
         ItemHeight = 80
         SpriteGridPos = 1,1
         ForceSingleItem = 
+    }
+    // dazedpower_03_28
+    tile
+    {
+        xy = 0,7
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        ItemHeight = 50
+    }
+    // dazedpower_03_29
+    tile
+    {
+        xy = 1,7
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        ItemHeight = 50
+    }
+    // dazedpower_03_30
+    tile
+    {
+        xy = 2,7
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        ItemHeight = 50
+    }
+    // dazedpower_03_31
+    tile
+    {
+        xy = 3,7
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        ItemHeight = 50
+    }
+    // dazedpower_03_32
+    tile
+    {
+        xy = 0,8
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        ItemHeight = 50
+    }
+    // dazedpower_03_33
+    tile
+    {
+        xy = 1,8
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        ItemHeight = 50
+    }
+    // dazedpower_03_34
+    tile
+    {
+        xy = 2,8
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        ItemHeight = 50
+    }
+    // dazedpower_03_35
+    tile
+    {
+        xy = 3,8
+        CustomName = Box Fan
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = MetalPlates
+        Material2 = MetalScrap
+        MaterialType = Metal_Large
+        IsMoveAble = 
+        CustomItem = Base.DazedBoxFan
+        PickUpWeight = 30
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        ItemHeight = 50
     }
 }

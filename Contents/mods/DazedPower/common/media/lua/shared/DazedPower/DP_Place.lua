@@ -340,13 +340,13 @@ function G.seed(obj, item, info)
     -- It starts dark; its controller lights it once it is wired in. A
     -- rotation keeps its system, and its lamp with it.
     if info.kind == "transformer" and not d.sys then P.setState(obj, "off") end
-    -- A fence, cooler or heater likewise starts dark until its system's tick lights it.
-    if (info.kind == "fence" or info.kind == "cooler" or info.kind == "heater") and not d.sys then
+    -- A fence, cooler, heater or fan likewise starts dark until its system's tick lights it.
+    if (info.kind == "fence" or info.kind == "cooler" or info.kind == "heater" or info.kind == "fan") and not d.sys then
         P.setState(obj, "off")
         d.live, d.why = nil, nil
     end
-    -- Dazed Climate reads a room's heat sources once, so a new heater or cooler has it read the room again.
-    if (info.kind == "cooler" or info.kind == "heater") and DazedPower.Appliances then pcall(DazedPower.Appliances.markRoomStale, obj) end
+    -- Dazed Climate reads a room's heat sources once, so a new heater, cooler or fan has it read the room again.
+    if (info.kind == "cooler" or info.kind == "heater" or info.kind == "fan") and DazedPower.Appliances then pcall(DazedPower.Appliances.markRoomStale, obj) end
     if DazedPower.System then DazedPower.System.register(obj) end
 end
 
@@ -1381,9 +1381,9 @@ end
 
 local function onObjectAboutToBeRemoved(obj)
     if isClient() or not obj then return end
-    -- A heater or cooler leaving, lifted or broken, has Dazed Climate read its room again.
+    -- A heater, cooler or fan leaving, lifted or broken, has Dazed Climate read its room again.
     local kind = P.partOf(obj)
-    if (kind == "heater" or kind == "cooler") and DazedPower.Appliances then pcall(DazedPower.Appliances.markRoomStale, obj) end
+    if (kind == "heater" or kind == "cooler" or kind == "fan") and DazedPower.Appliances then pcall(DazedPower.Appliances.markRoomStale, obj) end
     if removal.kept[obj] then return end
     local info = P.describe(obj)
     if not info then return end

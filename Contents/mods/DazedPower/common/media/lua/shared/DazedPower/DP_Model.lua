@@ -2293,10 +2293,10 @@ M.SLOTLESS_KINDS = {}
 M.INSTRUMENT_KINDS = { windsock = true, vane = true, rod = true }
 -- A wall gauge only reads a system: it lands on any wired part, nothing lands on it, and it takes no
 -- controller slot (M.countsAsNode).
-M.METER_KINDS = { gauge = true, bench = true, fence = true, cooler = true, heater = true }
+M.METER_KINDS = { gauge = true, bench = true, fence = true, cooler = true, heater = true, fan = true }
 -- The wired appliances: meter-like nodes that draw from their system and show on the LOADS page and the
 -- Load Priority menu (DP_Appliances).
-M.APPLIANCE_KINDS = { fence = true, cooler = true, heater = true }
+M.APPLIANCE_KINDS = { fence = true, cooler = true, heater = true, fan = true }
 function M.wireLegal(kind, targetKind)
     if M.INSTRUMENT_KINDS[kind] or M.INSTRUMENT_KINDS[targetKind] then return false end
     if M.METER_KINDS[targetKind] then return false end

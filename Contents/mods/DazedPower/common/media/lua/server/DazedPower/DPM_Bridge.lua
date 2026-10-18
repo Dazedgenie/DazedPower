@@ -135,7 +135,7 @@ end
 --  had no list to file them in.
 local function collect(rec)
     local out = { pedal = {}, windmill = {}, steam = {}, propane = {}, water = {}, hydro = {}, bench = {}, fence = {}, cooler = {}, heater = {},
-                  treadwheel = {}, treadmill = {} }
+                  fan = {}, treadwheel = {}, treadmill = {} }
     local root = UM.nodeKey(rec.x, rec.y, rec.z, "controller")
     for nk in pairs((S.claimed or {})[root] or {}) do
         local x, y, z, kind = UM.parseNodeKey(nk)
@@ -642,7 +642,7 @@ local function billWater(sys)
     CTX.waterDone = true
     local rec = CTX.rec
     local active, idle, total = waterDraw(rec)
-    -- The fences, coolers and heaters (DP_ApplianceTick) are billed the same way, on the same LOADS rows.
+    -- The fences, coolers, heaters and fans (DP_ApplianceTick) are billed the same way, on the same LOADS rows.
     local Ap = DazedPower.Appliances
     if Ap and Ap.draw then
         local a2, i2, t2 = Ap.draw(rec)

@@ -53,7 +53,7 @@ description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/mai
 description=[list]
 description=[*][b]Transformers[/b] carry power across town and wire whole buildings through Dazed Core's [b]Building Picker[/b]: lights and appliances inside work off your batteries.
 description=[*][b]Charger bench[/b] for loose batteries; any wired part charges a parked car within 10 tiles.
-description=[*][b]Electric fence[/b] stuns zombies, never people. [b]Room cooler[/b] keeps a whole room's food like a fridge. [b]Space heater[/b] warms its room with Dazed Climate.
+description=[*][b]Electric fence[/b] stuns zombies, never people. [b]Room cooler[/b] keeps a whole room's food like a fridge. [b]Space heater[/b] warms its room with Dazed Climate, a [b]box fan[/b] cools a hot one.
 description=[*][b]Wall gauge[/b], [b]solar lamps[/b], and the [b]Knox County Almanac[/b]: read the sky for a month of weather.
 description=[/list]
 description=
@@ -73,7 +73,7 @@ description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-works.png?v=2[/img]
 description=[list]
 description=[*][b]Dazed Plumbing[/b]: generators and steam engines feed from piped tanks; pumps, purifier, fuel pump and drilled well run off your controller.
-description=[*][b]Dazed Climate[/b]: heater and cooler change room temperature; batteries and engines feel the cold.
+description=[*][b]Dazed Climate[/b]: heater, fan and cooler change room temperature; batteries and engines feel the cold.
 description=[*][b]Dazed Cooking[/b]: the food dehydrator runs off your system.
 description=[*][b]Dazed Essentials[/b]: bulk jobs leave powered machines alone.
 description=[*][b]Electric Vehicles[/b]: charge homemade EVs from your banks.
@@ -100,6 +100,6 @@ description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.18.0[/i]
+description=[i]Mod ID: DazedPower · Version 0.19.0[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=unlisted

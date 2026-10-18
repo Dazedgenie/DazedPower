@@ -1004,4 +1004,18 @@ module Base
         Tags                = base:heavyitem;base:hasmetal;base:showcondition,
     }
 
+    item DazedBoxFan
+    {
+        DisplayName         = Box Fan,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 3.0,
+        Icon                = DazedBoxFan,
+        WorldObjectSprite   = dazedpower_03_29,
+        ConditionMax        = 100,
+        MetalValue          = 7.5,
+        Tooltip             = Tooltip_DazedBoxFan,
+        Tags                = base:hasmetal;base:showcondition,
+    }
+
 }
