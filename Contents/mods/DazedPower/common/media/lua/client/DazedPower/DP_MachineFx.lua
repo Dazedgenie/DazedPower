@@ -435,6 +435,8 @@ function M.consider(obj)
     local info = spr and P.spriteInfo(spr:getName())
     local spec = info and M.kinds[info.kind]
     if not spec then return end
+    -- The frames are one-square sprites: a 2x2 part (the large treadwheel) keeps its still sprite.
+    if (info.pieces or 1) > 1 then return end
     local sq = obj:getSquare()
     if not sq then return end
     local x, y, z = sq:getX(), sq:getY(), sq:getZ()

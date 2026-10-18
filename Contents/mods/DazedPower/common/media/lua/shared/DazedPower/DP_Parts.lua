@@ -206,7 +206,7 @@ P.MOUNTS = {
     propane = { "ground" }, petrol = { "ground" },
     gauge = { "wall" }, rod = { "ground" }, bench = { "ground" }, hydro = { "ground" },
     fence = { "ground" }, cooler = { "wall" }, heater = { "ground" }, windspin = { "ground" }, woodgas = { "ground" },
-    treadwheel = { "ground" }, steamfire = { "ground" },
+    treadwheel = { "ground", "xl" }, steamfire = { "ground" },
     woodgasfire = { "ground" }, petrolrun = { "ground" }, propaneflame = { "ground" },
     hydrospin = { "ground" }, treadspin = { "ground" }, windsockflap = { "ground" },
 }
@@ -256,9 +256,9 @@ P.STATES = {
     windsockflap = { "half1", "half2", "full1", "full2" },      -- a drooping or streaming windsock swung to either side, DP_TurnFx
     -- bank has no flat list: see P.statesFor.
 }
--- The 2x2 array is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its footprint; piece 1 is the
--- MASTER that carries the state and the item. Every other part is one square.
-P.PIECES = { array = { xl = 4 } }
+-- A 2x2 part (the XL array, the large treadwheel) is four sprites per facing: pieces 1..4 = NW, NE, SW, SE of its
+-- footprint; piece 1 is the MASTER that carries the state and the item. Every other part is one square.
+P.PIECES = { array = { xl = 4 }, treadwheel = { xl = 4 } }
 function P.piecesOf(kind, mount)
     local byMount = P.PIECES[kind]
     return byMount and byMount[mount] or 1
@@ -306,26 +306,40 @@ P.ALIAS = {
     windsockflap = { kind = "windsock", state = { half1 = "half", half2 = "half", full1 = "full", full2 = "full" } },
 }
 
+-- Mounts added after their kind's rows were released: their rows go at the END of the sheet, in this order, so
+-- nothing already standing in a save moves. Mirrors dp_taxonomy.LATE.
+P.LATE = { { "treadwheel", "xl" } }
+local function isLate(kind, mount)
+    for _, km in ipairs(P.LATE) do
+        if km[1] == kind and km[2] == mount then return true end
+    end
+    return false
+end
+
 --- Build the row table in exactly the order dp_taxonomy.py emits it.
 local function buildRows()
     local rows = {}
-    for _, kind in ipairs(P.KINDS) do
-        for _, mount in ipairs(P.MOUNTS[kind]) do
-            for _, tier in ipairs(P.TIERS[kind]) do
-                for _, state in ipairs(P.statesFor(kind, mount, tier)) do
-                    local alias = P.ALIAS[kind]
-                    if alias then
-                        rows[#rows + 1] = { kind = alias.kind, mount = mount, tier = tier, state = alias.state[state],
-                                            frame = state, piece = 1 }
-                    else
-                        for piece = 1, P.piecesOf(kind, mount) do
-                            rows[#rows + 1] = { kind = kind, mount = mount, tier = tier, state = state, piece = piece }
-                        end
+    local function emit(kind, mount)
+        for _, tier in ipairs(P.TIERS[kind]) do
+            for _, state in ipairs(P.statesFor(kind, mount, tier)) do
+                local alias = P.ALIAS[kind]
+                if alias then
+                    rows[#rows + 1] = { kind = alias.kind, mount = mount, tier = tier, state = alias.state[state],
+                                        frame = state, piece = 1 }
+                else
+                    for piece = 1, P.piecesOf(kind, mount) do
+                        rows[#rows + 1] = { kind = kind, mount = mount, tier = tier, state = state, piece = piece }
                     end
                 end
             end
         end
     end
+    for _, kind in ipairs(P.KINDS) do
+        for _, mount in ipairs(P.MOUNTS[kind]) do
+            if not isLate(kind, mount) then emit(kind, mount) end
+        end
+    end
+    for _, km in ipairs(P.LATE) do emit(km[1], km[2]) end
     return rows
 end
 
@@ -388,7 +402,7 @@ P.ITEM = {
     cooler = { wall = { standard = "Base.DazedRoomCooler" } },
     heater = { ground = { standard = "Base.DazedSpaceHeater" } },
     woodgas = { ground = { makeshift = "Base.DazedWoodGasMakeshift", salvaged = "Base.DazedWoodGasSalvaged", workshop = "Base.DazedWoodGasWorkshop" } },
-    treadwheel = { ground = { standard = "Base.DazedTreadwheel" } },
+    treadwheel = { ground = { standard = "Base.DazedTreadwheel" }, xl = { standard = "Base.DazedTreadwheelLarge" } },
 }
 
 -- Items that are not world parts.

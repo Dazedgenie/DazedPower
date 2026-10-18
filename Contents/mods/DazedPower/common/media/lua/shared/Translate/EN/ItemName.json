@@ -4,6 +4,7 @@
     "Base.DazedGearKitLow": "Low-Ratio Gear Kit",
     "Base.DazedGearKitRacing": "Racing Gear Kit",
     "Base.DazedGearKitStock": "Standard Gear Kit",
+    "Base.DazedTreadmill": "Treadmill Generator",
     "Base.DazedArrayMakeshift": "Makeshift Solar Array",
     "Base.DazedArraySalvaged": "Salvaged Solar Array",
     "Base.DazedArrayWorkshop": "Workshop Solar Array",
@@ -68,5 +69,5 @@
     "Base.DazedWoodGasSalvaged": "Salvaged Wood Gas Generator",
     "Base.DazedWoodGasWorkshop": "Workshop Wood Gas Generator",
     "Base.DazedTreadwheel": "Zombie Treadwheel",
-    "Base.DazedTreadmill": "Treadmill Generator"
+    "Base.DazedTreadwheelLarge": "Large Zombie Treadwheel"
 }

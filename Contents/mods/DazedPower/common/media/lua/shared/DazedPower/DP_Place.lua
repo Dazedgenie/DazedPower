@@ -917,7 +917,7 @@ function ISMoveableSpriteProps:placeMoveableInternal(...)
     -- state the server never has. So vanilla's object goes back untouched.
     if isClient() then return obj end
     if not info or not square then return obj end
-    -- A side square of a 2x2 array is its picture only; the master square carries the state.
+    -- A side square of a 2x2 part is its picture only; the master square carries the state.
     if info.pieces > 1 and not info.master then
         if obj then P.scrubCarried(obj) end
         return obj
@@ -966,8 +966,8 @@ if origCanPlace then
                 return false
             end
         end
-        -- A 2x2 array stands in the open: nothing overhead on any of its squares.
-        if info.pieces > 1 and square.isOutside and not square:isOutside() then
+        -- A 2x2 array stands in the open: nothing overhead on any of its squares. (The large treadwheel goes anywhere.)
+        if info.kind == "array" and info.pieces > 1 and square.isOutside and not square:isOutside() then
             return refuse(character, "IGUI_DazedPower_XLOutdoors")
         end
         return allowed

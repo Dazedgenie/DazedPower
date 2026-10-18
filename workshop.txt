@@ -35,7 +35,7 @@ description=[*][b]Steam engines[/b] burn fuel and drink water.
 description=[*][b]Propane, petrol and wood gas generators[/b] start and stop on their own at the levels you set. Makeshift ones are pull-start. Wood gas burns logs and planks, warms up for a few minutes and needs its ash cleaned out.
 description=[*][b]Car alternator[/b]: a parked car with its engine running feeds up to 500 W.
 description=[*][b]Treadmill generator[/b]: wire a gym treadmill to a controller and walk, run or sprint on it. Fitness 0 to 10 makes 50 to 150 W walking, double running, 3.5 times sprinting; sprinting tires you.
-description=[*][b]Zombie treadwheel[/b]: knock a zombie down, tie it with a rope (you see the rope), lead it home and put it in the wheel, where the real zombie walks for ever: about 80 W, 140 W while someone stands close. Running on a taut rope can snap it.
+description=[*][b]Zombie treadwheel[/b] (2x2): knock a zombie down, tie it with a rope (you see the rope), lead it home and put it in the wheel, where the real zombie walks for ever: about 80 W, 140 W while someone stands close. Running on a taut rope can snap it.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-store.png?v=2[/img]
@@ -100,6 +100,6 @@ description=
 description=[h2]Credits and licence[/h2]
 description=Built from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3789425624]Off-Grid: Solar Power[/url] by cakcan and released under the same licence, CC BY-NC-SA 4.0. Thank you, cakcan.
 description=
-description=[i]Mod ID: DazedPower · Version 0.17.0[/i]
+description=[i]Mod ID: DazedPower · Version 0.18.0[/i]
 tags=Build 42;Building;Items;Multiplayer;Realistic
 visibility=unlisted

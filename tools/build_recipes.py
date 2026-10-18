@@ -26,9 +26,11 @@ def destroy(name): return "item 1 [Base.%s] mode:destroy" % name
 # (kind, mount, tier): dict(action, time, skill, xp, inputs, scrap, learn)   learn: None, "basic" or "adv"
 R = {}
 
-def make(kind, mount, tier, time, skill, xp, inputs, scrap, learn, action="MakingElectrical", scrapTime=400, scrapXp="Electricity:10"):
+def make(kind, mount, tier, time, skill, xp, inputs, scrap, learn, action="MakingElectrical", scrapTime=400, scrapXp="Electricity:10",
+         name=None):
+    """name: the Make recipe's name when it is not Make<item> (None); False for a part that is only scrapped now."""
     R[(kind, mount, tier)] = dict(action=action, time=time, skill=skill, xp=xp, inputs=inputs, scrap=scrap, learn=learn,
-                                  scrapTime=scrapTime, scrapXp=scrapXp)
+                                  scrapTime=scrapTime, scrapXp=scrapXp, name=name)
 
 # ---- static arrays
 make("array", "ground", "makeshift", 550, "Electricity:2", "Electricity:20",
@@ -181,10 +183,16 @@ make("heater", "ground", "standard", 500, "Electricity:3", "Electricity:25",
      [SCREW, PLIERS, it(2, "ElectronicsScrap"), it(1, "SheetMetal"), it(2, "ElectricWire"), it(1, "SmallSheetMetal"), it(3, "Screws")],
      ["item 1 Base.ElectronicsScrap", "item 1 Base.SheetMetal"], "basic", scrapTime=300, scrapXp="Electricity:8")
 # ---- the zombie treadwheel: a plank wheel on an A-frame, a pipe axle and a small dynamo. Carpentry first.
+# The one-square wheel (0.13.0) is no longer built, only scrapped: its drum is too small for a real zombie. The 2x2 wheel
+# (0.18.0) keeps the recipe name MakeDazedTreadwheel, so whoever learned it from the handbook builds the large one.
 make("treadwheel", "ground", "standard", 800, "Electricity:2;Woodwork:3", "Electricity:20;Woodwork:30",
      [HAMMER, SCREW, it(8, "Plank"), it(16, "Nails"), it(1, "MetalPipe"), it(2, "ElectronicsScrap"), it(2, "ElectricWire"), it(4, "Screws")],
      ["item 4 Base.Plank", "item 6 Base.Nails", "item 1 Base.MetalPipe", "item 1 Base.ElectronicsScrap"], "basic",
-     scrapTime=400, scrapXp="Electricity:6;Woodwork:8")
+     scrapTime=400, scrapXp="Electricity:6;Woodwork:8", name=False)
+make("treadwheel", "xl", "standard", 1000, "Electricity:2;Woodwork:3", "Electricity:25;Woodwork:40",
+     [HAMMER, SCREW, it(14, "Plank"), it(24, "Nails"), it(2, "MetalPipe"), it(2, "ElectronicsScrap"), it(2, "ElectricWire"), it(4, "Screws")],
+     ["item 7 Base.Plank", "item 10 Base.Nails", "item 2 Base.MetalPipe", "item 1 Base.ElectronicsScrap"], "basic",
+     scrapTime=500, scrapXp="Electricity:6;Woodwork:10", name="MakeDazedTreadwheel")
 
 # Items that are not parts: (name, recipe lines) -- the gear kits and nothing else is crafted
 MISC_RECIPES = [
@@ -263,10 +271,12 @@ def main():
                 r = R[(kind, mount, tier)]
                 item = T.item_of(kind, mount, tier)
                 disp = T.display_name(kind, mount, tier)
-                out.append(recipe("Make" + item, r["action"], r["time"], r["skill"], r["xp"], r["inputs"], ["item 1 Base." + item], r["learn"]))
-                names["Make" + item] = "Build " + disp
-                if r["learn"] == "basic": basic.append("Make" + item)
-                if r["learn"] == "adv": adv.append("Make" + item)
+                mk = r["name"] if r["name"] is not None else "Make" + item
+                if mk:
+                    out.append(recipe(mk, r["action"], r["time"], r["skill"], r["xp"], r["inputs"], ["item 1 Base." + item], r["learn"]))
+                    names[mk] = "Build " + disp
+                    if r["learn"] == "basic": basic.append(mk)
+                    if r["learn"] == "adv": adv.append(mk)
                 if r["scrap"]:
                     out.append(recipe("Scrap" + item, "DismantleElectrical", r["scrapTime"], None, r["scrapXp"], [SCREW, destroy(item)], r["scrap"], False))
                     names["Scrap" + item] = "Scrap " + disp
@@ -399,15 +409,15 @@ MISC = """module Base
         Tags                = base:hasmetal,
     }}
 
-    /* The gym treadmill as a source (DP_Treadmill): placing it puts down vanilla's own tile, so it has no sheet row. The icon
-       is the treadwheel's until it has its own. */
+    /* The gym treadmill as a source (DP_Treadmill): placing it puts down vanilla's own tile, so it has no sheet row. Its icon
+       is rendered by tools/blender/dz2.py (icons:dp:DazedTreadmill). */
     item DazedTreadmill
     {{
         DisplayName         = Treadmill Generator,
         DisplayCategory     = Electronics,
         ItemType            = base:moveable,
         Weight              = 40.0,
-        Icon                = DazedTreadwheel,
+        Icon                = DazedTreadmill,
         WorldObjectSprite   = recreational_sports_01_39,
         MetalValue          = 80.0,
         Tooltip             = Tooltip_DazedTreadmill,

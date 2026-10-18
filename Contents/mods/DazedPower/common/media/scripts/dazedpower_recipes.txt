@@ -2221,32 +2221,6 @@ module Base
         }
     }
 
-    craftRecipe MakeDazedTreadwheel
-    {
-        timedAction     = MakingElectrical,
-        time            = 800,
-        SkillRequired   = Electricity:2;Woodwork:3,
-        Tags            = AnySurfaceCraft,
-        category        = Electrical,
-        xpAward         = Electricity:20;Woodwork:30,
-        NeedToBeLearn   = true,
-        inputs
-        {
-            item 1 tags[base:hammer] mode:keep,
-            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
-            item 8 [Base.Plank],
-            item 16 [Base.Nails],
-            item 1 [Base.MetalPipe],
-            item 2 [Base.ElectronicsScrap],
-            item 2 [Base.ElectricWire],
-            item 4 [Base.Screws],
-        }
-        outputs
-        {
-            item 1 Base.DazedTreadwheel,
-        }
-    }
-
     craftRecipe ScrapDazedTreadwheel
     {
         timedAction     = DismantleElectrical,
@@ -2264,6 +2238,53 @@ module Base
             item 4 Base.Plank,
             item 6 Base.Nails,
             item 1 Base.MetalPipe,
+            item 1 Base.ElectronicsScrap,
+        }
+    }
+
+    craftRecipe MakeDazedTreadwheel
+    {
+        timedAction     = MakingElectrical,
+        time            = 1000,
+        SkillRequired   = Electricity:2;Woodwork:3,
+        Tags            = AnySurfaceCraft,
+        category        = Electrical,
+        xpAward         = Electricity:25;Woodwork:40,
+        NeedToBeLearn   = true,
+        inputs
+        {
+            item 1 tags[base:hammer] mode:keep,
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
+            item 14 [Base.Plank],
+            item 24 [Base.Nails],
+            item 2 [Base.MetalPipe],
+            item 2 [Base.ElectronicsScrap],
+            item 2 [Base.ElectricWire],
+            item 4 [Base.Screws],
+        }
+        outputs
+        {
+            item 1 Base.DazedTreadwheelLarge,
+        }
+    }
+
+    craftRecipe ScrapDazedTreadwheelLarge
+    {
+        timedAction     = DismantleElectrical,
+        time            = 500,
+        Tags            = AnySurfaceCraft,
+        category        = Electrical,
+        xpAward         = Electricity:6;Woodwork:10,
+        inputs
+        {
+            item 1 tags[base:screwdriver] mode:keep flags[Prop1],
+            item 1 [Base.DazedTreadwheelLarge] mode:destroy,
+        }
+        outputs
+        {
+            item 7 Base.Plank,
+            item 10 Base.Nails,
+            item 2 Base.MetalPipe,
             item 1 Base.ElectronicsScrap,
         }
     }

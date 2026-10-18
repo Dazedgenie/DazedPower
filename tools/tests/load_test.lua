@@ -115,7 +115,7 @@ print(string.format("loaded %d files", loaded))
 
 -- ------------------------------------------------------------ smoke checks
 local P, M = DazedPower.Parts, DazedPower.Model
-check(#P.ROWS == 255, "255 sheet rows: " .. #P.ROWS)
+check(#P.ROWS == 263, "263 sheet rows: " .. #P.ROWS)
 check(P.sprite("array", "ground", "makeshift", "clear", "S") == "dazedpower_01_1", "first array sprite")
 check(P.sprite("controller", "ground", "makeshift", "off", "S") == "dazedpower_01_345", "controller sprite matches the taxonomy")
 local xl = P.spriteInfo("dazedpower_01_73")
@@ -161,8 +161,18 @@ check(ws and ws.kind == "windsock" and ws.tier == "basic" and ws.frame == "full2
 check(P.spriteInfo(P.sprite("hydro", "ground", "standard", "turning", "S")).frame == nil
       and P.spriteInfo(P.sprite("treadwheel", "ground", "standard", "walking", "S")).frame == nil
       and P.spriteInfo(P.sprite("windsock", "ground", "basic", "half", "S")).frame == nil, "turning frames don't shadow the real sprites")
-check(P.spriteInfo("dazedpower_02_508") == nil and P.spriteInfo("dazedpower_02_507") ~= nil, "nothing past the sheet")
-check(#P.ROWS * P.COLS <= 2 * P.SHEET_TILES, "the sheet still fits two tilesets")
+-- The 2x2 treadwheel (0.18.0) is appended after every older row, so nothing standing in a save moves; it spills
+-- onto a third tileset.
+local tx = P.spriteInfo("dazedpower_02_508")
+check(tx and tx.kind == "treadwheel" and tx.mount == "xl" and tx.state == "empty" and tx.piece == 1 and tx.master
+      and tx.pieces == 4 and tx.facing == "E", "the 2x2 treadwheel rows follow the windsock")
+check(P.sprite("treadwheel", "xl", "standard", "empty", "S") == "dazedpower_02_509", "the 2x2 treadwheel's item sprite")
+local tw = P.spriteInfo(P.sprite("treadwheel", "xl", "standard", "walking", "N", 4))
+check(tw and tw.piece == 4 and not tw.master and tw.state == "walking" and tw.frame == nil, "2x2 treadwheel piece 4 decoded")
+check(P.sprite("treadwheel", "ground", "standard", "walking", "S") == "dazedpower_02_269", "the one-square treadwheel keeps its sprites")
+check(P.itemFor("treadwheel", "xl", "standard") == "Base.DazedTreadwheelLarge", "the 2x2 treadwheel's item")
+check(P.spriteInfo("dazedpower_03_27") ~= nil and P.spriteInfo("dazedpower_03_28") == nil, "nothing past the sheet")
+check(#P.ROWS * P.COLS <= 3 * P.SHEET_TILES, "the sheet fits three tilesets")
 -- Windmill spin frames read back as the windmill they animate, with their own frame name and their own sprite lookups.
 local f2 = P.spriteInfo(P.sprite("windmill", "ground", "salvaged", "spin2", "W"))
 check(f2 and f2.kind == "windmill" and f2.state == "turning" and f2.frame == "spin2" and f2.tier == "salvaged" and f2.facing == "W",
@@ -182,7 +192,7 @@ for n = 0, #P.ROWS * P.COLS - 1 do
     if P.indexOf(nm) ~= n or tonumber(string.match(nm, "_(%d+)$")) >= 512 then over = over + 1 end
 end
 check(over == 0, "every sprite round-trips and no tileset holds more than 512")
-check(#P.allItems() == 71, "71 items: " .. #P.allItems())
+check(#P.allItems() == 72, "72 items: " .. #P.allItems())
 check(M.wireLegal("windmill", "controller") and M.wireLegal("windmill", "windmill") and not M.wireLegal("windmill", "array"), "source wiring rules")
 check(M.wireLegal("waterpump", "transformer") and not M.wireLegal("array", "waterpump") and not M.wireLegal("vane", "controller"), "load and instrument rules")
 check(M.ctrlSpec("makeshift").nodes == 8 and M.ctrlSpec("workshop").nodes == 24, "controller node caps")

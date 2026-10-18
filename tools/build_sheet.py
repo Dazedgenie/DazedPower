@@ -216,7 +216,7 @@ GRID_POS = {1: "0,0", 2: "1,0", 3: "0,1", 4: "1,1"}
 
 def group_of(kind, mount, tier, state):
     """The engine builds one sprite grid per GroupName+CustomName and facing, so each 2x2 state needs its own group."""
-    if kind == "array" and mount == "xl" and state != T.states_for(kind, mount, tier)[0]:
+    if mount == "xl" and state != T.states_for(kind, mount, tier)[0]:
         return T.GROUP + " " + state.capitalize()
     return T.GROUP
 
@@ -251,6 +251,8 @@ def tile_props(kind, mount, tier, state, facing, piece, index):
         p["solidtrans"] = ""; p["ItemHeight"] = "56"
     elif kind in ("hydro", "treadwheel"):
         p["solidtrans"] = ""; p["ItemHeight"] = "80"
+        if mount == "xl":
+            p["SpriteGridPos"] = GRID_POS[piece]; p["ForceSingleItem"] = ""
     elif kind == "fence":
         p["solid"] = ""; p["ItemHeight"] = "70"
     elif kind == "cooler":

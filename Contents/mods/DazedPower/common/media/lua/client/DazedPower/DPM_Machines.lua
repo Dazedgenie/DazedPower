@@ -26,11 +26,11 @@ local function watched(kind)
 end
 Mc.listeners = Mc.listeners or {}
 
---- Is this one of our power-source machines (by its sprite)?
+--- Is this one of our power-source machines (by its sprite)? A 2x2 part counts once, by its master square.
 function Mc.isMachine(obj)
     local spr = obj and obj.getSprite and obj:getSprite()
     local info = spr and P.spriteInfo(spr:getName())
-    return info ~= nil and watched(info.kind)
+    return info ~= nil and watched(info.kind) and ((info.pieces or 1) == 1 or info.master == true)
 end
 
 --- Track an object if it is one of our machines, and tell the listeners about a new one.

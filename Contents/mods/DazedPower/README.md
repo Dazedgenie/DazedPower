@@ -28,7 +28,7 @@ Makeshift lamps, the windsock and the weather vane need no book. Anything over 3
 | Wall power gauge | Hangs on a wall; cable it to any part of a system. Its lamp shows the charge band, and Read Gauge (or a click) opens that system's monitor, read only. Takes no controller slot. |
 | Electric fence | A solid fence section; cable it to any part of a system (no controller slot). While the system is on and above its discharge floor, a zombie beside it is knocked down and stunned, 5 Wh a zap, 3 s apart per zombie. People are not hurt. |
 | Room cooler | Hangs on a wall inside a room; cabled like the fence. While powered, food in every container of that room (not fridges) keeps like it does in a fridge. 100 W plus 10 W per container, Normal priority. Dazed Climate's cold-storage rule is the unpowered cousin: in a room below 15 C (no cooler needed) ordinary containers (not fridges or freezers) age food slower, about 30% speed at 0-4 C like a fridge and almost not at all when frozen, back to normal at 15 C. A powered Power cooler owns its room and Climate checks for it and leaves that room alone, because both work by rewinding each item's age and must never both run on one container. Any other room-wide food system (a cellar, an ice house) must register with the same check Climate uses. |
-| Zombie treadwheel | One square, one grade for now (Dazed Power Handbook, Electricity 2, Carpentry 3). Knock a zombie down, right-click it with a Rope or Sheet Rope, **Tie up the zombie** (about 3 s; it fails if it gets up first). Walk it home: it follows on the rope, is pulled along when the rope goes taut, never through a wall or fence, and does not attack while tied. Running or sprinting with the rope taut can snap it (a sheet rope sooner), a zombie held back 8 tiles always breaks free, and a snapped rope or **Let go of the rope** frees it to come for you (sandbox *Treadwheel rope can snap*). Within 3 tiles of a wheel, **Put the zombie on the treadwheel**: the zombie stays in the drum, walking in place for ever (0.17.0; kill it and the wheel is empty; sandbox *Real zombie on the treadwheel* off: it leaves the world and the wheel shows a painted one), 80 W (a crawler 40%), 140 W while anyone stands within 8 tiles, scaled by the wheel's condition; the slats wear 0.03 points an hour and are repaired like the water wheel. **Release the zombie** lets it out beside the wheel, hostile; **Put the zombie down** leaves a corpse and gives the rope back. A wheel with a zombie in it cannot be picked up. Blender art (0.11.1): the empty wheel, and a grey-green zombie walking it. |
+| Zombie treadwheel | The **Large Zombie Treadwheel** (0.18.0): 2x2 squares, its drum tall enough for a grown zombie; one grade (Dazed Power Handbook, Electricity 2, Carpentry 3; 14 planks, 24 nails, 2 metal pipes). Wheels of the old one-square kind already standing keep working and can be scrapped, but are no longer built. Knock a zombie down, right-click it with a Rope or Sheet Rope, **Tie up the zombie** (about 3 s; it fails if it gets up first). Walk it home: it follows on the rope, is pulled along when the rope goes taut, never through a wall or fence, and does not attack while tied. Running or sprinting with the rope taut can snap it (a sheet rope sooner), a zombie held back 8 tiles always breaks free, and a snapped rope or **Let go of the rope** frees it to come for you (sandbox *Treadwheel rope can snap*). Within 3 tiles of a wheel, **Put the zombie on the treadwheel**: the zombie stays in the drum, walking in place for ever (0.17.0; kill it and the wheel is empty; sandbox *Real zombie on the treadwheel* off: it leaves the world and the wheel shows a painted one), 80 W (a crawler 40%), 140 W while anyone stands within 8 tiles, scaled by the wheel's condition; the slats wear 0.03 points an hour and are repaired like the water wheel. **Release the zombie** lets it out beside the wheel, hostile; **Put the zombie down** leaves a corpse and gives the rope back. A wheel with a zombie in it cannot be picked up. Blender art (0.11.1): the empty wheel, and a grey-green zombie walking it. |
 | Treadmill generator | The vanilla gym treadmill (W 28+29, N 30+31, E 36+37, S 38+39 of `recreational_sports_01`), wired like any source; the item (Dazed Power Handbook, Electricity 3, Metal Welding 2) puts down that tile. Right-click it: **Walk**, **Run** or **Sprint on the treadmill**. A pedal rider's watts (50 W at Fitness 0, 150 W at 10) times 1, 2 or 3.5, scaled by condition and the sandbox *Treadmill output*. Costs Fatigue every game minute (0.20, 0.35, 0.50 points); a sprint also spends 0.02 Endurance a minute and drops to a run below 0.15. One user at a time. Our data is made only when it is first wired or used. |
 | Electric space heater | Stands on the floor; cabled like the fence and switched on from its menu. Draws 1500 W while it runs, Low priority by default. With Dazed Climate it warms its room. Dazed Power Handbook, Electricity 3. |
 
@@ -64,6 +64,18 @@ faces the machine, loops without a jump, and the action finishes and does its jo
 in the palm and point sensibly? Then untick **Work animations** (options, Dazed Core page) and every one of these goes
 back to the 0.14.0 looting animation (ExamineVehicle for the sky). With a skirt or dress on, laying cable: the hem
 stays off the floor. Multiplayer: a second player sees the same animations.
+
+## Test in game (0.18.0, the large 2x2 treadwheel)
+
+Coded and tested headless only (`tools/tests/tread_test.lua`, `load_test.lua`); the art is rendered and packed. Console at
+start: `DazedPower: ready -- 1052/1052 tiles`. Build **Large Zombie Treadwheel** from the handbook recipe (it replaces the
+one-square build; the recipe keeps its name, so a handbook already read still teaches it). Place it in all four facings,
+indoors and out: four squares, one wheel, no gaps or seams between its squares, the item comes back as one when lifted.
+Tie a zombie and **Put the zombie on the treadwheel** from any of its squares: the zombie stands in the middle of the big
+drum, head and shoulders inside the rim, facing the wheel's front, walking in place; the drum stays still (no stride
+frames on the large wheel). Walk round it: no square of it can be lifted while the zombie is in it. **Release** it: it
+steps out on a free square beside the wheel, never inside it. Sandbox *Real zombie on the treadwheel* off: the painted
+zombie shows on the large wheel too. An old one-square wheel in a save still works as before.
 
 ## Test in game (0.14.0, turning machines: windmill, water wheel, treadwheel, windsock)
 
@@ -220,6 +232,12 @@ DazedPower: ready -- 660/660 tiles, 66/66 items
   (`DPM_Treadmill`, modelled on `DPM_Pedal`), rows in `DP_TreadmillMenu`, Endurance helpers in `DPM_Stats`. The bridge folds
   treadmill watts into `pedalW` and lists them on the board. Animation nodes `DazedTreadmill{Walk,Run,Sprint}`. New sandbox
   option TreadmillWatts. Tests: `tools/tests/treadmill_test.lua`.
+- **0.18.0.** The large treadwheel: mount `xl` of `treadwheel`, four pieces like the XL array, its rows APPENDED after
+  every older row (`dp_taxonomy.LATE`, mirrored as `P.LATE`) so nothing already in a save moves: `dazedpower_02_508` to
+  `dazedpower_03_27`. Rendered by `tools/blender/dz2.py dp:treadxl` (`treadwheel_xl_part`, drum radius 1.0 with the zombie
+  at k=1.2). `MakeDazedTreadwheel` now outputs `DazedTreadwheelLarge`; the one-square wheel is scrap-only
+  (`build_recipes.make(name=False)`). `T.spot`, `T.wheelAt`, `T.occupant` and `T.freeBeside` resolve a wheel's master and
+  its footprint; DPM_Machines tracks only masters and DP_MachineFx gives 2x2 parts no frames.
 - **0.10.0.** The zombie treadwheel (see the parts table): a new part, `treadwheel`, appended to the sheet on a new
   page (`dazedpower_02_264` to `_271`), Blender-rendered since 0.11.1 (`tools/blender/dz2.py dp:treadwheel`). The rope and wheel live in `DP_Tread` (rules, leash
   registry, authority commands, the follow loop), `DP_TreadActions` (tying) and `DP_TreadMenu` (rows); the bridge

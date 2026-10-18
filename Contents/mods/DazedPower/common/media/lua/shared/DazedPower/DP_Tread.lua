@@ -183,10 +183,14 @@ end
 
 ---------------------------------------------------------------- the wheel's zombie
 
---- The zombie a wheel holds, or nil.
+--- The zombie a wheel holds, or nil. Any square of a large (2x2) wheel answers for it: its master keeps the record.
 function T.occupant(obj)
     local info = obj and P.describe(obj)
     if not info or info.kind ~= "treadwheel" then return nil end
+    if info.pieces > 1 and not info.master then
+        obj = P.master(obj)
+        if not obj then return nil end
+    end
     local md = obj:getModData()
     local d = md and md.dazedpower
     local z = d and d.zombie
@@ -208,14 +212,17 @@ end
 
 local function note(player, key, warn) if player and DazedCore.Note then DazedCore.Note.say(player, key, nil, warn) end end
 
---- The wheel at x, y, z, or nil.
+--- The wheel at x, y, z, or nil: for any square of a large (2x2) wheel, its master.
 local function wheelAt(x, y, z)
     local sq = DazedCore.Util.squareAt(tonumber(x) or 0, tonumber(y) or 0, tonumber(z) or 0)
     local objs = sq and sq:getObjects()
     for i = 0, (objs and objs:size() or 0) - 1 do
         local o = objs:get(i)
         local info = P.describe(o)
-        if info and info.kind == "treadwheel" then return o end
+        if info and info.kind == "treadwheel" then
+            if info.pieces > 1 and not info.master then return P.master(o) end
+            return o
+        end
     end
     return nil
 end
@@ -255,17 +262,36 @@ function T.leashOf(player)
     return pid ~= nil and T.leashes[pid] or nil
 end
 
+-- The squares beside a wheel, nearest first, from its (master) square: round one square, or round a 2x2 footprint.
+T.BESIDE = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } }
+T.BESIDE_XL = { { 2, 0 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 1, -1 },
+                { 2, 2 }, { -1, -1 }, { 2, -1 }, { -1, 2 } }
+
+--- The first free square beside a wheel that is not walled off from it, or nil. A square beside a 2x2 wheel is
+--  checked against the footprint square it touches.
+function T.freeBeside(wheel)
+    local sq = wheel and wheel:getSquare()
+    if not sq then return nil end
+    local info = P.describe(wheel)
+    local xl = info and info.pieces > 1
+    local x, y, z = sq:getX(), sq:getY(), sq:getZ()
+    for _, off in ipairs(xl and T.BESIDE_XL or T.BESIDE) do
+        local s = DazedCore.Util.squareAt(x + off[1], y + off[2], z)
+        local from = sq
+        if xl then
+            from = DazedCore.Util.squareAt(x + math.max(0, math.min(1, off[1])), y + math.max(0, math.min(1, off[2])), z) or sq
+        end
+        if s and try(s, "isFree", false) and not try(from, "isBlockedTo", s) then return s end
+    end
+    return nil
+end
+
 --- Spawn a zombie like the one a wheel held, on a free square beside the wheel. Returns it or nil.
 local function spawnBeside(wheel, desc, knockedDown)
     local sq = wheel and wheel:getSquare()
     if not (sq and addZombiesInOutfit) then return nil end
-    local x, y, z = sq:getX(), sq:getY(), sq:getZ()
-    local spot = nil
-    for _, off in ipairs({ { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } }) do
-        local s = DazedCore.Util.squareAt(x + off[1], y + off[2], z)
-        if s and try(s, "isFree", false) and not try(sq, "isBlockedTo", s) then spot = s break end
-    end
-    spot = spot or sq
+    local z = sq:getZ()
+    local spot = T.freeBeside(wheel) or sq
     local ok, list = pcall(addZombiesInOutfit, spot:getX(), spot:getY(), z, 1, desc and desc.outfit or nil,
                            (desc and desc.female) and 100 or 0, desc and desc.crawler == true, false, false,
                            knockedDown == true, false, false, 1.0)
@@ -313,11 +339,15 @@ function T.isReal(desc) return type(desc) == "table" and desc.real == true end
 
 function T.key(x, y, z) return tostring(x) .. "," .. tostring(y) .. "," .. tostring(z) end
 
---- Where a wheel's zombie stands and the way it faces: x, y, z, fx, fy.
+--- Where a wheel's zombie stands and the way it faces: x, y, z, fx, fy. A large (2x2) wheel's drum stands on the
+--  middle of its footprint, the corner its four squares share.
 function T.spot(wheel)
+    local info = wheel and P.describe(wheel)
+    if info and info.pieces > 1 and not info.master then wheel = P.master(wheel) end
     local sq = wheel and wheel:getSquare()
     if not sq then return nil end
     local f = T.FACE[P.facingOf(wheel)] or T.FACE.S
+    if info and info.pieces > 1 then return sq:getX() + 1.0, sq:getY() + 1.0, sq:getZ(), f[1], f[2] end
     return sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), f[1], f[2]
 end
 
@@ -488,7 +518,8 @@ function T.COMMANDS.treadLoad(player, args)
     local wheel = wheelAt(args.x, args.y, args.z)
     if not wheel or T.occupied(wheel) then return end
     local sq = wheel:getSquare()
-    if not near(player, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), T.LOAD_REACH + 0.5) then return end
+    local mx, my = T.spot(wheel)
+    if not near(player, mx, my, sq:getZ(), T.LOAD_REACH + 0.5) then return end
     local pid = T.pid(player)
     local l = pid ~= nil and T.leashes[pid]
     if not l then return end
@@ -496,7 +527,7 @@ function T.COMMANDS.treadLoad(player, args)
     if not zb then note(player, "IGUI_DazedPower_TreadNoZombie", true) return end
     if T.zid(zb) ~= l.zid then return end                 -- only the zombie this player's own leash holds
     local zx, zy = try(zb, "getX") or 1e9, try(zb, "getY") or 1e9
-    local dx, dy = zx - (sq:getX() + 0.5), zy - (sq:getY() + 0.5)
+    local dx, dy = zx - mx, zy - my
     if dx * dx + dy * dy > (T.LOAD_REACH + 0.5) * (T.LOAD_REACH + 0.5) then
         note(player, "IGUI_DazedPower_TreadTooFar", true)
         return
@@ -539,14 +570,8 @@ end
 
 --- Move a real wheel's zombie out onto a free square beside the wheel (the one spawnBeside would use).
 local function stepOut(wheel, zb)
-    local sq = wheel:getSquare()
-    for _, off in ipairs({ { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } }) do
-        local s = DazedCore.Util.squareAt(sq:getX() + off[1], sq:getY() + off[2], sq:getZ())
-        if s and try(s, "isFree", false) and not try(sq, "isBlockedTo", s) then
-            T.place(zb, s:getX() + 0.5, s:getY() + 0.5)
-            return
-        end
-    end
+    local s = T.freeBeside(wheel)
+    if s then T.place(zb, s:getX() + 0.5, s:getY() + 0.5) end
 end
 
 function T.COMMANDS.treadRelease(player, args)
@@ -554,7 +579,8 @@ function T.COMMANDS.treadRelease(player, args)
     local desc = wheel and T.occupant(wheel)
     if not desc then return end
     local sq = wheel:getSquare()
-    if not near(player, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), T.LOAD_REACH + 0.5) then return end
+    local mx, my = T.spot(wheel)
+    if not near(player, mx, my, sq:getZ(), T.LOAD_REACH + 0.5) then return end
     local zb = T.isReal(desc) and realZombie(wheel, desc) or nil
     clearWheel(wheel)
     if zb then
@@ -572,7 +598,8 @@ function T.COMMANDS.treadPutDown(player, args)
     local desc = wheel and T.occupant(wheel)
     if not desc then return end
     local sq = wheel:getSquare()
-    if not near(player, sq:getX() + 0.5, sq:getY() + 0.5, sq:getZ(), T.LOAD_REACH + 0.5) then return end
+    local mx, my = T.spot(wheel)
+    if not near(player, mx, my, sq:getZ(), T.LOAD_REACH + 0.5) then return end
     local zb = T.isReal(desc) and realZombie(wheel, desc) or nil
     clearWheel(wheel)
     if zb then

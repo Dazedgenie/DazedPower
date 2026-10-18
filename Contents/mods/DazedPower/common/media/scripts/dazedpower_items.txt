@@ -989,4 +989,19 @@ module Base
         Tags                = base:heavyitem;base:hasmetal;base:showcondition,
     }
 
+    item DazedTreadwheelLarge
+    {
+        DisplayName         = Large Zombie Treadwheel,
+        DisplayCategory     = Electronics,
+        ItemType            = base:moveable,
+        Weight              = 30.0,
+        Icon                = DazedTreadwheelLarge,
+        WorldObjectSprite   = dazedpower_02_509,
+        ConditionMax        = 100,
+        MetalValue          = 75.0,
+        Tooltip             = Tooltip_DazedTreadwheelLarge,
+        RequiresEquippedBothHands = true,
+        Tags                = base:heavyitem;base:hasmetal;base:showcondition,
+    }
+
 }

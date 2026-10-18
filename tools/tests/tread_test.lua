@@ -417,6 +417,51 @@ return function(check, E)
     DazedCore.Net.send(player, "DazedPower", "treadRelease", { x = 520, y = 500, z = 0 })
     check(#spawned == n0 + 1 and spawned[#spawned].target == player and T.registry()[KEY] == nil,
           "no zombie to be found: one in its clothes is released instead")
+
+    ------------------------------------------------------------ the large (2x2) wheel (0.18.0)
+    -- Four pieces NW, NE, SW, SE from its master at 524,500; any square of it answers for the wheel, its zombie walks
+    -- the middle of the footprint, and it steps out beside the footprint, not onto it.
+    local getSquare1 = getSquare
+    getSquare = function(x, y, z) return E.square(x, y, z) end
+    local SqM = getmetatable(E.square(524, 500, 0)).__index
+    local isFree0 = SqM.isFree
+    function SqM:isFree() return self:getObjects():size() == 0 end
+    local big = {}
+    for piece, off in ipairs(P.PIECE_OFFSET) do
+        big[piece] = E.object(P.sprite("treadwheel", "xl", "standard", "empty", "S", piece), E.square(524 + off[1], 500 + off[2], 0))
+    end
+    local bi = P.describe(big[4])
+    check(bi and bi.kind == "treadwheel" and bi.mount == "xl" and bi.pieces == 4 and not bi.master, "a large wheel's piece is a treadwheel")
+    check(P.master(big[4]) == big[1] and T.wheelAt(525, 501, 0) == big[1], "any square of the large wheel finds its master")
+    check(DazedPower.More.Machines.isMachine(big[1]) and not DazedPower.More.Machines.isMachine(big[2]),
+          "the large wheel is one machine, by its master")
+    local MF = DazedPower.MachineFx
+    if MF and MF.consider then
+        MF.consider(big[1])
+        check(not MF.tracked[big[1]], "no one-square stride frames on the large wheel")
+    end
+    local mx, my = T.spot(big[3])
+    check(mx == 525 and my == 501, "its zombie walks the middle of the footprint")
+    E.give(player, "Base.Rope", 1)
+    local zl = zombie(30, 523.5, 502.5, { down = true, outfit = "Police" })
+    player.x, player.y = 523.5, 501.5
+    DP_TieZombie:new(player, 30, T.ropeIn(player)):complete()
+    DazedCore.Net.send(player, "DazedPower", "treadLoad", { x = 525, y = 501, z = 0 })
+    check(T.occupied(big[1]) and T.occupied(big[4]) and zl.x == 525 and zl.y == 501 and zl.useless == true,
+          "loaded from its far square: the real zombie stands in the middle of the big drum")
+    check(T.registry()["524,500,0"] ~= nil, "filed under its master square")
+    check(G.mayTake(player, E.square(525, 501, 0), big[4], true) == false, "no square of an occupied large wheel can be lifted")
+    zl.x, zl.y = 524.6, 500.7
+    Wc.track(big[1])
+    Wc.frame(4e7)
+    check(zl.x == 525 and zl.y == 501, "the client pins it in the middle of the big drum")
+    DazedCore.Net.send(player, "DazedPower", "treadRelease", { x = 524, y = 501, z = 0 })
+    local fx, fy = math.floor(zl.x), math.floor(zl.y)
+    check(not T.occupied(big[1]) and zl.useless == false
+          and not (fx >= 524 and fx <= 525 and fy >= 500 and fy <= 501), "released: it steps out beside the large wheel")
+    getSquare = getSquare1
+    SqM.isFree = isFree0
+
     SandboxVars.DazedPower.TreadRealZombie = nil
     T.held, T.reg = {}, nil
     Z.faceLocationF = face0

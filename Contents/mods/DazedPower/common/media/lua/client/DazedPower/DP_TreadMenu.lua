@@ -119,7 +119,8 @@ end
 function TM.inReach(player, obj)
     local sq = obj and obj:getSquare()
     if not (sq and player) or math.floor(player:getZ()) ~= sq:getZ() then return false end
-    local dx, dy = player:getX() - (sq:getX() + 0.5), player:getY() - (sq:getY() + 0.5)
+    local mx, my = T.spot(obj)
+    local dx, dy = player:getX() - mx, player:getY() - my
     return dx * dx + dy * dy <= T.LOAD_REACH * T.LOAD_REACH
 end
 
@@ -151,7 +152,8 @@ function TM.wheelRows(menu, wo, target, player, icon)
         local zb = T.findZombie(l.zid)
         local sq = target:getSquare()
         if zb and sq then
-            local dx, dy = zb:getX() - (sq:getX() + 0.5), zb:getY() - (sq:getY() + 0.5)
+            local mx, my = T.spot(target)
+            local dx, dy = zb:getX() - mx, zb:getY() - my
             if dx * dx + dy * dy > (T.LOAD_REACH + 0.5) * (T.LOAD_REACH + 0.5) then grey(opt, "Tooltip_DazedPower_TreadBringCloser")
             else opt.toolTip = tip("Tooltip_DazedPower_TreadLoad") end
         end

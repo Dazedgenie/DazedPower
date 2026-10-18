@@ -18,7 +18,7 @@ def sprite_name(n):
     """Engine sprite name for overall sheet index n."""
     return "%s_%d" % (TILESETS[n // SHEET_TILES], n % SHEET_TILES)
 GROUP = "Dazed Power"
-PIECES_XL = 4                       # a 2x2 array: pieces 1..4 = NW, NE, SW, SE of its footprint
+PIECES_XL = 4                       # a 2x2 part (the XL array, the large treadwheel): pieces 1..4 = NW, NE, SW, SE
 
 KINDS = ["array", "bank", "controller", "transformer", "lamp", "pedal", "windmill", "steam", "windsock", "vane",
          "propane", "petrol", "gauge", "rod", "bench", "hydro", "fence", "cooler", "heater", "windspin", "woodgas", "treadwheel",
@@ -37,7 +37,7 @@ MOUNTS = {
     "steam": ["ground"], "windsock": ["ground"], "vane": ["ground"], "propane": ["ground"], "petrol": ["ground"],
     "gauge": ["wall"], "rod": ["ground"], "bench": ["ground"], "hydro": ["ground"],
     "fence": ["ground"], "cooler": ["wall"], "heater": ["ground"], "windspin": ["ground"], "woodgas": ["ground"],
-    "treadwheel": ["ground"], "steamfire": ["ground"], "woodgasfire": ["ground"], "petrolrun": ["ground"], "propaneflame": ["ground"],
+    "treadwheel": ["ground", "xl"], "steamfire": ["ground"], "woodgasfire": ["ground"], "petrolrun": ["ground"], "propaneflame": ["ground"],
     "hydrospin": ["ground"], "treadspin": ["ground"], "windsockflap": ["ground"],
 }
 THREE = ["makeshift", "salvaged", "workshop"]
@@ -86,16 +86,30 @@ def states_for(kind, mount, tier):
     return ["c%d" % i for i in range(BANK_CELLS[mount][tier] + 1)]
 
 
+# Mounts added after their kind's rows were released: their rows go at the END of the sheet, in this order, so
+# nothing already standing in a save moves. The 2x2 treadwheel (0.18.0) fits a full-size zombie in its drum.
+LATE = [("treadwheel", "xl")]
+
+
+def pieces_of(kind, mount):
+    return PIECES_XL if mount == "xl" else 1
+
+
 def rows():
-    """[(kind, mount, tier, state, piece)] in sheet order; piece is 1 except for the XL array (1..4)."""
+    """[(kind, mount, tier, state, piece)] in sheet order; piece is 1 except for 2x2 parts (1..4)."""
     out = []
+
+    def emit(kind, mount):
+        for tier in TIERS[kind]:
+            for state in states_for(kind, mount, tier):
+                for piece in range(1, pieces_of(kind, mount) + 1):
+                    out.append((kind, mount, tier, state, piece))
     for kind in KINDS:
         for mount in MOUNTS[kind]:
-            for tier in TIERS[kind]:
-                for state in states_for(kind, mount, tier):
-                    pieces = PIECES_XL if (kind == "array" and mount == "xl") else 1
-                    for piece in range(1, pieces + 1):
-                        out.append((kind, mount, tier, state, piece))
+            if (kind, mount) not in LATE:
+                emit(kind, mount)
+    for kind, mount in LATE:
+        emit(kind, mount)
     return out
 
 
@@ -133,11 +147,11 @@ ITEM = {
     "cooler": {"wall": {"standard": "DazedRoomCooler"}},
     "heater": {"ground": {"standard": "DazedSpaceHeater"}},
     "woodgas": {"ground": {"makeshift": "DazedWoodGasMakeshift", "salvaged": "DazedWoodGasSalvaged", "workshop": "DazedWoodGasWorkshop"}},
-    "treadwheel": {"ground": {"standard": "DazedTreadwheel"}},
+    "treadwheel": {"ground": {"standard": "DazedTreadwheel"}, "xl": {"standard": "DazedTreadwheelLarge"}},
 }
 # Items that are not world parts.
 OTHER_ITEMS = ["DazedPowerManual", "DazedPowerManualAdv", "DazedAlmanac", "DazedAmplifier",
-               "DazedGearKitLow", "DazedGearKitStock", "DazedGearKitRacing"]
+               "DazedGearKitLow", "DazedGearKitStock", "DazedGearKitRacing", "DazedTreadmill"]
 
 TIER_WORD = {"makeshift": "Makeshift", "salvaged": "Salvaged", "workshop": "Workshop", "standard": "", "basic": ""}
 # Display names (CustomName on the tile, DisplayName of the item), by kind and mount; {T} is the tier word.
@@ -156,7 +170,7 @@ NAME = {
     ("rod", "ground"): "Grounding Rod", ("bench", "ground"): "Battery Charger Bench", ("hydro", "ground"): "Micro-Hydro Wheel",
     ("fence", "ground"): "Electric Fence", ("cooler", "wall"): "Room Cooler", ("heater", "ground"): "Electric Space Heater",
     ("woodgas", "ground"): "{T} Wood Gas Generator",
-    ("treadwheel", "ground"): "Zombie Treadwheel",
+    ("treadwheel", "ground"): "Zombie Treadwheel", ("treadwheel", "xl"): "Large Zombie Treadwheel",
 }
 # Weight in kg (PickUpWeight is kg x 10). Anything over 30 comes apart into parts (DazedCore.Heavy).
 WEIGHT = {
@@ -177,7 +191,7 @@ WEIGHT = {
     ("rod", "ground"): {"standard": 4}, ("bench", "ground"): {"standard": 18}, ("hydro", "ground"): {"standard": 26},
     ("fence", "ground"): {"standard": 12}, ("cooler", "wall"): {"standard": 14}, ("heater", "ground"): {"standard": 6},
     ("woodgas", "ground"): {"makeshift": 34, "salvaged": 48, "workshop": 62},
-    ("treadwheel", "ground"): {"standard": 28},
+    ("treadwheel", "ground"): {"standard": 28}, ("treadwheel", "xl"): {"standard": 30},
 }
 
 

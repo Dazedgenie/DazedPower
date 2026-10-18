@@ -12096,7 +12096,7 @@ tileset
 tileset
 {
     file = dazedpower_02
-    size = 4,127
+    size = 4,128
     id = 2
     // dazedpower_02_0
     tile
@@ -23369,5 +23369,811 @@ tileset
         Woffset = -1
         Noffset = 0
         solidtrans = 
+    }
+    // dazedpower_02_508
+    tile
+    {
+        xy = 0,127
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_02_509
+    tile
+    {
+        xy = 1,127
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_02_510
+    tile
+    {
+        xy = 2,127
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_02_511
+    tile
+    {
+        xy = 3,127
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+}
+tileset
+{
+    file = dazedpower_03
+    size = 4,7
+    id = 3
+    // dazedpower_03_0
+    tile
+    {
+        xy = 0,0
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_1
+    tile
+    {
+        xy = 1,0
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_2
+    tile
+    {
+        xy = 2,0
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_3
+    tile
+    {
+        xy = 3,0
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_4
+    tile
+    {
+        xy = 0,1
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_5
+    tile
+    {
+        xy = 1,1
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_6
+    tile
+    {
+        xy = 2,1
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_7
+    tile
+    {
+        xy = 3,1
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_8
+    tile
+    {
+        xy = 0,2
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_9
+    tile
+    {
+        xy = 1,2
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_10
+    tile
+    {
+        xy = 2,2
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_11
+    tile
+    {
+        xy = 3,2
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_12
+    tile
+    {
+        xy = 0,3
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_13
+    tile
+    {
+        xy = 1,3
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_14
+    tile
+    {
+        xy = 2,3
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_15
+    tile
+    {
+        xy = 3,3
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_16
+    tile
+    {
+        xy = 0,4
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_17
+    tile
+    {
+        xy = 1,4
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_18
+    tile
+    {
+        xy = 2,4
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_19
+    tile
+    {
+        xy = 3,4
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,0
+        ForceSingleItem = 
+    }
+    // dazedpower_03_20
+    tile
+    {
+        xy = 0,5
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_21
+    tile
+    {
+        xy = 1,5
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_22
+    tile
+    {
+        xy = 2,5
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_23
+    tile
+    {
+        xy = 3,5
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 0,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_24
+    tile
+    {
+        xy = 0,6
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = E
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = 0
+        Soffset = 1
+        Woffset = 2
+        Noffset = 3
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_25
+    tile
+    {
+        xy = 1,6
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = S
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -1
+        Soffset = 0
+        Woffset = 1
+        Noffset = 2
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_26
+    tile
+    {
+        xy = 2,6
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = W
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -2
+        Soffset = -1
+        Woffset = 0
+        Noffset = 1
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
+    }
+    // dazedpower_03_27
+    tile
+    {
+        xy = 3,6
+        CustomName = Large Zombie Treadwheel
+        GroupName = Dazed Power Walking
+        Facing = N
+        BlocksPlacement = 
+        Material = WoodPlank
+        Material2 = MetalScrap
+        MaterialType = Wood_Solid
+        IsMoveAble = 
+        CustomItem = Base.DazedTreadwheelLarge
+        PickUpWeight = 300
+        PickUpLevel = 0
+        MoveType = Object
+        Eoffset = -3
+        Soffset = -2
+        Woffset = -1
+        Noffset = 0
+        solidtrans = 
+        ItemHeight = 80
+        SpriteGridPos = 1,1
+        ForceSingleItem = 
     }
 }

@@ -107,6 +107,7 @@
     "Tooltip_DazedWoodGasSalvaged": "A gasifier off an old farm truck, with a cooler and filter, on a standby engine. Set it to AUTO and it lights itself when the batteries run low. Warms up faster, burns wood further and holds more ash than the drum kind.",
     "Tooltip_DazedWoodGasWorkshop": "A properly built gasifier with a cyclone, a cooler and a big hopper, on a muffled engine. The most power per log of anything in the shed, quick to warm up and slow to choke. AUTO starts and stops it around the batteries.",
     "Tooltip_DazedTreadwheel": "Knock a zombie down, tie it with a rope, walk it here and put it in the wheel. It walks for ever: about 80 W, up to 140 W while someone stands close. Wire it to a controller.",
+    "Tooltip_DazedTreadwheelLarge": "A 2x2 wheel with a drum tall enough for a grown zombie. Knock one down, tie it with a rope, walk it here and put it in. It walks for ever: about 80 W, up to 140 W while someone stands close. Wire it to a controller.",
     "Tooltip_DazedPower_TreadNeedRope": "You need a rope or a sheet rope.",
     "Tooltip_DazedPower_TreadTie": "Uses the rope. Be quick, it will get up. Walk it home: running with the rope taut can snap it, and a fence or a shut door holds it back.",
     "Tooltip_DazedPower_TreadNeedZombie": "Knock a zombie down, tie it up and walk it here first.",

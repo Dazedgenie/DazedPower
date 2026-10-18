@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0 (2026-10-18)
+- **The zombie treadwheel is now 2x2 squares.** The old one-square drum was too small for a real zombie (its head stuck out of the top). The new **Large Zombie Treadwheel** has a drum tall enough for a grown zombie to walk upright inside, drawn in the Dazed Power style in all four facings.
+  - Built from the same handbook recipe, so a handbook you already read still teaches it: 14 planks, 24 nails, 2 metal pipes, 2 electronics scrap, 2 electric wire, 4 screws, a hammer and a screwdriver (Electricity 2, Carpentry 3). Scrapping it gives back 7 planks, 10 nails, 2 pipes and an electronics scrap.
+  - Right-click any of its four squares to load, release or put down the zombie. The zombie walks the middle of the drum, and a released one steps out beside the wheel, never inside it. It can go indoors (only the large solar array has to stand in the open).
+  - One-square wheels already in a save keep working as before and can still be scrapped, but are no longer built.
+  - The drum stands still while the zombie walks it (the stride frames are one-square art).
+- Lua tests cover the large wheel's pieces, loading from a far square, the pin, the pick-up lock and release; not yet run in game.
+
 ## 0.17.0 (2026-10-18)
 - **The real zombie walks the treadwheel.** The zombie you put on a wheel no longer turns into a painted one: it stays in the world, held in the middle of the drum, facing the wheel's front and walking in place on the game's own zombie walk (a crawler crawls). It cannot bite or wander off, and the wheel makes power exactly as before. The drum shows without the painted zombie and stands still while the real one walks it.
   - Kill it (or put it down from the menu) and the wheel is empty. Release it and that same zombie is let loose beside the wheel and comes for you.
