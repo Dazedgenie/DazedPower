@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.19.2 (2026-10-19)
+- The "Spawn Dazed Power generators" debug submenu from 0.19.1 is removed; Dazed Showcase will lay out every generator instead. The full "Spawn all Dazed Power items" and battery rack rows stay.
+
 ## 0.19.1 (2026-10-18)
 - **Debug: spawn single generators.** Dazed debug (right-click, debug mode or staff) has a new "Spawn Dazed Power generators" submenu. Each tiered generator (pedal, windmill, steam engine, propane, petrol, wood gas) has its own submenu with a row for each tier (Makeshift, Salvaged, Workshop) and one for all three tiers. Below them are rows for the micro-hydro wheel, both zombie treadwheels and the treadmill generator, and one row spawns every generator in every tier. They are placed around you the same way as the full Dazed Power spawn.
 - Lua tests cover the new spawn sets; the menu itself is not yet tried in game.

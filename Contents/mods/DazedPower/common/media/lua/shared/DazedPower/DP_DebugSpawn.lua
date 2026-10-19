@@ -86,10 +86,10 @@ end
 
 S.register("powerBanks", "battery rack", nil, { label = "IGUI_DazedPower_DebugBanks", place = spawnBanks })
 
---- Every generator one at a time, for the "Spawn Dazed Power generators" submenu (client DP_DebugGenMenu): each
+--- Every generator one at a time, as Dazed Core spawn sets other mods can send (the 0.19.1 debug submenu is gone): each
 --  source that comes in three tiers, by tier or all three together, then the one-tier sources, and one row for
 --  the lot. Each row is a Dazed Core set, so the authority puts the parts down through the player's own place
---  call, but the sets stay out of Dazed debug's flat list: the submenu is the only way to them.
+--  call, but the sets stay out of Dazed debug's flat list.
 DazedPower.DebugGens = DazedPower.DebugGens or {}
 local G = DazedPower.DebugGens
 G.TIERED = { "pedal", "windmill", "steam", "propane", "petrol", "woodgas" }
