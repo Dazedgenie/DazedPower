@@ -1,7 +1,7 @@
 version=1
 id=3817322112
 title=Dazed Power
-description=[b]Disclaimer: this mod was made with AI assistance.[/b] If you're not comfortable with that, please stop reading here.
+description=[b]Disclaimer: this mod was made with AI assistance.[/b] If you're not comfortable with that, please stop reading here. Still in development: expect bugs. Dedicated server testing isn't finished, but it should work.
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/banner.jpg?v=2[/img]
 description=
@@ -85,7 +85,7 @@ description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-compat.png?v=2[/img]
 description=[list]
 description=[*]Do not run it alongside Off-Grid: Solar Power; Dazed Power replaces it.
-description=[*][b]Dazed Dank[/b] (0.57+, Core 1.8.4+): grow lights, fans, heaters, ACs, humidifiers, pumps and the drying fan cabled to a controller or transformer are Power loads: billed on the LOADS page, in Load Priority (Grow lights, Fans, Hydro pumps, Grow climate), dark when cut, no controller slot. Uncabled gear still runs free off a lit square.
+description=[*][b]Dazed Dank[/b] (0.57+, Core 1.9.0+): grow lights, fans, heaters, ACs, humidifiers, pumps and the drying fan cabled to a controller or transformer are Power loads: billed on the LOADS page, in Load Priority (Grow lights, Fans, Hydro pumps, Grow climate), dark when cut, no controller slot. Uncabled gear still runs free off a lit square.
 description=[*]If something desyncs in multiplayer, please tell me.
 description=[/list]
 description=
