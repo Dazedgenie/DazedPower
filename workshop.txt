@@ -1,7 +1,7 @@
 version=1
 id=3817322112
 title=Dazed Power
-description=[b]Disclaimer: this mod was made with AI assistance.[/b] If you're not comfortable with that, please stop reading here. Still in development: expect bugs. Dedicated server testing isn't finished, but it should work.
+description=[b]Disclaimer: this mod was made with AI assistance.[/b] If you're not comfortable with that, please stop reading here. Still in development, so expect bugs: report them at https://discord.gg/qkP5CPHgy. Dedicated server testing isn't finished, but it should work.
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/banner.jpg?v=2[/img]
 description=
@@ -90,7 +90,7 @@ description=[*]If something desyncs in multiplayer, please tell me.
 description=[/list]
 description=
 description=[img]https://raw.githubusercontent.com/Dazedgenie/Dazed-Workshop/main/Power/images/h-help.png?v=2[/img]
-description=Post in the Discussions tab or open an issue on [url=https://github.com/Dazedgenie/DazedPower]GitHub[/url]. Include your game version, the Dazed mods you run, and your console.txt if there is an error.
+description=Post in the Discussions tab or open an issue on [url=https://github.com/Dazedgenie/DazedPower]GitHub[/url]. Include your game version, mod list and console.txt.
 description=
 description=[hr][/hr]
 description=
