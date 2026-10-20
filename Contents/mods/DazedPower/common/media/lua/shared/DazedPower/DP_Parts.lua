@@ -452,6 +452,7 @@ end
 
 --- Sprite name for a variant (piece 1 unless asked), or nil if that combination does not exist.
 function P.sprite(kind, mount, tier, state, facing, piece)
+    if kind == nil or tier == nil or state == nil then return nil end
     local row = P.ROW_OF[kind .. "|" .. (mount or "ground") .. "|" .. tier .. "|" .. state .. "|" .. (piece or 1)]
     if not row then return nil end
     local fi = P.FACING_INDEX[facing or "S"] or 1

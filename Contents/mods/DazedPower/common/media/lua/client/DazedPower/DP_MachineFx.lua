@@ -414,11 +414,25 @@ function M.frames(t)
             else
                 f = math.floor(t / M.FRAME_MS + e.offset) % n
             end
-            if f ~= e.f or cur ~= e.spr then
+            local frame = cyc[f + 1]
+            if frame == nil then
+                -- A step that lands outside the cycle (an empty cycle, a phase gone NaN) stops this engine's cycling
+                -- instead of failing every frame; say once what it was, so the cause can be found.
+                if not M.badFrameSaid then
+                    M.badFrameSaid = true
+                    print("DazedPower: machine effects stopped a bad frame step: kind=" .. tostring(spec.kind) .. " tier="
+                          .. tostring(e.tier) .. " mode=" .. tostring(e.mode) .. " n=" .. tostring(n) .. " f=" .. tostring(f)
+                          .. " phase=" .. tostring(e.phase) .. " rate=" .. tostring(e.rate))
+                end
+                e.mode, e.cyc, e.phase = nil, nil, nil
+                live = false
+            elseif f ~= e.f or cur ~= e.spr then
                 e.f = f
-                show(obj, M.spriteName(spec.kind, e.tier, cyc[f + 1], e.facing))
+                show(obj, M.spriteName(spec.kind, e.tier, frame, e.facing))
                 e.spr = P.try(obj, "getSprite")
             end
+        end
+        if live then
             keep = keep + 1
             active[keep] = e
         end
