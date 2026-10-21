@@ -1,26 +1,26 @@
---[[ DazedPower -- some of the generators already on the map are Dazed ones.
+--[[ DazedPower -- the generators already on the map are Dazed ones.
 
      The map ships generators as plain tiles (appliances_misc_01_0..15) and
      vanilla's MOGenerator.lua turns each into a working IsoGenerator the first
      time its ground is generated. This file takes over those sixteen sprites
-     and, for one tile in GenSwapChance, stands a Dazed petrol or propane
-     generator there instead, with a makeshift controller on the square beside
-     it, already wired. Kyle, 2026-10-21: the Dazed generators should turn up
-     across the map in place of the default ones.
+     and stands a Dazed petrol or propane generator there instead, with a
+     makeshift controller beside it, already wired. Kyle, 2026-10-21: "I dont
+     want any vanilla generators". DP_Loot swaps them out of the loot lists
+     the same way. The sandbox switch ReplaceGenerators turns both off.
 
-     COMPLETE OR VANILLA. A Dazed generator does not light the houses around it
-     the way a vanilla one does; only a controller hands its power out. So a
-     generator with no controller beside it would be a find nobody can use,
-     and DP_Seed's rule holds here too: the pair is placed whole, or the tile
-     becomes the vanilla generator it always was. No free square beside it,
-     or a part that will not place, and the vanilla path runs.
+     A Dazed generator does not light the houses around it the way a vanilla
+     one does; only a controller hands its power out, so the controller comes
+     with it whenever there is anywhere to put one: a free square beside it
+     with no wall between, then any free square two out. Only when there is
+     none does the generator stand alone, unwired, because Kyle would rather
+     a player find a controller than find a vanilla generator.
 
      WHY THE SAME PRIORITY. MapObjects keeps one callback per sprite and
      priority, and registering at an equal priority replaces it (the same
      fact DUP_World.lua relies on). Registering at vanilla's 5 therefore
-     takes the tile over instead of racing MOGenerator for it, and the vanilla
-     branch below is MOGenerator's own code, so a tile that is not swapped
-     comes out exactly as it would without this mod.
+     takes the tile over instead of racing MOGenerator for it. W.vanilla is
+     MOGenerator's own code, for the switch turned off and for a swap the
+     engine refuses outright.
 
      The colour picks the engine: red and old become petrol, yellow and blue
      the propane standby set a house would have had. The old ones are the
@@ -42,7 +42,6 @@ local M = DazedPower.Model
 local try = P.try
 
 W.PRIORITY = 5                 -- MOGenerator.lua's, so this replaces its callback
-W.CHANCE = 3                   -- the sandbox default: one map generator in this many
 W.WORKSHOP_IN = 5              -- one non-old swap in this many is Workshop grade
 W.SALT = 4242
 
@@ -54,19 +53,14 @@ W.BLOCKS = {
     { first = 12, item = "Base.Generator_Blue",   kind = "propane", old = false },
 }
 
---- The neighbours tried for the controller, sides first.
+--- The neighbours tried for the controller, sides first, then the ring two out.
 W.AROUND = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }
+W.FARTHER = { { 2, 0 }, { 0, 2 }, { -2, 0 }, { 0, -2 }, { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 },
+              { 1, 2 }, { -1, 2 }, { 1, -2 }, { -1, -2 }, { 2, 2 }, { -2, 2 }, { 2, -2 }, { -2, -2 } }
 
-function W.chance()
-    local n = math.floor(tonumber(P.sandbox("GenSwapChance")) or W.CHANCE)
-    return n < 0 and 0 or n
-end
-
---- Is the tile at x, y one of the swapped ones?
-function W.picked(x, y)
-    local n = W.chance()
-    if n <= 0 then return false end
-    return M.placeRoll(x, y, W.SALT, n) == 0
+--- Are vanilla generators being replaced? The sandbox switch, on by default.
+function W.on()
+    return P.sandbox("ReplaceGenerators") ~= false
 end
 
 function W.gradeOf(x, y, old)
@@ -94,12 +88,16 @@ local function floorFree(sq)
     return true
 end
 
---- A square beside the generator the controller can stand on, with no wall between them.
+--- A square for the controller: beside the generator with no wall between them, else two out.
 function W.spotFor(sq)
     local x, y, z = sq:getX(), sq:getY(), sq:getZ()
     for _, d in ipairs(W.AROUND) do
         local n = getSquare(x + d[1], y + d[2], z)
         if n and floorFree(n) and try(sq, "isBlockedTo", n) ~= true then return n end
+    end
+    for _, d in ipairs(W.FARTHER) do
+        local n = getSquare(x + d[1], y + d[2], z)
+        if n and floorFree(n) then return n end
     end
     return nil
 end
@@ -137,27 +135,18 @@ local function place(sq, kind, tier, state, facing)
     return o
 end
 
---- Stand the Dazed pair where the vanilla tile was. Returns true when both are down.
+--- Stand the Dazed generator where the vanilla tile was, with its controller when there is room.
+--  Returns true once the generator is down (the tile is then gone).
 function W.swap(object, block)
     local sq = object:getSquare()
     if not sq then return false end
-    local spot = W.spotFor(sq)
-    if not spot then return false end
     local x, y, z = sq:getX(), sq:getY(), sq:getZ()
     local tier = W.gradeOf(x, y, block.old)
     local facing = W.facingOf(object)
 
-    -- The vanilla tile is taken away last, so a part that will not place leaves it for vanilla:
-    -- no generator, or a generator with no controller, and the pair is not placed at all.
+    -- The vanilla tile is taken away only once the Dazed generator stands.
     local g = place(sq, block.kind, tier, "off", facing)
     if not g then return false end
-    local c = DazedPower.Place and DazedPower.Place.makeController(spot, nil,
-        { kind = "controller", mount = "ground", tier = (tier == "workshop") and "workshop" or "makeshift",
-          facing = facing }, nil)
-    if not c then
-        sq:transmitRemoveItemFromSquare(g)
-        return false
-    end
     sq:transmitRemoveItemFromSquare(object)
 
     local d = P.data(g)
@@ -169,11 +158,17 @@ function W.swap(object, block)
     d.state = "off"
     g:transmitModData()
 
-    local cd = P.data(c)
-    cd.trip = false
-    cd.wire = M.wireAdd("", M.nodeKey(x, y, z, block.kind),
-                        M.nodeKey(spot:getX(), spot:getY(), spot:getZ(), "controller"))
-    c:transmitModData()
+    local spot = W.spotFor(sq)
+    local c = spot and DazedPower.Place and DazedPower.Place.makeController(spot, nil,
+        { kind = "controller", mount = "ground", tier = (tier == "workshop") and "workshop" or "makeshift",
+          facing = facing }, nil)
+    if c then
+        local cd = P.data(c)
+        cd.trip = false
+        cd.wire = M.wireAdd("", M.nodeKey(x, y, z, block.kind),
+                            M.nodeKey(spot:getX(), spot:getY(), spot:getZ(), "controller"))
+        c:transmitModData()
+    end
     return true
 end
 
@@ -182,11 +177,12 @@ local function handler(block)
         if not object or not object:getSquare() then return end
         local sq = object:getSquare()
         local ok, done = true, false
-        if W.picked(sq:getX(), sq:getY()) then
+        if W.on() then
             ok, done = pcall(W.swap, object, block)
             if not ok then print("DP_GenSwap: swap failed: " .. tostring(done)) done = false end
+            if not done then print("DP_GenSwap: kept a vanilla generator at " .. sq:getX() .. "," .. sq:getY()) end
         end
-        -- Not swapped, or the swap failed part way: the tile still gets a working vanilla generator.
+        -- Switched off, or the engine refused the Dazed generator: the tile still gets a working one.
         if not done then W.vanilla(object, block, sq) end
     end
 end

@@ -292,6 +292,58 @@ L.VEHICLES = {
     },
 }
 
+--- No vanilla generators (Kyle, 2026-10-21): every vanilla generator a loot
+--  list can hand out is the Dazed engine its colour stands for, at the same
+--  weight, the way DP_GenSwap turns the ones standing on the map. Done in
+--  place, so a list another mod already added a vanilla generator to is
+--  covered too. Off with the sandbox switch ReplaceGenerators.
+L.GENERATOR_SWAP = {
+    Generator = "DazedPetrolSalvaged",
+    Generator_Old = "DazedPetrolMakeshift",
+    Generator_Yellow = "DazedPropaneSalvaged",
+    Generator_Blue = "DazedPropaneSalvaged",
+}
+
+--- Swap the vanilla generators in one flat name/weight array. Returns how many.
+function L.swapIn(items)
+    local n = 0
+    if type(items) ~= "table" then return 0 end
+    for i = 1, #items, 2 do
+        local name = items[i]
+        if type(name) == "string" then
+            local bare = name:gsub("^Base%.", "")
+            local to = L.GENERATOR_SWAP[bare]
+            if to then items[i] = to n = n + 1 end
+        end
+    end
+    return n
+end
+
+--- Every list in one distribution table, and its junk, following nested tables once each.
+function L.swapAll(root)
+    local seen, n = {}, 0
+    local function walk(t, depth)
+        if type(t) ~= "table" or seen[t] or depth > 4 then return end
+        seen[t] = true
+        if t.items then n = n + L.swapIn(t.items) end
+        if type(t.junk) == "table" then n = n + L.swapIn(t.junk.items) end
+        for k, v in pairs(t) do
+            if k ~= "items" and type(v) == "table" then walk(v, depth + 1) end
+        end
+    end
+    walk(root, 0)
+    return n
+end
+
+function L.swapGenerators()
+    if DazedPower.Parts and DazedPower.Parts.sandbox("ReplaceGenerators") == false then return 0 end
+    local n = 0
+    if ProceduralDistributions and ProceduralDistributions.list then n = n + L.swapAll(ProceduralDistributions.list) end
+    if VehicleDistributions then n = n + L.swapAll(VehicleDistributions) end
+    print("DazedPower: swapped " .. n .. " vanilla generator loot entries for Dazed ones")
+    return n
+end
+
 function L.inject()
     if L.done then return end
     if not ProceduralDistributions or not ProceduralDistributions.list then
@@ -342,6 +394,8 @@ function L.inject()
     else
         missed[#missed + 1] = "VehicleDistributions"
     end
+
+    L.swapGenerators()
 
     print(string.format("DazedPower: seeded %d loot entries%s", added,
                         #missed > 0
