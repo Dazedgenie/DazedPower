@@ -317,6 +317,7 @@ dofile("treadmill_test.lua")(check, E)
 dofile("steamfx_test.lua")(check, E)
 dofile("genfx_test.lua")(check, E)
 dofile("turnfx_test.lua")(check, E)
+dofile("genswap_test.lua")(check, E)
 
 -- The monitor places itself before building; stop it there to check that much runs (it once called a missing helper).
 do

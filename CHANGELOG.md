@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0 (2026-10-21)
+- **Dazed generators on the map.** On newly explored ground, about one in three of the generators already standing on the map (vanilla's red, old, yellow and blue ones) is a Dazed generator instead. Red and old ones become petrol generators; yellow and blue ones become propane standby generators. Old ones are Makeshift and worn. The rest are Salvaged, with one in five Workshop.
+- Each one comes with a makeshift controller on the square beside it, already wired, because a Dazed generator only powers things through a controller. Like a vanilla one, it is found empty and switched off: fuel it, switch it on and wire the house from the controller. If there is no free square beside it with no wall in between, that generator stays vanilla.
+- New sandbox setting "Dazed generators on the map (one in)", default 3. 0 leaves every map generator vanilla.
+- Lua tests cover the swap, the wiring, the vanilla fallback and the setting. Not yet tried in game.
+
 ## 0.19.2 (2026-10-19)
 - The "Spawn Dazed Power generators" debug submenu from 0.19.1 is removed; Dazed Showcase will lay out every generator instead. The full "Spawn all Dazed Power items" and battery rack rows stay.
 

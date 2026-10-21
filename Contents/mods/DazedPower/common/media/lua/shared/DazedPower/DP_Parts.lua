@@ -43,6 +43,7 @@ P.SANDBOX_DEFAULTS = {
     TransformerLoss = 25,
     RealisticMode = false,
     RigChance = 15,
+    GenSwapChance = 3,
     CableTilesPerWire = 4,
     LiveShock = true,
     ColdStarts = true,

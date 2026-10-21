@@ -129,6 +129,19 @@ option DazedPower.RigChance
     translation = DazedPower_RigChance,
 }
 
+/* One generator in this many of those already standing on the map (the vanilla red, old, yellow and
+   blue ones) is a Dazed petrol or propane generator instead, with a makeshift controller beside it,
+   wired. Newly generated ground only. 0 leaves every map generator vanilla. (0.20.0) */
+option DazedPower.GenSwapChance
+{
+    type = integer,
+    min = 0,
+    max = 100,
+    default = 3,
+    page = DazedPower,
+    translation = DazedPower_GenSwapChance,
+}
+
 /* Wiring (0.2.0). CableTilesPerWire is how many tiles one Electric Wire covers when a cable is run
    (0 makes cables free); cutting one gives half back. LiveShock lets wiring a live system shock. */
 option DazedPower.CableTilesPerWire
